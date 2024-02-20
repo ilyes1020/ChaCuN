@@ -1,0 +1,22 @@
+package ch.epfl.chacun;
+
+import java.util.List;
+
+public enum Rotation {
+    NONE,
+    RIGHT,
+    HALF_TURN,
+    LEFT;
+
+
+    public static final List<Rotation> ALL = List.of(values());
+    public static final int COUNT = ALL.size();
+
+    public Rotation add(Rotation that){
+        return ALL.get(this.ordinal() + that.ordinal());
+    }
+
+    public Rotation negated(){
+
+    }
+}
