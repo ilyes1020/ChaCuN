@@ -23,6 +23,6 @@ public enum Direction {
     }
 
     public Direction opposite() {
-        return ALL.get((this.ordinal() + 2) % COUNT);         // Adding 2 to get opposite direction (magic number ?)
+        return ALL.get((this.ordinal() + Rotation.HALF_TURN.ordinal()) % COUNT);         // Adding 2 to get opposite direction (magic number ?)
     }
 }

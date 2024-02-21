@@ -35,9 +35,8 @@ public enum Rotation {
      * @return The negated rotation.
      */
     public Rotation negated() {
-        return ALL.get((this.ordinal() + HALF_TURN.ordinal()) % COUNT);
+        return ALL.get((COUNT - this.ordinal()) % COUNT);
     }
-
     /**
      * @return The number of quarter turns clockwise.
      */
