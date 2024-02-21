@@ -1,4 +1,74 @@
 package ch.epfl.chacun;
 
-public class Points {
+/**
+ * class representing the points of the game
+ *
+ * @author Ilyes Rouibi (372420)
+ * @author Weifeng Ding(379902)
+ */
+public final class Points {
+    private Points() {}
+
+    /**
+     * point for closing a forest
+     * @param tileCount nb of tile constituting the forest
+     * @param mushroomGroupCount nb of mushroom group in the forest
+     * @return the point gained by the player for closing a forest (int)
+     */
+    public static int forClosedForest(int tileCount, int mushroomGroupCount) {
+        Preconditions.checkArgument(tileCount > 1);
+        return (2 * tileCount) + (3 * mushroomGroupCount);
+    }
+
+    /**
+     * point for closing a river
+     * @param tileCount nb of tile constituting a river
+     * @param fishCount nb of fish in the river
+     * @return the point gained by the player for closing a river (int)
+     */
+    public static int forClosedRiver(int tileCount, int fishCount){
+        return tileCount + fishCount;
+    }
+
+    /**
+     * point for occupying a meadow
+     * @param mammothCount nb of mommoth in the meadow
+     * @param aurochsCount nb of aurochs in the meadow
+     * @param deerCount nb of deer in the meadow
+     * @return the nb of point gained by the player for occupying a meadow
+     */
+    public static int forMeadow(int mammothCount, int aurochsCount, int deerCount){
+        Preconditions.checkArgument(mammothCount >= 0 && aurochsCount >= 0 && deerCount >= 0);
+        return (3 * mammothCount) + (2 * aurochsCount) + deerCount;
+    }
+    /**
+     * point for occupying a river system
+     * @param fishCount nb of fish in the river system
+     * @return the nb of point gained by the player for occupying a river system
+     */
+    public static int forRiverSystem(int fishCount){
+        Preconditions.checkArgument(fishCount >= 0);
+        return fishCount;
+    }
+
+    /**
+     * point for having a logboat in the river system
+     * @param lakeCount nb of lake in the river system
+     * @return the bonus point gained by the player for closing a river system with logboat
+     */
+    public static int forLogboat(int lakeCount){
+        Preconditions.checkArgument(lakeCount > 0);
+        return 2 * lakeCount;
+    }
+
+    /**
+     * point for having a raft in the river system
+     * @param lakeCount nb of lake in the river system
+     * @return the point gained by the player for occupying a river system with raft
+     */
+    public static int forRaft(int lakeCount){
+        Preconditions.checkArgument(lakeCount > 0);
+        return lakeCount;
+    }
+
 }
