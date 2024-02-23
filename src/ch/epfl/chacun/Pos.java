@@ -28,9 +28,9 @@ public record Pos(int x, int y) {
      */
     public Pos neighbor(Direction direction){
         return switch (direction) {
-            case N -> new Pos(this.x, this.y + 1);
+            case N -> new Pos(this.x, this.y - 1);
             case E -> new Pos(this.x + 1, this.y);
-            case S -> new Pos(this.x, this.y - 1);
+            case S -> new Pos(this.x, this.y + 1);
             case W -> new Pos(this.x - 1, this.y);
         };
     }
