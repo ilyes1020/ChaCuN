@@ -8,7 +8,7 @@ package ch.epfl.chacun;
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding(379902)
  */
-public record Animal(Kind kind, int id) {
+public record Animal( int id, Kind kind) {
 
     /**
      * enum representing the four kinds of animal in game

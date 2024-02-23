@@ -24,20 +24,11 @@ public enum Direction {
      */
     public static final int COUNT = ALL.size();
 
-    /**
-     * gives the rotated direction
-     * @param rotation degree of rotation
-     * @return rotated direction (Direction)
-     */
     public Direction rotated(Rotation rotation){
         return ALL.get((this.ordinal() + rotation.quarterTurnsCW()) % COUNT);
     }
 
-    /**
-     * gives the opposite direction
-     * @return the opposite direction (Direction)
-     */
     public Direction opposite() {
-        return ALL.get((this.ordinal() + Rotation.HALF_TURN.ordinal()) % COUNT);
+        return ALL.get((this.ordinal() + Rotation.HALF_TURN.ordinal()) % COUNT);         // Adding 2 to get opposite direction (magic number ?)
     }
 }
