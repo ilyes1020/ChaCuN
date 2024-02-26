@@ -16,7 +16,7 @@ public final class Points {
      * @return the point gained by the player for closing a forest (int)
      */
     public static int forClosedForest(int tileCount, int mushroomGroupCount) {
-        Preconditions.checkArgument(tileCount > 1);
+        Preconditions.checkArgument(tileCount > 1 && mushroomGroupCount >= 0);
         return (2 * tileCount) + (3 * mushroomGroupCount);
     }
 
@@ -27,6 +27,7 @@ public final class Points {
      * @return the point gained by the player for closing a river (int)
      */
     public static int forClosedRiver(int tileCount, int fishCount){
+        Preconditions.checkArgument(tileCount > 1 && fishCount >= 0);
         return tileCount + fishCount;
     }
 
