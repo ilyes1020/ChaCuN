@@ -2,7 +2,7 @@ package ch.epfl.chacun;
 
 /**
  * class representing the animals in game
- * @param id the animal's id
+ * @param id the id of the animal
  * @param kind the kind of the animal
  *
  * @author Ilyes Rouibi (372420)

@@ -96,7 +96,7 @@ public sealed interface Zone {
     }
 
     /**
-     * Interface representing aquatic areas
+     * interface representing aquatic areas
      */
     sealed interface Water extends Zone{
         /**
