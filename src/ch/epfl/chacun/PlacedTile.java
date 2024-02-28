@@ -169,7 +169,10 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      * @return the same placed tile, but with an occupant
      */
     public PlacedTile withOccupant(Occupant occupant){
-        return new PlacedTile(tile, placer, rotation, pos, occupant);
+        if (this.occupant == null){
+            return new PlacedTile(tile, placer, rotation, pos, occupant);
+        }
+        throw new IllegalArgumentException("The tile is already occupied");
     }
 
     /**
