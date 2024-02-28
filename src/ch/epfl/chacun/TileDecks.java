@@ -1,12 +1,10 @@
 package ch.epfl.chacun;
 
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * record representing a deck of tiles
+ * Record representing a deck of tiles.
  * This record encapsulates the start tiles, normal tiles, and menhir tiles used in the game.
  * Each deck is represented as a list of tiles.
  *
@@ -14,12 +12,26 @@ import java.util.function.Predicate;
  * @author Weifeng Ding (379902)
  */
 public record TileDecks(List<Tile> startTiles, List<Tile> normalTiles, List<Tile> menhirTiles) {
+
+    /**
+     * Constructs a new TileDecks record.
+     *
+     * @param startTiles  The list of start tiles.
+     * @param normalTiles The list of normal tiles.
+     * @param menhirTiles The list of menhir tiles.
+     */
     public TileDecks{
         startTiles = List.copyOf(startTiles);
         normalTiles = List.copyOf(normalTiles);
         menhirTiles = List.copyOf(menhirTiles);
     }
 
+    /**
+     * Returns the size of the specified tile deck.
+     *
+     * @param kind The type of tile deck (START, NORMAL, or MENHIR).
+     * @return The size of the specified tile deck.
+     */
     public int deckSize(Tile.Kind kind){
         return switch (kind) {
             case START -> startTiles.size();
@@ -28,6 +40,12 @@ public record TileDecks(List<Tile> startTiles, List<Tile> normalTiles, List<Tile
         };
     }
 
+    /**
+     * Returns the top tile from the specified tile deck.
+     *
+     * @param kind The type of tile deck (START, NORMAL, or MENHIR).
+     * @return The top tile from the specified tile deck, or null if the deck is empty.
+     */
     public Tile topTile(Tile.Kind kind) {
         if (deckSize(kind) == 0) {
             return null;
@@ -40,6 +58,13 @@ public record TileDecks(List<Tile> startTiles, List<Tile> normalTiles, List<Tile
         }
     }
 
+    /**
+     * Returns a new TileDecks record with the top tile removed from the specified tile deck.
+     *
+     * @param kind The type of tile deck (START, NORMAL, or MENHIR).
+     * @return A new TileDecks record with the top tile removed from the specified tile deck.
+     * @throws IllegalArgumentException If the specified tile deck is empty.
+     */
     public TileDecks withTopTileDrawn(Tile.Kind kind) {
         switch (kind) {
             case START:
@@ -63,6 +88,15 @@ public record TileDecks(List<Tile> startTiles, List<Tile> normalTiles, List<Tile
         }
         return new TileDecks(startTiles, normalTiles, menhirTiles);
     }
+
+    /**
+     * Returns a new TileDecks record with tiles removed from the specified tile deck until the predicate returns false.
+     *
+     * @param kind      The type of tile deck (START, NORMAL, or MENHIR).
+     * @param predicate The predicate specifying the condition that the top tile must satisfy to be removed.
+     * @return A new TileDecks record with tiles removed from the specified tile deck until the predicate returns false.
+     * @throws IllegalArgumentException If the specified tile deck is empty.
+     */
     public TileDecks withTopTileDrawnUntil(Tile.Kind kind, Predicate<Tile> predicate){
         switch (kind) {
             case START:
