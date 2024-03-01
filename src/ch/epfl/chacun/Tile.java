@@ -36,7 +36,7 @@ public record Tile(int id, Kind kind, TileSide n, TileSide e, TileSide s, TileSi
     }
 
     /**
-     * gives the zones that are in contact with at least one side of the tile
+     * gives the zones that are in contact with at least one side of the tile (exluding lakes)
      * @return the zones that are in contact with at least one side of the tile (Set)
      */
     public Set<Zone> sideZones(){

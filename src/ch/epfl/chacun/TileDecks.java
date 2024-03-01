@@ -51,9 +51,9 @@ public record TileDecks(List<Tile> startTiles, List<Tile> normalTiles, List<Tile
             return null;
         } else {
             return switch (kind) {
-                case START -> startTiles.get(0);
-                case NORMAL -> normalTiles.get(0);
-                case MENHIR -> menhirTiles.get(0);
+                case START -> startTiles.getFirst();
+                case NORMAL -> normalTiles.getFirst();
+                case MENHIR -> menhirTiles.getFirst();
             };
         }
     }
@@ -66,27 +66,26 @@ public record TileDecks(List<Tile> startTiles, List<Tile> normalTiles, List<Tile
      * @throws IllegalArgumentException If the specified tile deck is empty.
      */
     public TileDecks withTopTileDrawn(Tile.Kind kind) {
-        switch (kind) {
-            case START:
+        return switch (kind) {
+            case START -> {
                 if (startTiles.isEmpty()) {
                     throw new IllegalArgumentException("Start tiles deck is empty");
                 }
-                startTiles.removeFirst();
-                break;
-            case NORMAL:
+                yield new TileDecks(startTiles.subList(1, startTiles.size()), normalTiles, menhirTiles);
+            }
+            case NORMAL -> {
                 if (normalTiles.isEmpty()) {
                     throw new IllegalArgumentException("Normal tiles deck is empty");
                 }
-                normalTiles.removeFirst();
-                break;
-            case MENHIR:
+                yield new TileDecks(startTiles, normalTiles.subList(1, normalTiles.size()), menhirTiles);
+            }
+            case MENHIR -> {
                 if (menhirTiles.isEmpty()) {
                     throw new IllegalArgumentException("Menhir tiles deck is empty");
                 }
-                menhirTiles.removeFirst();
-                break;
-        }
-        return new TileDecks(startTiles, normalTiles, menhirTiles);
+                yield new TileDecks(startTiles, normalTiles, menhirTiles.subList(1, menhirTiles.size()));
+            }
+        };
     }
 
     /**
@@ -97,33 +96,37 @@ public record TileDecks(List<Tile> startTiles, List<Tile> normalTiles, List<Tile
      * @return A new TileDecks record with tiles removed from the specified tile deck until the predicate returns false.
      * @throws IllegalArgumentException If the specified tile deck is empty.
      */
-    public TileDecks withTopTileDrawnUntil(Tile.Kind kind, Predicate<Tile> predicate){
+    public TileDecks withTopTileDrawnUntil(Tile.Kind kind, Predicate<Tile> predicate) {
+        List<Tile> updatedStartTiles = startTiles;
+        List<Tile> updatedNormalTiles = normalTiles;
+        List<Tile> updatedMenhirTiles = menhirTiles;
+
         switch (kind) {
             case START:
                 if (startTiles.isEmpty()) {
                     throw new IllegalArgumentException("Start tiles deck is empty");
                 }
-                while (!startTiles.isEmpty() && predicate.test(startTiles.getFirst())) {
-                    startTiles.removeFirst();
+                while (!updatedStartTiles.isEmpty() && !predicate.test(updatedStartTiles.getFirst())) {
+                    updatedStartTiles = updatedStartTiles.subList(1, updatedStartTiles.size());
                 }
                 break;
             case NORMAL:
                 if (normalTiles.isEmpty()) {
                     throw new IllegalArgumentException("Normal tiles deck is empty");
                 }
-                while (!normalTiles.isEmpty() && predicate.test(normalTiles.getFirst())) {
-                    normalTiles.removeFirst();
+                while (!updatedNormalTiles.isEmpty() && !predicate.test(updatedNormalTiles.getFirst())) {
+                    updatedNormalTiles = updatedNormalTiles.subList(1, updatedNormalTiles.size());
                 }
                 break;
             case MENHIR:
                 if (menhirTiles.isEmpty()) {
                     throw new IllegalArgumentException("Menhir tiles deck is empty");
                 }
-                while (!menhirTiles.isEmpty() && predicate.test(menhirTiles.getFirst())) {
-                    menhirTiles.removeFirst();
+                while (!updatedMenhirTiles.isEmpty() && !predicate.test(updatedMenhirTiles.getFirst())) {
+                    updatedMenhirTiles = updatedMenhirTiles.subList(1, updatedMenhirTiles.size());
                 }
                 break;
         }
-        return new TileDecks(startTiles, normalTiles, menhirTiles);
+        return new TileDecks(updatedStartTiles, updatedNormalTiles, updatedMenhirTiles);
     }
 }
