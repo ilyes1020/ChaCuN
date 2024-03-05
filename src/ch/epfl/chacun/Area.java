@@ -8,7 +8,7 @@ import java.util.*;
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding(379902)
  */
-public record Area<Z>(Set<Z> zones, List<PlayerColor> occupants, int openConnections) {
+public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, int openConnections) {
     public Area {
         Preconditions.checkArgument(openConnections >= 0);
 
@@ -121,19 +121,34 @@ public record Area<Z>(Set<Z> zones, List<PlayerColor> occupants, int openConnect
     }
 
     public Area<Z> withInitialOccupant(PlayerColor occupant){
-        return ;
+        Preconditions.checkArgument(!isOccupied());
+        return new Area<>(zones, List.of(occupant), openConnections);
     }
     public Area<Z> withoutOccupant(PlayerColor occupant){
-        return ;
+        //throw IllegalArgumentException if this has not occupant of the given color
+        Preconditions.checkArgument(occupants.contains(occupant));
+
+        List<PlayerColor> updatedOccupants = new ArrayList<>(occupants);
+        updatedOccupants.remove(occupant);
+
+        return new Area<>(zones, updatedOccupants, openConnections);
     }
     public Area<Z> withoutOccupants(){
-        return ;
+        return new Area<>(zones, List.of(), openConnections);
     }
     public Set<Integer> tileIds(){
-        return ;
+        Set<Integer> tileIds = new HashSet<>();
+        for(Z zone : zones){
+            tileIds.add(zone.tileId());
+        }
+        return tileIds;
     }
-    public Zone zoneWithSpecialPower(Zone.SpecialPower specialPower){
-        return ;
+    public Zone zoneWithSpecialPower(Zone.SpecialPower specialPower) {
+        for (Z zone : zones) {
+            if (zone.specialPower() == specialPower) {
+                return zone;
+            }
+        }
+        return null;
     }
-
 }
