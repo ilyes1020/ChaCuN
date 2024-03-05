@@ -54,6 +54,5 @@ public record ZonePartition<Z> (Set<Area<Z>> areas) {
 //        public ZonePartition<Z> build(){
 //            return ;
 //        }
-
     }
 }

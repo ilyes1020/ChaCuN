@@ -50,23 +50,20 @@ public record Area<Z>(Set<Z> zones, List<PlayerColor> occupants, int openConnect
         int fishCount = 0;
 
         for (Zone.River aRiver : river.zones()) {
-            if (aRiver.hasLake()) {
-                Zone.Lake lake = aRiver.lake();
-                if (lakesEncountered.add(lake)) {
-                    fishCount += lake.fishCount();
+            if (aRiver.hasLake()) { //a revoir
+                if (lakesEncountered.add(aRiver.lake())) {
+                    fishCount += aRiver.lake().fishCount();
                 }
             } else {
                 fishCount += aRiver.fishCount();
             }
         }
-
         return fishCount;
     }
-
     public static int riverSystemFishCount(Area<Zone.Water> riverSystem){
         int fishCount = 0;
         for(Zone.Water aWater : riverSystem.zones()){
-            fishCount++; // pas sur
+            fishCount += aWater.fishCount();
         }
         return fishCount;
     }
