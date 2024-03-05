@@ -103,9 +103,23 @@ public record Area<Z>(Set<Z> zones, List<PlayerColor> occupants, int openConnect
             return Collections.emptySet();
         }
     }
-    public Area<Z> connectTo(Area<Z> that){
-        return ;
+    public Area<Z> connectTo(Area<Z> that) {
+        Set<Z> combinedZones = new HashSet<>(this.zones);
+        combinedZones.addAll(that.zones);
+
+        List<PlayerColor> combinedOccupants = new ArrayList<>(this.occupants);
+        combinedOccupants.addAll(that.occupants);
+
+        int combinedOpenConnections;
+        if (this == that) {
+            combinedOpenConnections = this.openConnections - 2; // -2 because we are connecting the same area
+        } else {
+            combinedOpenConnections = this.openConnections + that.openConnections;
+        }
+
+        return new Area<>(combinedZones, combinedOccupants, combinedOpenConnections);
     }
+
     public Area<Z> withInitialOccupant(PlayerColor occupant){
         return ;
     }
