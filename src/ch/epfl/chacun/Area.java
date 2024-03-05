@@ -41,7 +41,6 @@ public record Area<Z>(Set<Z> zones, List<PlayerColor> occupants, int openConnect
 //    public static int lakeCount(Area<Zone.Water> riverSystem){
 //        return ;
 //    }
-
 //    public boolean isClosed(){
 //        return ;
 //    }
