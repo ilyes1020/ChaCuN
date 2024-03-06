@@ -14,7 +14,7 @@ import java.util.function.Predicate;
 public record TileDecks(List<Tile> startTiles, List<Tile> normalTiles, List<Tile> menhirTiles) {
 
     /**
-     * Constructs a new TileDecks record.
+     * Compact constructor that makes TileDecks immutable
      *
      * @param startTiles  The list of start tiles.
      * @param normalTiles The list of normal tiles.

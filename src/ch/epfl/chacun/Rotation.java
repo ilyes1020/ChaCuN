@@ -9,9 +9,25 @@ import java.util.List;
  * @author Weifeng Ding(379902)
  */
 public enum Rotation {
+
+    /**
+     * Represents no rotation (0 degrees).
+     */
     NONE,
+
+    /**
+     * Represents a 90-degree clockwise rotation.
+     */
     RIGHT,
+
+    /**
+     * Represents a 180-degree rotation.
+     */
     HALF_TURN,
+
+    /**
+     * Represents a 90-degree counterclockwise rotation.
+     */
     LEFT;
 
     /**

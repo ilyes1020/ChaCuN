@@ -11,11 +11,20 @@ import java.util.Objects;
  * @author Weifeng Ding(379902)
  */
 public record Occupant(Kind kind, int zoneId) {
+
     /**
      * enum representing the 2 kinds of occupant
      */
     public enum Kind {
+
+        /**
+         * Represents a pawn occupant
+         */
         PAWN,
+
+        /**
+         * Represents a hut occupant
+         */
         HUT;
     }
 

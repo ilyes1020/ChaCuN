@@ -14,14 +14,37 @@ public sealed interface Zone {
      * enum representing the special powers of the zones
      */
     enum SpecialPower {
+
+        /**
+         * Represents the shaman special power
+         */
         SHAMAN,
+
+        /**
+         * Represents the logboat special power
+         */
         LOGBOAT,
+
+        /**
+         * Represents the hunting trap special power
+         */
         HUNTING_TRAP,
+
+        /**
+         * Represents the pit trap special power
+         */
         PIT_TRAP,
+
+        /**
+         * Represents the wildfire special power
+         */
         WILD_FIRE,
+
+        /**
+         * Represents the raft special power
+         */
         RAFT;
     }
-
     /**
      * gives the id of his tile
      * @param zoneId the id of the zone

@@ -14,9 +14,25 @@ public record Animal(int id, Kind kind) {
      * enum representing the four kinds of animal in game
      */
     public enum Kind {
+
+        /**
+         * Represents a mammoth
+         */
         MAMMOTH,
+
+        /**
+         * Represents an aurochs
+         */
         AUROCHS,
+
+        /**
+         * Represents a deer
+         */
         DEER,
+
+        /**
+         * Represents a tiger
+         */
         TIGER;
     }
 

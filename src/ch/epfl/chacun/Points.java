@@ -7,6 +7,10 @@ package ch.epfl.chacun;
  * @author Weifeng Ding(379902)
  */
 public final class Points {
+
+    /**
+     * Private constructor to prevent instantiation
+     */
     private Points() {}
 
     /**

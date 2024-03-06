@@ -9,10 +9,34 @@ import java.util.List;
  * @author Weifeng Ding(379902)
  */
 public enum PlayerColor {
+
+    /**
+     * Represents the player RED
+     */
     RED,
+
+    /**
+     * Represents the player BLUE
+     */
     BLUE,
+
+    /**
+     * Represents the player GREEN
+     */
     GREEN,
+
+    /**
+     * Represents the player YELLOW
+     */
     YELLOW,
+
+    /**
+     * Represents the player PURPLE
+     */
     PURPLE;
+
+    /**
+     * A static list containing all available player colors
+     */
     public static final List<PlayerColor> ALL = List.of(values());
 }

@@ -22,8 +22,20 @@ public record Tile(int id, Kind kind, TileSide n, TileSide e, TileSide s, TileSi
      * enum representing the three kinds of tiles
      */
     public enum Kind{
+
+        /**
+         * Represents the starting tile
+         */
         START,
+
+        /**
+         * Represents a normal tile
+         */
         NORMAL,
+
+        /**
+         * Represents a tile with a menhir
+         */
         MENHIR;
     }
 
