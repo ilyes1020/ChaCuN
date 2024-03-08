@@ -70,7 +70,9 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
         for(Zone.Meadow aMeadow : meadow.zones()){
             animals.addAll(aMeadow.animals());
         }
-        animals.removeAll(cancelledAnimals);
+        if (cancelledAnimals != null){
+            animals.removeAll(cancelledAnimals);
+        }
         return animals;
     }
 
@@ -85,12 +87,9 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
         int fishCount = 0;
 
         for (Zone.River aRiver : river.zones()) {
-            if (aRiver.hasLake()) { //a revoir
-                if (lakesEncountered.add(aRiver.lake())) {
-                    fishCount += aRiver.lake().fishCount();
-                }
-            } else {
-                fishCount += aRiver.fishCount();
+            fishCount += aRiver.fishCount();
+            if (aRiver.hasLake() && lakesEncountered.add(aRiver.lake())) {
+                fishCount += aRiver.lake().fishCount();
             }
         }
         return fishCount;
@@ -166,7 +165,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
             }
             return majorityColors;
         } else {
-            return Collections.emptySet();
+            return Set.of();
         }
     }
 
@@ -181,13 +180,13 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
         combinedZones.addAll(that.zones);
 
         List<PlayerColor> combinedOccupants = new ArrayList<>(this.occupants);
-        combinedOccupants.addAll(that.occupants);
 
         int combinedOpenConnections;
         if (this == that) {
             combinedOpenConnections = this.openConnections - 2; // -2 because we are connecting the same area
         } else {
-            combinedOpenConnections = this.openConnections + that.openConnections;
+            combinedOpenConnections = this.openConnections + that.openConnections -2;
+            combinedOccupants.addAll(that.occupants);
         }
 
         return new Area<>(combinedZones, combinedOccupants, combinedOpenConnections);
@@ -249,7 +248,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
      * @param specialPower the special power to search for
      * @return the zone with the specified special power, or null if not found
      */
-    public Zone zoneWithSpecialPower(Zone.SpecialPower specialPower) {
+    public Zone zoneWithSpecialPower(Zone.SpecialPower specialPower){
         for (Z zone : zones) {
             if (zone.specialPower() == specialPower) {
                 return zone;
