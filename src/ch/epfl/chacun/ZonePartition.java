@@ -12,7 +12,7 @@ import java.util.*;
 public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
 
     /**
-     * Compact constructor that makes ZonePartitions immutable
+     * Compact constructor that makes ZonePartition immutable
      * @param areas the set of areas in the partition
      */
     public ZonePartition {
