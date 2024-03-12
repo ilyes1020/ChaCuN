@@ -95,7 +95,8 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
         }
 
         /**
-         * Removes all occupants from the given area. Throws IllegalArgumentException if the given area is not in the partition
+         * Removes all occupants from the given area
+         * Throws IllegalArgumentException if the given area is not in the partition
          *
          * @param area the area from which all occupants should be removed
          */
