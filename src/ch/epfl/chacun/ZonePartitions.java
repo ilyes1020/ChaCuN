@@ -42,24 +42,20 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
          * @param tile the tile we want to add to the partitions
          */
         public void addTile(Tile tile){
-
             //compute the number of open connections for each zone in the tile
-            int[] zoneIdSortedOpenConnections = new int[9];
+            int[] zoneIdSortedOpenConnections = new int[10];
 
-            for (Zone zone : tile.zones()){
+            for (Zone zone : tile.sideZones()){
 
                 int openConnectionCount = 0;
-                if(zone instanceof Zone.River river && river.hasLake()){
-                    int riversLakeLocalId = river.lake().localId();
-                    zoneIdSortedOpenConnections[riversLakeLocalId]++;
-                    openConnectionCount++;
+                if (zone instanceof Zone.River river && river.hasLake()){
+                    zoneIdSortedOpenConnections[river.lake().localId()]++;
+                    zoneIdSortedOpenConnections[river.localId()]++;
                 }
                 for (TileSide tileSide : tile.sides()){
-                    if (tileSide.zones().contains(zone)){
-                        openConnectionCount++;
-                    }
+                    if (tileSide.zones().contains(zone))
+                        zoneIdSortedOpenConnections[zone.localId()]++;
                 }
-                zoneIdSortedOpenConnections[zone.localId()] += openConnectionCount;
             }
 
             //add each zone as an area in the respective partition,
@@ -80,7 +76,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
                 }
             }
             //we connect all rivers areas to their respective lake, if they have one
-            for (Zone zone : tile.zones()){
+            for (Zone zone : tile.sideZones()){
                 if (zone instanceof Zone.River river && river.hasLake())
                     riverSystemsBuilder.union(river, river.lake());
             }
