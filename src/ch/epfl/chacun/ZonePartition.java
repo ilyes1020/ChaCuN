@@ -77,8 +77,8 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
          */
         public void addInitialOccupant(Z zone, PlayerColor color){
             Area<Z> areaWithZone = build().areaContaining(zone);
-            areas.add(areaWithZone.withInitialOccupant(color));
             areas.remove(areaWithZone);
+            areas.add(areaWithZone.withInitialOccupant(color));
         }
 
         /**
@@ -90,8 +90,8 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
          */
         public void removeOccupant(Z zone, PlayerColor color){
             Area<Z> areaWithZone = build().areaContaining(zone);
-            areas.add(areaWithZone.withoutOccupant(color));
             areas.remove(areaWithZone);
+            areas.add(areaWithZone.withoutOccupant(color));
         }
 
         /**
@@ -102,8 +102,8 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
          */
         public void removeAllOccupantsOf(Area<Z> area){
             Preconditions.checkArgument(areas.contains(area));
-            areas.add(area.withoutOccupants());
             areas.remove(area);
+            areas.add(area.withoutOccupants());
         }
 
         /**
@@ -117,9 +117,9 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
             Area<Z> areaWithZone1 = build().areaContaining(zone1);
             Area<Z> areaWithZone2 = build().areaContaining(zone2);
             Area<Z> connectedArea = areaWithZone1.connectTo(areaWithZone2);
-            areas.add(connectedArea);
             areas.remove(areaWithZone1);
             areas.remove(areaWithZone2);
+            areas.add(connectedArea);
         }
 
         /**

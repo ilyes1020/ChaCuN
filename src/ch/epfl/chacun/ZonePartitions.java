@@ -1,8 +1,5 @@
 package ch.epfl.chacun;
 
-import java.util.List;
-import java.util.Set;
-
 /**
  * Record representing the zone partitions of the game board.
  *
@@ -84,8 +81,10 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
 
         /**
          * Connects two tile sides by unionizing the areas.
+         *
          * @param s1 first tile side
          * @param s2 second tile side
+         * @throws IllegalArgumentException If the sides are not compatibles
          */
         public void connectSides(TileSide s1, TileSide s2){
             switch (s1) {
@@ -102,6 +101,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
                         riversBuilder.union(r1, r2);
                         meadowsBuilder.union(m11, m22);
                         meadowsBuilder.union(m12, m21);
+                        riverSystemsBuilder.union(r1, r2);
                 }
                 default -> throw new IllegalArgumentException("Different kinds of tile sides");
             }
@@ -109,40 +109,38 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
 
         /**
          * Adds an initial occupant of a specific kind of by the specific player to the area containing the given zone.
-         * Throws IllegalArgumentException if the occupant kind cannot be on the given zone type
          *
          * @param player the player who will occupy the zone
          * @param occupantKind the kind of the occupant
          * @param occupiedZone the zone that will be occupied
+         * @throws IllegalArgumentException if the occupant kind cannot be on the given zone type
          */
         public void addInitialOccupant(PlayerColor player, Occupant.Kind occupantKind, Zone occupiedZone){
-            switch (occupiedZone) {
-                case Zone.Forest forest
-                        when occupantKind == Occupant.Kind.PAWN ->
-                        forestsBuilder.addInitialOccupant(forest, player);
-
-                case Zone.Meadow meadow
-                        when occupantKind == Occupant.Kind.PAWN ->
-                        meadowsBuilder.addInitialOccupant(meadow, player);
-
-                case Zone.River river
-                        when !river.hasLake() || occupantKind == Occupant.Kind.PAWN ->
-                        riversBuilder.addInitialOccupant(river, player);
-
-                case Zone.Lake lake
-                        when occupantKind == Occupant.Kind.HUT ->
-                        riverSystemsBuilder.addInitialOccupant(lake, player);
-
-                default -> throw new IllegalArgumentException("The occupant type cannot occupy the given zone");
+            switch (occupantKind) {
+                case PAWN -> {
+                    switch (occupiedZone) {
+                        case Zone.Forest forest -> forestsBuilder.addInitialOccupant(forest, player);
+                        case Zone.Meadow meadow -> meadowsBuilder.addInitialOccupant(meadow, player);
+                        case Zone.River river -> riversBuilder.addInitialOccupant(river, player);
+                        default -> throw new IllegalArgumentException("The occupant type cannot occupy the given zone");
+                    }
+                }
+                case HUT -> {
+                    switch (occupiedZone) {
+                        case Zone.River river when !river.hasLake() -> riverSystemsBuilder.addInitialOccupant(river, player);
+                        case Zone.Lake lake -> riverSystemsBuilder.addInitialOccupant(lake, player);
+                        default -> throw new IllegalArgumentException("The occupant type cannot occupy the given zone");
+                    }
+                }
             }
         }
 
         /**
          * Removes a pawn of the specified color from the area containing the given zone.
-         * Throws IllegalArgumentException if the zone is a lake
          *
          * @param player the player who possess the pawn that will be removed
          * @param occupiedZone the zone to remove the pawn from
+         * @throws IllegalArgumentException if the zone is a lake
          */
         public void removePawn(PlayerColor player, Zone occupiedZone){
             switch (occupiedZone) {

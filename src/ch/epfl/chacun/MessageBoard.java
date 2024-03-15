@@ -103,13 +103,13 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
             animalCountMap.put(animal.kind(), animalCountMap.getOrDefault(animal.kind(), 0) + 1);
         }
 
-        int points = Points.forMeadow(animalCountMap.get(Animal.Kind.MAMMOTH), animalCountMap.get(Animal.Kind.AUROCHS), animalCountMap.get(Animal.Kind.DEER));
+        int points = Points.forMeadow(animalCountMap.getOrDefault(Animal.Kind.MAMMOTH,0), animalCountMap.getOrDefault(Animal.Kind.AUROCHS,0), animalCountMap.getOrDefault(Animal.Kind.DEER,0));
         if (points > 0){
-        String text = textMaker.playerScoredHuntingTrap(scorer, points, animalCountMap);
+            String text = textMaker.playerScoredHuntingTrap(scorer, points, animalCountMap);
 
-        List<Message> updatedMessages = new ArrayList<>(this.messages);
-        updatedMessages.add(new Message(text, points, Set.of(scorer), adjacentMeadow.tileIds()));
-        return new MessageBoard(textMaker , updatedMessages);
+            List<Message> updatedMessages = new ArrayList<>(this.messages);
+            updatedMessages.add(new Message(text, points, Set.of(scorer), adjacentMeadow.tileIds()));
+            return new MessageBoard(textMaker , updatedMessages);
         }
         return this;
     }
@@ -142,14 +142,15 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @return A new message board reflecting the changes, if any.
      */
     public MessageBoard withScoredMeadow(Area<Zone.Meadow> meadow, Set<Animal> cancelledAnimals){
-        if (meadow.isOccupied()){
-            Set<Animal> animals = Area.animals(meadow,cancelledAnimals);
-            Map<Animal.Kind, Integer> animalCountMap = new TreeMap<>();
-            for (Animal animal : animals) {
-                animalCountMap.put(animal.kind(), animalCountMap.getOrDefault(animal.kind(), 0) + 1);
-            }
+        Set<Animal> animals = Area.animals(meadow,cancelledAnimals);
+        Map<Animal.Kind, Integer> animalCountMap = new TreeMap<>();
+        for (Animal animal : animals) {
+            animalCountMap.put(animal.kind(), animalCountMap.getOrDefault(animal.kind(), 0) + 1);
+        }
 
-            int points = Points.forMeadow(animalCountMap.getOrDefault(Animal.Kind.MAMMOTH,0), animalCountMap.getOrDefault(Animal.Kind.AUROCHS,0), animalCountMap.getOrDefault(Animal.Kind.DEER, 0));
+        int points = Points.forMeadow(animalCountMap.getOrDefault(Animal.Kind.MAMMOTH,0), animalCountMap.getOrDefault(Animal.Kind.AUROCHS,0), animalCountMap.getOrDefault(Animal.Kind.DEER, 0));
+        if (meadow.isOccupied() && points > 0){
+
             String text = textMaker.playersScoredMeadow(meadow.majorityOccupants(), points, animalCountMap);
 
             List<Message> updatedMessages = new ArrayList<>(this.messages);

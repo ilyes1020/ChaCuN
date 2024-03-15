@@ -168,6 +168,7 @@ public class MyMessageBoardTest1 {
     List<Animal> animalList4 = new ArrayList<>(List.of(animal6));
     List<Animal> animalList5 = new ArrayList<>(List.of(animal7,animal8));
     List<Animal> animalList6 = new ArrayList<>(List.of(animal9,animal10));
+    List<Animal> animalEmptyList = new ArrayList<>(List.of());
     Set<Animal> cancelledAnimalSet = new HashSet<>(List.of(animal4));
 
     Zone.Meadow meadow1 = new Zone.Meadow(113,animalList,null);
@@ -177,11 +178,13 @@ public class MyMessageBoardTest1 {
     Zone.Meadow meadow5 = new Zone.Meadow(152,animalList5, null);
     Zone.Meadow meadow6 = new Zone.Meadow(155, Collections.emptyList(), Zone.SpecialPower.SHAMAN);
     Zone.Meadow meadow7 = new Zone.Meadow(160,animalList6, null);
-    Zone.Meadow meadow8 = new Zone.Meadow(177,Collections.emptyList(), null);
+    Zone.Meadow meadow8 = new Zone.Meadow(165,animalEmptyList, null);
+    Zone.Meadow emptyMeadow = new Zone.Meadow(177,Collections.emptyList(), null);
     Set<Zone.Meadow> meadowSet = new HashSet<>(List.of(meadow1,meadow2));
     Set<Zone.Meadow> meadowSet2 = new HashSet<>(List.of(meadow3,meadow4));
     Set<Zone.Meadow> meadowSet3 = new HashSet<>(List.of(meadow5,meadow6));
     Set<Zone.Meadow> meadowSet4 = new HashSet<>(List.of(meadow7,meadow8));
+    Set<Zone.Meadow> meadowSet5 = new HashSet<>(List.of(emptyMeadow));
 
     Zone.Lake lake1 = new Zone.Lake(118,2, Zone.SpecialPower.RAFT);
     Zone.Lake lake2 = new Zone.Lake(138,4,null);
@@ -217,6 +220,8 @@ public class MyMessageBoardTest1 {
     Area<Zone.Meadow> meadowArea2 = new Area<>(meadowSet2,playerColorList5,1);
     Area<Zone.Meadow> meadowArea3 = new Area<>(meadowSet3,playerColorList6,1);
     Area<Zone.Meadow> meadowArea4 = new Area<>(meadowSet4,playerColorList7,1);
+    Area<Zone.Meadow> meadowArea5 = new Area<>(meadowSet5,playerColorList7,4);
+
     Set<Area<Zone.Meadow>> meadowAreaSet = new HashSet<>(List.of(meadowArea,meadowArea2));
     Set<Area<Zone.Meadow>> meadowAreaSet2 = new HashSet<>(List.of(meadowArea3,meadowArea4));
     ZonePartition<Zone.Meadow> meadowZonePartition = new ZonePartition<>(meadowAreaSet);
@@ -235,19 +240,18 @@ public class MyMessageBoardTest1 {
 
     @Test
     void points() {
-        MessageBoard messageBoard1 = messageBoard.withScoredRiverSystem(riverSystemArea);
-        MessageBoard messageBoard2 = messageBoard1.withScoredRiver(riverArea);
-        MessageBoard messageBoard3 = messageBoard2.withScoredHuntingTrap(PlayerColor.RED,meadowArea);
-        MessageBoard messageBoard4 = messageBoard3.withScoredForest(forestArea);
+        messageBoard = messageBoard.withScoredRiverSystem(riverSystemArea);
+        messageBoard = messageBoard.withScoredRiver(riverArea);
+        messageBoard = messageBoard.withScoredHuntingTrap(PlayerColor.RED,meadowArea);
+        messageBoard = messageBoard.withScoredForest(forestArea);
         Map<PlayerColor, Integer> points = new HashMap<>();
         points.put(PlayerColor.RED,22);
         points.put(PlayerColor.BLUE,9);
         points.put(PlayerColor.GREEN,9);
         points.put(PlayerColor.PURPLE,9);
-        assertEquals(4,messageBoard4.messages().size());
+        assertEquals(4,messageBoard.messages().size());
 
-
-        assertEquals(points,messageBoard4.points());
+        assertEquals(points,messageBoard.points());
     }
 
     @Test
@@ -257,14 +261,12 @@ public class MyMessageBoardTest1 {
 
         assertEquals(1,messageBoard.withScoredForest(forestArea).messages().size());
         assertEquals(new theTextMaker().playersScoredForest(set,9,1,3),messageBoard.withScoredForest(forestArea).messages().getFirst().text());
-
     }
 
     @Test
     void withClosedForestWithMenhir() {
         assertEquals(1,messageBoard.withClosedForestWithMenhir(PlayerColor.BLUE,forestArea).messages().size());
         assertEquals(new theTextMaker().playerClosedForestWithMenhir(PlayerColor.BLUE),messageBoard.withClosedForestWithMenhir(PlayerColor.BLUE,forestArea).messages().getFirst().text());
-
     }
 
     @Test
@@ -284,7 +286,9 @@ public class MyMessageBoardTest1 {
         map.put(Animal.Kind.DEER,1); //att.
         map.put(Animal.Kind.TIGER,1);
         map.put(Animal.Kind.AUROCHS,1);
-        assertEquals(new theTextMaker().playerScoredHuntingTrap(PlayerColor.RED,6,map),messageBoard.withScoredHuntingTrap(PlayerColor.RED,meadowArea).messages().getFirst().text());
+        assertEquals(new theTextMaker().playerScoredHuntingTrap(PlayerColor.RED,6,map), messageBoard.withScoredHuntingTrap(PlayerColor.RED,meadowArea).messages().getFirst().text());
+        messageBoard = messageBoard.withScoredHuntingTrap(PlayerColor.RED,meadowArea);
+        assertEquals(2,messageBoard.withScoredHuntingTrap(PlayerColor.RED,meadowArea4).messages().size());
     }
 
     @Test
