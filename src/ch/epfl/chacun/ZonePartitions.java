@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Record representing the zone partitions of the game board
+ * Record representing the zone partitions of the game board.
  *
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding (379902)
@@ -16,8 +16,8 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
     public final static ZonePartitions EMPTY = new ZonePartitions(new ZonePartition<>(), new ZonePartition<>(), new ZonePartition<>(), new ZonePartition<>());
 
     /**
-     * A builder class for constructing instances of the {@code ZonePartitions} class
-     * This builder allows for the modification of a {@code ZonePartitions} by manipulating its internal four different type of {@code ZonePartition}
+     * A builder class for constructing instances of the {@code ZonePartitions} class.
+     * This builder allows for the modification of a {@code ZonePartitions} by manipulating its internal four different type of {@code ZonePartition}.
      */
     public static final class Builder {
         private ZonePartition.Builder<Zone.Forest> forestsBuilder;
@@ -27,7 +27,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
 
 
         /**
-         * Constructor to instantiate a {@code ZonePartitions}'s Builder from an existing one
+         * Constructor to instantiate a {@code ZonePartitions}'s Builder from an existing one.
          * @param initial the existing {@code ZonePartitions}
          */
         public Builder(ZonePartitions initial){
@@ -38,7 +38,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
         }
 
         /**
-         * Add the areas made of the zones of the given tile to the partitions
+         * Add the areas made of the zones of the given tile to the partitions.
          * @param tile the tile we want to add to the partitions
          */
         public void addTile(Tile tile){
@@ -83,7 +83,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
         }
 
         /**
-         * Connects two tile sides by unionizing the areas
+         * Connects two tile sides by unionizing the areas.
          * @param s1 first tile side
          * @param s2 second tile side
          */
@@ -108,7 +108,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
         }
 
         /**
-         * Adds an initial occupant of a specific kind of by the specific player to the area containing the given zone
+         * Adds an initial occupant of a specific kind of by the specific player to the area containing the given zone.
          * Throws IllegalArgumentException if the occupant kind cannot be on the given zone type
          *
          * @param player the player who will occupy the zone
@@ -138,7 +138,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
         }
 
         /**
-         * Removes a pawn of the specified color from the area containing the given zone
+         * Removes a pawn of the specified color from the area containing the given zone.
          * Throws IllegalArgumentException if the zone is a lake
          *
          * @param player the player who possess the pawn that will be removed
@@ -159,7 +159,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
         }
 
         /**
-         * Removes all gatherers (PAWN) from the given forest area
+         * Removes all gatherers (PAWN) from the given forest area.
          *
          * @param forest the forest from which all gatherers (PAWN) should be removed
          */
@@ -168,7 +168,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
         }
 
         /**
-         * Removes all fishers (PAWN) from the given river area
+         * Removes all fishers (PAWN) from the given river area.
          *
          * @param river the river from which all fishers (PAWN) should be removed
          */
@@ -177,7 +177,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
         }
 
         /**
-         * Builds the zone partitions
+         * Builds the zone partitions.
          *
          * @return the new zone partitions
          */

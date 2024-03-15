@@ -20,7 +20,7 @@ public final class Preconditions {
      */
     public static void checkArgument(boolean shouldBeTrue) throws IllegalArgumentException{
         if (!shouldBeTrue) {
-            throw new IllegalArgumentException("Error: This parameter is wrong");
+            throw new IllegalArgumentException();
         }
     }
 }

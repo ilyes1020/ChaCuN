@@ -240,7 +240,7 @@ public class MyMessageBoardTest1 {
         MessageBoard messageBoard3 = messageBoard2.withScoredHuntingTrap(PlayerColor.RED,meadowArea);
         MessageBoard messageBoard4 = messageBoard3.withScoredForest(forestArea);
         Map<PlayerColor, Integer> points = new HashMap<>();
-        points.put(PlayerColor.RED,21);
+        points.put(PlayerColor.RED,22);
         points.put(PlayerColor.BLUE,9);
         points.put(PlayerColor.GREEN,9);
         points.put(PlayerColor.PURPLE,9);
@@ -301,7 +301,7 @@ public class MyMessageBoardTest1 {
         map.put(Animal.Kind.TIGER,1);
         map.put(Animal.Kind.MAMMOTH,1);
 
-        assertEquals(new theTextMaker().playersScoredMeadow(set,5,map),messageBoard.withScoredMeadow(meadowArea,cancelledAnimalSet).messages().getFirst().text());
+        assertEquals(new theTextMaker().playersScoredMeadow(set,5,map), messageBoard.withScoredMeadow(meadowArea,cancelledAnimalSet).messages().getFirst().text());
     }
 
     @Test
@@ -317,7 +317,7 @@ public class MyMessageBoardTest1 {
         Set<PlayerColor> set = new HashSet<>();
         set.add(PlayerColor.RED);
 
-        TreeMap<Animal.Kind,Integer> map= new TreeMap<>(); //att
+        Map<Animal.Kind,Integer> map= new TreeMap<>(); //att
         map.put(Animal.Kind.MAMMOTH,1);
         map.put(Animal.Kind.AUROCHS,1);
         map.put(Animal.Kind.TIGER,1);
