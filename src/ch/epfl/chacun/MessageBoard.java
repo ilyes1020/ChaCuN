@@ -149,7 +149,7 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
                 animalCountMap.put(animal.kind(), animalCountMap.getOrDefault(animal.kind(), 0) + 1);
             }
 
-            int points = Points.forMeadow(animalCountMap.get(Animal.Kind.MAMMOTH), animalCountMap.get(Animal.Kind.AUROCHS), animalCountMap.get(Animal.Kind.DEER));
+            int points = Points.forMeadow(animalCountMap.getOrDefault(Animal.Kind.MAMMOTH,0), animalCountMap.getOrDefault(Animal.Kind.AUROCHS,0), animalCountMap.getOrDefault(Animal.Kind.DEER, 0));
             String text = textMaker.playersScoredMeadow(meadow.majorityOccupants(), points, animalCountMap);
 
             List<Message> updatedMessages = new ArrayList<>(this.messages);
@@ -192,12 +192,12 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
     public MessageBoard withScoredPitTrap(Area<Zone.Meadow> adjacentMeadow, Set<Animal> cancelledAnimals){
 
             Set<Animal> animals = Area.animals(adjacentMeadow, cancelledAnimals);
-            Map<Animal.Kind, Integer> animalCountMap = new HashMap<>();
+            Map<Animal.Kind, Integer> animalCountMap = new TreeMap<>();
             for (Animal animal : animals) {
                 animalCountMap.put(animal.kind(), animalCountMap.getOrDefault(animal.kind(), 0) + 1);
             }
 
-            int points = Points.forMeadow(animalCountMap.get(Animal.Kind.MAMMOTH), animalCountMap.get(Animal.Kind.AUROCHS), animalCountMap.get(Animal.Kind.DEER));
+            int points = Points.forMeadow(animalCountMap.getOrDefault(Animal.Kind.MAMMOTH,0), animalCountMap.getOrDefault(Animal.Kind.AUROCHS,0), animalCountMap.getOrDefault(Animal.Kind.DEER,0));
 
             if (adjacentMeadow.isOccupied() && points > 0){
                 String text = textMaker.playersScoredPitTrap(adjacentMeadow.majorityOccupants(), points, animalCountMap);

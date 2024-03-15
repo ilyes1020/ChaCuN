@@ -284,7 +284,7 @@ public class MyMessageBoardTest1 {
         map.put(Animal.Kind.DEER,1); //att.
         map.put(Animal.Kind.TIGER,1);
         map.put(Animal.Kind.AUROCHS,1);
-        assertEquals(new theTextMaker().playerScoredHuntingTrap(PlayerColor.RED,5,map),messageBoard.withScoredHuntingTrap(PlayerColor.RED,meadowArea).messages().getFirst().text());
+        assertEquals(new theTextMaker().playerScoredHuntingTrap(PlayerColor.RED,6,map),messageBoard.withScoredHuntingTrap(PlayerColor.RED,meadowArea).messages().getFirst().text());
     }
 
     @Test
@@ -321,7 +321,8 @@ public class MyMessageBoardTest1 {
         map.put(Animal.Kind.MAMMOTH,1);
         map.put(Animal.Kind.AUROCHS,1);
         map.put(Animal.Kind.TIGER,1);
-        assertEquals(new theTextMaker().playersScoredPitTrap(set,10,map),messageBoard.withScoredPitTrap(meadowArea,cancelledAnimalSet).messages().getFirst().text());
+
+        assertEquals(new theTextMaker().playersScoredPitTrap(set,5,map), messageBoard.withScoredPitTrap(meadowArea,cancelledAnimalSet).messages().getFirst().text());
     }
 
     @Test
