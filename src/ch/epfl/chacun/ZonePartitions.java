@@ -44,7 +44,6 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
 
             for (Zone zone : tile.sideZones()){
 
-                int openConnectionCount = 0;
                 if (zone instanceof Zone.River river && river.hasLake()){
                     zoneIdSortedOpenConnections[river.lake().localId()]++;
                     zoneIdSortedOpenConnections[river.localId()]++;

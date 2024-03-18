@@ -28,6 +28,7 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
      *
      * @param zone the zone in the area we want
      * @return the area containing the zone
+     * @throws IllegalArgumentException if the zone does not belong to any area in the partition
      */
     public Area<Z> areaContaining(Z zone){
         Area<Z> areaWithZone = null;
