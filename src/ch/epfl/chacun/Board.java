@@ -420,7 +420,7 @@ public final class Board {
             for (int forestAreaTilesIds: forestArea.tileIds()) {
                 PlacedTile forestAreaTile = tileWithId(forestAreaTilesIds);
 
-                if (forestAreaTile.occupant() != null){
+                if (forestAreaTile.idOfZoneOccupiedBy(Occupant.Kind.PAWN) != -1){
 
                     int zoneContainingGathererId = forestAreaTile.idOfZoneOccupiedBy(Occupant.Kind.PAWN);
                     Zone zoneContainingGatherer = forestAreaTile.zoneWithId(zoneContainingGathererId);
@@ -440,7 +440,8 @@ public final class Board {
             for (int riverAreaTilesIds : riverArea.tileIds()) {
                 PlacedTile riverAreaTile = tileWithId(riverAreaTilesIds);
 
-                if (riverAreaTile.occupant() != null){
+                if (riverAreaTile.idOfZoneOccupiedBy(Occupant.Kind.PAWN) != -1){
+
                     int zoneContainingFisherId = riverAreaTile.idOfZoneOccupiedBy(Occupant.Kind.PAWN);
                     Zone zoneContainingFisher = riverAreaTile.zoneWithId(zoneContainingFisherId);
 
