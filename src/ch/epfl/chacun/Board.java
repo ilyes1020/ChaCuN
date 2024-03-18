@@ -349,12 +349,29 @@ public final class Board {
      *
      * @param occupant The occupant to be added to the board.
      * @return A new board with the given occupant added.
-     * @throws IllegalArgumentException if the tile on which the occupant would be placed is already occupied.
+     * @throws IllegalArgumentException if the tile on which the occupant would be placed is already occupied or if the tile on which the occupant stands is not on the board.
      */
-    //TODO
     public Board withOccupant(Occupant occupant) {
-        // To be implemented
-        return null;
+        PlacedTile occupantsTile = tileWithId(Zone.tileId(occupant.zoneId()));
+        //withOccupant throws the exception if the tile is already occupied
+        PlacedTile occupantsTileWithOccupant = occupantsTile.withOccupant(occupant);
+
+        //updating the placedTiles table
+        int BOARD_SIZE = 25;
+        int occupantsTileIndex = (occupantsTile.pos().y() + 12) * BOARD_SIZE +
+                                 (occupantsTile.pos().x() + 12);
+        PlacedTile[] updatedPlacedTiles = placedTiles.clone();
+
+        updatedPlacedTiles[occupantsTileIndex] = occupantsTileWithOccupant;
+
+        //updating the zonePartitions
+        ZonePartitions.Builder zonePartitionsBuilder = new ZonePartitions.Builder(zonePartitions);
+        Zone occupantsZone = occupantsTile.zoneWithId(occupant.zoneId());
+
+        zonePartitionsBuilder.addInitialOccupant(occupantsTile.placer(), occupant.kind(), occupantsZone);
+        ZonePartitions updatedZonePartitions = zonePartitionsBuilder.build();
+
+        return new Board(updatedPlacedTiles, tilesIndex, updatedZonePartitions, cancelledAnimals);
     }
 
     /**
@@ -362,11 +379,28 @@ public final class Board {
      *
      * @param occupant The occupant to be removed from the board.
      * @return A new board with the given occupant removed.
+     * @throws IllegalArgumentException if the tile on which the occupant stands is not on the board.
      */
-    //TODO
     public Board withoutOccupant(Occupant occupant) {
-        // To be implemented
-        return null;
+        PlacedTile occupantsTile = tileWithId(Zone.tileId(occupant.zoneId()));
+        PlacedTile occupantsTileWithoutOccupant = occupantsTile.withNoOccupant();
+
+        //updating the placedTiles table
+        int BOARD_SIZE = 25;
+        int occupantsTileIndex = (occupantsTile.pos().y() + 12) * BOARD_SIZE +
+                                 (occupantsTile.pos().x() + 12);
+        PlacedTile[] updatedPlacedTiles = placedTiles.clone();
+
+        updatedPlacedTiles[occupantsTileIndex] = occupantsTileWithoutOccupant;
+
+        //updating the zonePartitions
+        ZonePartitions.Builder zonePartitionsBuilder = new ZonePartitions.Builder(zonePartitions);
+        Zone occupantsZone = occupantsTile.zoneWithId(occupant.zoneId());
+
+        zonePartitionsBuilder.removePawn(occupantsTile.placer(), occupantsZone);
+        ZonePartitions updatedZonePartitions = zonePartitionsBuilder.build();
+
+        return new Board(updatedPlacedTiles, tilesIndex, updatedZonePartitions, cancelledAnimals);
     }
 
     /**
@@ -376,10 +410,52 @@ public final class Board {
      * @param rivers  The set of river areas.
      * @return A new board with no gatherers or fishers in the specified forests and rivers.
      */
-    //TODO
     public Board withoutGatherersOrFishersIn(Set<Area<Zone.Forest>> forests, Set<Area<Zone.River>> rivers) {
-        // To be implemented
-        return null;
+        PlacedTile[] updatedPlacedTiles = placedTiles.clone();
+        ZonePartitions.Builder zonePartitionsBuilder = new ZonePartitions.Builder(zonePartitions);
+
+        for (Area<Zone.Forest> forestArea : forests) {
+            zonePartitionsBuilder.clearGatherers(forestArea);
+
+            for (int forestAreaTilesIds: forestArea.tileIds()) {
+                PlacedTile forestAreaTile = tileWithId(forestAreaTilesIds);
+
+                if (forestAreaTile.occupant() != null){
+
+                    int zoneContainingGathererId = forestAreaTile.idOfZoneOccupiedBy(Occupant.Kind.PAWN);
+                    Zone zoneContainingGatherer = forestAreaTile.zoneWithId(zoneContainingGathererId);
+
+                    if (forestArea.zones().contains(zoneContainingGatherer)){
+                        int BOARD_SIZE = 25;
+                        int forestAreaTileIndex = (forestAreaTile.pos().y() + 12) * BOARD_SIZE +
+                                                  (forestAreaTile.pos().x() + 12);
+                        updatedPlacedTiles[forestAreaTileIndex] = forestAreaTile.withNoOccupant();
+                    }
+                }
+            }
+        }
+        for (Area<Zone.River> riverArea : rivers) {
+            zonePartitionsBuilder.clearFishers(riverArea);
+
+            for (int riverAreaTilesIds : riverArea.tileIds()) {
+                PlacedTile riverAreaTile = tileWithId(riverAreaTilesIds);
+
+                if (riverAreaTile.occupant() != null){
+                    int zoneContainingFisherId = riverAreaTile.idOfZoneOccupiedBy(Occupant.Kind.PAWN);
+                    Zone zoneContainingFisher = riverAreaTile.zoneWithId(zoneContainingFisherId);
+
+                    if (riverArea.zones().contains(zoneContainingFisher)){
+                        int BOARD_SIZE = 25;
+                        int riverAreaTileIndex = (riverAreaTile.pos().y() + 12) * BOARD_SIZE +
+                                                 (riverAreaTile.pos().x() + 12);
+                        updatedPlacedTiles[riverAreaTileIndex] = riverAreaTile.withNoOccupant();
+                    }
+                }
+            }
+        }
+        ZonePartitions updatedZonePartitions = zonePartitionsBuilder.build();
+
+        return new Board(updatedPlacedTiles, tilesIndex, updatedZonePartitions, cancelledAnimals);
     }
 
     /**
@@ -388,17 +464,20 @@ public final class Board {
      * @param newlyCancelledAnimals The set of animals to be added to the cancelled animals.
      * @return A new board with the given animals added to the cancelled animals.
      */
-    //TODO
     public Board withMoreCancelledAnimals(Set<Animal> newlyCancelledAnimals) {
-        // To be implemented
-        return null;
+        Set<Animal> updatedCancelledAnimals = new HashSet<>(cancelledAnimals);
+        updatedCancelledAnimals.addAll(newlyCancelledAnimals);
+        return new Board(placedTiles, tilesIndex, zonePartitions, Set.copyOf(updatedCancelledAnimals));
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Board board)) return false;
-        return Arrays.equals(placedTiles, board.placedTiles) && Arrays.equals(tilesIndex, board.tilesIndex) && zonePartitions.equals(board.zonePartitions) && cancelledAnimals.equals(board.cancelledAnimals);
+        return Arrays.equals(placedTiles, board.placedTiles) &&
+               Arrays.equals(tilesIndex, board.tilesIndex) &&
+               zonePartitions.equals(board.zonePartitions) &&
+               cancelledAnimals.equals(board.cancelledAnimals);
     }
 
     @Override
