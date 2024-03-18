@@ -1,4 +1,4 @@
-package ch.epfl.chacun;
+package ch.epfl.chacun.MyTests;
 
 /**
  * @author Ilyes Rouibi (372420)
@@ -6,6 +6,10 @@ package ch.epfl.chacun;
  */
 
 
+import ch.epfl.chacun.Animal;
+import ch.epfl.chacun.Area;
+import ch.epfl.chacun.PlayerColor;
+import ch.epfl.chacun.Zone;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;

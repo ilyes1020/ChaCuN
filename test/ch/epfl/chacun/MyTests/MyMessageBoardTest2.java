@@ -1,5 +1,6 @@
-package ch.epfl.chacun;
+package ch.epfl.chacun.MyTests;
 
+import ch.epfl.chacun.*;
 import ch.epfl.chacun.utils.ChaCuNUtils;
 import ch.epfl.chacun.utils.Tuples;
 import org.junit.jupiter.api.Test;
@@ -925,3 +926,4 @@ class TextMakerTest2 implements TextMaker {
         return null;
     }
 }
+

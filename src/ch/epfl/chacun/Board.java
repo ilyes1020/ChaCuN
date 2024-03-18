@@ -11,7 +11,7 @@ import java.util.Set;
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding(379902)
  */
-public class Board {
+public final class Board {
     private final PlacedTile[] placedTiles;
     private final int[] tilesIndex;
     private final ZonePartitions zonePartitions;
@@ -159,7 +159,8 @@ public class Board {
         for (Zone.Meadow meadowInInitialMeadowArea : initialMeadowArea.zones()){
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y <= 1; y++) {
-                    if (tileAt(pos.translated(x, y)).meadowZones().contains(meadowInInitialMeadowArea)){
+                    PlacedTile adjacentTile = tileAt(pos.translated(x, y));
+                    if (adjacentTile != null && adjacentTile.meadowZones().contains(meadowInInitialMeadowArea)){
                         adjacentMeadowZones.add(meadowZone);
                     }
                 }
@@ -228,12 +229,21 @@ public class Board {
      *
      * @return The set of forest areas closed by the last placed tile.
      */
-    //FIXME
     public Set<Area<Zone.Forest>> forestsClosedByLastTile() {
-        if (tilesIndex.length == 0){
+        if (lastPlacedTile() == null){
             return Set.of();
         }
-        return null;
+        PlacedTile lastPlacedTile = lastPlacedTile();
+        Set<Area<Zone.Forest>> closedForestAreas = new HashSet<>();
+
+        for (Direction direction : Direction.values()) {
+            if (lastPlacedTile.side(direction) instanceof TileSide.Forest lastTileForestSide){
+                if (forestArea(lastTileForestSide.forest()).isClosed()){
+                    closedForestAreas.add(forestArea(lastTileForestSide.forest()));
+                }
+            }
+        }
+        return closedForestAreas;
     }
 
     /**
@@ -241,12 +251,21 @@ public class Board {
      *
      * @return The set of river areas closed by the last placed tile.
      */
-    //FIXME
     public Set<Area<Zone.River>> riversClosedByLastTile() {
-        if (tilesIndex.length == 0){
+        if (lastPlacedTile() == null){
             return Set.of();
         }
-        return null;
+        PlacedTile lastPlacedTile = lastPlacedTile();
+        Set<Area<Zone.River>> closedRiverAreas = new HashSet<>();
+
+        for (Direction direction : Direction.values()) {
+            if (lastPlacedTile.side(direction) instanceof TileSide.River lastTileRiverSide){
+                if (riverArea(lastTileRiverSide.river()).isClosed()){
+                    closedRiverAreas.add(riverArea(lastTileRiverSide.river()));
+                }
+            }
+        }
+        return closedRiverAreas;
     }
 
     /**
@@ -332,6 +351,7 @@ public class Board {
      * @return A new board with the given occupant added.
      * @throws IllegalArgumentException if the tile on which the occupant would be placed is already occupied.
      */
+    //TODO
     public Board withOccupant(Occupant occupant) {
         // To be implemented
         return null;
@@ -343,6 +363,7 @@ public class Board {
      * @param occupant The occupant to be removed from the board.
      * @return A new board with the given occupant removed.
      */
+    //TODO
     public Board withoutOccupant(Occupant occupant) {
         // To be implemented
         return null;
@@ -355,6 +376,7 @@ public class Board {
      * @param rivers  The set of river areas.
      * @return A new board with no gatherers or fishers in the specified forests and rivers.
      */
+    //TODO
     public Board withoutGatherersOrFishersIn(Set<Area<Zone.Forest>> forests, Set<Area<Zone.River>> rivers) {
         // To be implemented
         return null;
@@ -366,6 +388,7 @@ public class Board {
      * @param newlyCancelledAnimals The set of animals to be added to the cancelled animals.
      * @return A new board with the given animals added to the cancelled animals.
      */
+    //TODO
     public Board withMoreCancelledAnimals(Set<Animal> newlyCancelledAnimals) {
         // To be implemented
         return null;

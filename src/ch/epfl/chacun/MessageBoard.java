@@ -244,7 +244,7 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
         String text = textMaker.playersWon(winners, points);
 
         List<Message> updatedMessages = new ArrayList<>(this.messages);
-        updatedMessages.add(new Message(text, points, winners, Set.of()));
+        updatedMessages.add(new Message(text, 0, Set.of(), Set.of()));
         return new MessageBoard(textMaker , updatedMessages);
     }
 
