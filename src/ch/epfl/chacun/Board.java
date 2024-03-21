@@ -34,15 +34,15 @@ public final class Board {
      * @return The tile at the given position, or null if no tile is found or the position is invalid.
      */
     public PlacedTile tileAt(Pos pos) {
-        if (pos.x() < -12 ||
-            pos.y() < -12 ||
-            pos.x() > 12 ||
-            pos.y() > 12){
+        if (pos.x() < -REACH ||
+            pos.y() < -REACH ||
+            pos.x() > REACH ||
+            pos.y() > REACH){
             return null;
         }
         int BOARD_SIZE = 25;
-        int tileIndex = (pos.y() + 12) * BOARD_SIZE +
-                        (pos.x() + 12);
+        int tileIndex = (pos.y() + REACH) * BOARD_SIZE +
+                        (pos.x() + REACH);
         return placedTiles[tileIndex];
     }
 
@@ -199,10 +199,10 @@ public final class Board {
 
                 Pos placedTileNeighborPos = placedTiles[placedTileIndex].pos().neighbor(direction);
 
-                if (placedTileNeighborPos.x() >= -12 &&
-                    placedTileNeighborPos.y() >= -12 &&
-                    placedTileNeighborPos.x() <= 12 &&
-                    placedTileNeighborPos.y() <= 12) {
+                if (placedTileNeighborPos.x() >= -REACH &&
+                    placedTileNeighborPos.y() >= -REACH &&
+                    placedTileNeighborPos.x() <= REACH &&
+                    placedTileNeighborPos.y() <= REACH) {
                     if (tileAt(placedTileNeighborPos) == null) {
                         insertionPositions.add(placedTileNeighborPos);
                     }
@@ -316,8 +316,8 @@ public final class Board {
         Preconditions.checkArgument(tilesIndex.length == 0 || canAddTile(tile));
 
         int BOARD_SIZE = 25;
-        int newTileIndex = (tile.pos().y() + 12) * BOARD_SIZE +
-                           (tile.pos().x() + 12);
+        int newTileIndex = (tile.pos().y() + REACH) * BOARD_SIZE +
+                           (tile.pos().x() + REACH);
 
         //updating the tileIndex table
         int[] updatedTilesIndex = Arrays.copyOf(tilesIndex, tilesIndex.length + 1);
@@ -358,8 +358,8 @@ public final class Board {
 
         //updating the placedTiles table
         int BOARD_SIZE = 25;
-        int occupantsTileIndex = (occupantsTile.pos().y() + 12) * BOARD_SIZE +
-                                 (occupantsTile.pos().x() + 12);
+        int occupantsTileIndex = (occupantsTile.pos().y() + REACH) * BOARD_SIZE +
+                                 (occupantsTile.pos().x() + REACH);
         PlacedTile[] updatedPlacedTiles = placedTiles.clone();
 
         updatedPlacedTiles[occupantsTileIndex] = occupantsTileWithOccupant;
@@ -387,8 +387,8 @@ public final class Board {
 
         //updating the placedTiles table
         int BOARD_SIZE = 25;
-        int occupantsTileIndex = (occupantsTile.pos().y() + 12) * BOARD_SIZE +
-                                 (occupantsTile.pos().x() + 12);
+        int occupantsTileIndex = (occupantsTile.pos().y() + REACH) * BOARD_SIZE +
+                                 (occupantsTile.pos().x() + REACH);
         PlacedTile[] updatedPlacedTiles = placedTiles.clone();
 
         updatedPlacedTiles[occupantsTileIndex] = occupantsTileWithoutOccupant;
@@ -427,8 +427,8 @@ public final class Board {
 
                     if (forestArea.zones().contains(zoneContainingGatherer)){
                         int BOARD_SIZE = 25;
-                        int forestAreaTileIndex = (forestAreaTile.pos().y() + 12) * BOARD_SIZE +
-                                                  (forestAreaTile.pos().x() + 12);
+                        int forestAreaTileIndex = (forestAreaTile.pos().y() + REACH) * BOARD_SIZE +
+                                                  (forestAreaTile.pos().x() + REACH);
                         updatedPlacedTiles[forestAreaTileIndex] = forestAreaTile.withNoOccupant();
                     }
                 }
@@ -447,8 +447,8 @@ public final class Board {
 
                     if (riverArea.zones().contains(zoneContainingFisher)){
                         int BOARD_SIZE = 25;
-                        int riverAreaTileIndex = (riverAreaTile.pos().y() + 12) * BOARD_SIZE +
-                                                 (riverAreaTile.pos().x() + 12);
+                        int riverAreaTileIndex = (riverAreaTile.pos().y() + REACH) * BOARD_SIZE +
+                                                 (riverAreaTile.pos().x() + REACH);
                         updatedPlacedTiles[riverAreaTileIndex] = riverAreaTile.withNoOccupant();
                     }
                 }
