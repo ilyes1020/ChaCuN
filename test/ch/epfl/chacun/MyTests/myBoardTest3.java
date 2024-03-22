@@ -1312,7 +1312,6 @@ class myBoardTest3 {
                 ChaCuNUtils.createMeadowTileSide(1257),
                 ChaCuNUtils.createMeadowTileSide(1256)
         );
-
         assertFalse(board.couldPlaceTile(tile));
     }
 
