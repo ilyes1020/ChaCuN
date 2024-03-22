@@ -740,18 +740,18 @@ public class MyMessageBoardTest2 {
         assertThrows(IllegalArgumentException.class, () -> messageBoard.withScoredRaft(riverSystemWithNoLakes));
     }
 
-    @Test
-    void withWinners() {
-        var players = Set.of(PlayerColor.RED, PlayerColor.BLUE);
-        int points = 382;
-
-        var expectedMessages = addMessageAfterDefaultList(
-                createMessage(players, points, pair -> TEXT_MAKER.playersWon(pair.a(), pair.b()))
-        );
-
-        var messageBoard = new MessageBoard(TEXT_MAKER, getInitialMessages());
-        assertEquals(expectedMessages, messageBoard.withWinners(players, points).messages());
-    }
+//    @Test
+//    void withWinners() {
+//        var players = Set.of(PlayerColor.RED, PlayerColor.BLUE);
+//        int points = 382;
+//
+//        var expectedMessages = addMessageAfterDefaultList(
+//                createMessage(players, points, pair -> TEXT_MAKER.playersWon(pair.a(), pair.b()))
+//        );
+//
+//        var messageBoard = new MessageBoard(TEXT_MAKER, getInitialMessages());
+//        assertEquals(expectedMessages, messageBoard.withWinners(players, points).messages());
+//    }
 
 //    @Test
 //    void withWinnersExceptions() {

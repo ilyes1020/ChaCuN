@@ -78,7 +78,9 @@ public final class Board {
     public Set<Occupant> occupants() {
         Set<Occupant> totalOccupants = new HashSet<>();
         for (int placedTileIndex : tilesIndex) {
-            totalOccupants.add(placedTiles[placedTileIndex].occupant());
+            if (placedTiles[placedTileIndex].occupant() != null) {
+                totalOccupants.add(placedTiles[placedTileIndex].occupant());
+            }
         }
         return totalOccupants;
     }
@@ -180,6 +182,7 @@ public final class Board {
         int occupantCount = 0;
         for (int placedTileIndex : tilesIndex) {
             if ((placedTiles[placedTileIndex].placer() == player) &&
+                (placedTiles[placedTileIndex].occupant() != null) &&
                 (placedTiles[placedTileIndex].occupant().kind() == occupantKind)){
                 occupantCount++;
             }
