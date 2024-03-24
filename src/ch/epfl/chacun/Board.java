@@ -35,14 +35,14 @@ public final class Board {
      */
     public PlacedTile tileAt(Pos pos) {
         if (pos.x() < -REACH ||
-            pos.y() < -REACH ||
-            pos.x() > REACH ||
-            pos.y() > REACH){
+                pos.y() < -REACH ||
+                pos.x() > REACH ||
+                pos.y() > REACH){
             return null;
         }
         int BOARD_SIZE = 25;
         int tileIndex = (pos.y() + REACH) * BOARD_SIZE +
-                        (pos.x() + REACH);
+                (pos.x() + REACH);
         return placedTiles[tileIndex];
     }
 
@@ -182,8 +182,8 @@ public final class Board {
         int occupantCount = 0;
         for (int placedTileIndex : tilesIndex) {
             if ((placedTiles[placedTileIndex].placer() == player) &&
-                (placedTiles[placedTileIndex].occupant() != null) &&
-                (placedTiles[placedTileIndex].occupant().kind() == occupantKind)){
+                    (placedTiles[placedTileIndex].occupant() != null) &&
+                    (placedTiles[placedTileIndex].occupant().kind() == occupantKind)){
                 occupantCount++;
             }
         }
@@ -203,9 +203,9 @@ public final class Board {
                 Pos placedTileNeighborPos = placedTiles[placedTileIndex].pos().neighbor(direction);
 
                 if (placedTileNeighborPos.x() >= -REACH &&
-                    placedTileNeighborPos.y() >= -REACH &&
-                    placedTileNeighborPos.x() <= REACH &&
-                    placedTileNeighborPos.y() <= REACH) {
+                        placedTileNeighborPos.y() >= -REACH &&
+                        placedTileNeighborPos.x() <= REACH &&
+                        placedTileNeighborPos.y() <= REACH) {
                     if (tileAt(placedTileNeighborPos) == null) {
                         insertionPositions.add(placedTileNeighborPos);
                     }
@@ -320,7 +320,7 @@ public final class Board {
 
         int BOARD_SIZE = 25;
         int newTileIndex = (tile.pos().y() + REACH) * BOARD_SIZE +
-                           (tile.pos().x() + REACH);
+                (tile.pos().x() + REACH);
 
         //updating the tileIndex table
         int[] updatedTilesIndex = Arrays.copyOf(tilesIndex, tilesIndex.length + 1);
@@ -362,7 +362,7 @@ public final class Board {
         //updating the placedTiles table
         int BOARD_SIZE = 25;
         int occupantsTileIndex = (occupantsTile.pos().y() + REACH) * BOARD_SIZE +
-                                 (occupantsTile.pos().x() + REACH);
+                (occupantsTile.pos().x() + REACH);
         PlacedTile[] updatedPlacedTiles = placedTiles.clone();
 
         updatedPlacedTiles[occupantsTileIndex] = occupantsTileWithOccupant;
@@ -391,7 +391,7 @@ public final class Board {
         //updating the placedTiles table
         int BOARD_SIZE = 25;
         int occupantsTileIndex = (occupantsTile.pos().y() + REACH) * BOARD_SIZE +
-                                 (occupantsTile.pos().x() + REACH);
+                (occupantsTile.pos().x() + REACH);
         PlacedTile[] updatedPlacedTiles = placedTiles.clone();
 
         updatedPlacedTiles[occupantsTileIndex] = occupantsTileWithoutOccupant;
@@ -431,7 +431,7 @@ public final class Board {
                     if (forestArea.zones().contains(zoneContainingGatherer)){
                         int BOARD_SIZE = 25;
                         int forestAreaTileIndex = (forestAreaTile.pos().y() + REACH) * BOARD_SIZE +
-                                                  (forestAreaTile.pos().x() + REACH);
+                                (forestAreaTile.pos().x() + REACH);
                         updatedPlacedTiles[forestAreaTileIndex] = forestAreaTile.withNoOccupant();
                     }
                 }
@@ -451,7 +451,7 @@ public final class Board {
                     if (riverArea.zones().contains(zoneContainingFisher)){
                         int BOARD_SIZE = 25;
                         int riverAreaTileIndex = (riverAreaTile.pos().y() + REACH) * BOARD_SIZE +
-                                                 (riverAreaTile.pos().x() + REACH);
+                                (riverAreaTile.pos().x() + REACH);
                         updatedPlacedTiles[riverAreaTileIndex] = riverAreaTile.withNoOccupant();
                     }
                 }
@@ -479,9 +479,9 @@ public final class Board {
         if (this == o) return true;
         if (!(o instanceof Board board)) return false;
         return Arrays.equals(placedTiles, board.placedTiles) &&
-               Arrays.equals(tilesIndex, board.tilesIndex) &&
-               zonePartitions.equals(board.zonePartitions) &&
-               cancelledAnimals.equals(board.cancelledAnimals);
+                Arrays.equals(tilesIndex, board.tilesIndex) &&
+                zonePartitions.equals(board.zonePartitions) &&
+                cancelledAnimals.equals(board.cancelledAnimals);
     }
 
     @Override
