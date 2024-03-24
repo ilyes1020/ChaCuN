@@ -1,5 +1,6 @@
 package ch.epfl.chacun;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -88,13 +89,20 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
         Preconditions.checkArgument(board.lastPlacedTile() != null);
         Preconditions.checkArgument(!board.equals(Board.EMPTY));
 
-        Set<Occupant> lastTilePotentialOccupants = board.lastPlacedTile().potentialOccupants();
-        lastTilePotentialOccupants.removeIf(lastTilePotentialOccupant -> {
-            Zone potentialOccupantZone = board.lastPlacedTile().zoneWithId(lastTilePotentialOccupant.zoneId());
+        PlacedTile lastPlacedTile = board.lastPlacedTile();
+        Set<Occupant> lastTilePotentialOccupants = lastPlacedTile.potentialOccupants();
+
+        Arrays.stream(Occupant.Kind.values()).forEach(kind -> {
+            int playersFreeOccupantsCount = freeOccupantsCount(lastPlacedTile.placer(), kind);
+            lastTilePotentialOccupants.removeIf(occupant -> playersFreeOccupantsCount == 0 && occupant.kind() == kind);
+        });
+
+        lastTilePotentialOccupants.removeIf(occupant -> {
+            Zone potentialOccupantZone = lastPlacedTile.zoneWithId(occupant.zoneId());
             return switch (potentialOccupantZone) {
                 case Zone.Forest forestZone -> board.forestArea(forestZone).isOccupied();
                 case Zone.Meadow meadowZone -> board.meadowArea(meadowZone).isOccupied();
-                case Zone.River riverZone -> switch (lastTilePotentialOccupant.kind()) {
+                case Zone.River riverZone -> switch (occupant.kind()) {
                     case PAWN -> board.riverArea(riverZone).isOccupied();
                     case HUT -> board.riverSystemArea(riverZone).isOccupied();
                 };
