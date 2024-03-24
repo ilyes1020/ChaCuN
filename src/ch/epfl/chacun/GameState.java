@@ -45,42 +45,6 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
     }
 
     /**
-     * return the current player or null if the next action is START_GAME or END_GAME
-     * @return the current player or null if the next action is START_GAME or END_GAME
-     */
-    public PlayerColor currentPlayer(){
-        if (nextAction == Action.START_GAME || nextAction == Action.END_GAME){
-            return null;
-        }
-        return players.getFirst();
-    }
-
-    public int freeOccupantsCount(PlayerColor player, Occupant.Kind kind){
-        return board.occupantCount(player, kind) - board.occupants().size(); //pas sur
-    }
-
-    public Set<Occupant> lastTilePotentialOccupants(){
-        Preconditions.checkArgument(board.lastPlacedTile() != null);
-        Tile lastTile = board.lastPlacedTile().tile();
-        Set<Occupant> allOccupants = board.lastPlacedTile().potentialOccupants();
-
-        for (Zone zone : board.lastPlacedTile().tile().zones()) {
-            switch (zone){
-                case Zone.Forest forest-> allOccupants.remove(board.forestArea(forest));
-                case Zone.Meadow meadow-> allOccupants.remove(board.meadowArea(meadow));
-                case Zone.River river -> {
-                    allOccupants.remove(board.riverSystemArea(river));
-                    if (river.hasLake()) {
-                        allOccupants.remove(board.riverSystemArea(river.lake()));
-                    }
-                }
-                case Zone.Lake lake -> allOccupants.remove(board.riverSystemArea(lake));
-            }
-        }
-        return allOccupants; //pas sur
-    }
-
-    /**
      * enum representing the different actions that can be executed
      */
 
@@ -91,5 +55,99 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
         RETAKE_PAWN,
         OCCUPY_TILE,
         END_GAME
+    }
+
+    /**
+     * return the current player or null if the next action is START_GAME or END_GAME
+     * @return the current player or null if the next action is START_GAME or END_GAME
+     */
+    public PlayerColor currentPlayer(){
+        if (nextAction == Action.START_GAME || nextAction == Action.END_GAME){
+            return null;
+        }
+        return players.getFirst();
+    }
+
+    /**
+     * Returns the number of free occupants of the given kind belonging to the given player.
+     * Free occupants are those not currently placed on the game board.
+     * @param player The player color.
+     * @param kind The kind of occupant.
+     * @return The number of free occupants of the specified kind and belonging to the specified player.
+     */
+    public int freeOccupantsCount(PlayerColor player, Occupant.Kind kind){
+        return Occupant.occupantsCount(kind) - board.occupantCount(player, kind);
+    }
+
+    /**
+     * Returns the set of potential occupants of the last placed tile.
+     * @return The set of potential occupants of the last placed tile.
+     * @throws IllegalArgumentException If the board is empty.
+     */
+    public Set<Occupant> lastTilePotentialOccupants(){
+        Preconditions.checkArgument(board.lastPlacedTile() != null);
+        Preconditions.checkArgument(!board.equals(Board.EMPTY));
+
+        Set<Occupant> lastTilePotentialOccupants = board.lastPlacedTile().potentialOccupants();
+        lastTilePotentialOccupants.removeIf(lastTilePotentialOccupant -> {
+            Zone potentialOccupantZone = board.lastPlacedTile().zoneWithId(lastTilePotentialOccupant.zoneId());
+            return switch (potentialOccupantZone) {
+                case Zone.Forest forestZone -> board.forestArea(forestZone).isOccupied();
+                case Zone.Meadow meadowZone -> board.meadowArea(meadowZone).isOccupied();
+                case Zone.River riverZone -> switch (lastTilePotentialOccupant.kind()) {
+                    case PAWN -> board.riverArea(riverZone).isOccupied();
+                    case HUT -> board.riverSystemArea(riverZone).isOccupied();
+                };
+                case Zone.Lake lakeZone -> board.riverSystemArea(lakeZone).isOccupied();
+            };
+        });
+        return lastTilePotentialOccupants;
+    }
+
+    /**
+     * Handles the transition from START_GAME to PLACE_TILE by placing the starting tile
+     * in the center of the board and drawing the first normal tile from the tile deck.
+     * @return The updated game state after placing the starting tile.
+     * @throws IllegalArgumentException If the next action is not START_GAME.
+     */
+    public GameState withStartingTilePlaced() throws IllegalArgumentException {
+        // TODO: Implement this method
+        return null; // Placeholder
+    }
+
+    /**
+     * Handles transitions from PLACE_TILE by adding the given tile to the board, assigning any points
+     * obtained from placing the canoe or pit trap, and determining the next action.
+     * @param tile The tile to be placed.
+     * @return The updated game state after placing the given tile.
+     * @throws IllegalArgumentException If the next action is not PLACE_TILE or if the given tile is already occupied.
+     */
+    public GameState withPlacedTile(PlacedTile tile) throws IllegalArgumentException {
+        // TODO: Implement this method
+        return null; // Placeholder
+    }
+
+    /**
+     * Handles transitions from RETAKE_PAWN by removing the given occupant, unless it is null
+     * indicating that the player does not wish to retake a pawn.
+     * @param occupant The occupant to be removed.
+     * @return The updated game state after removing the given occupant.
+     * @throws IllegalArgumentException If the next action is not RETAKE_PAWN or if the given occupant is neither null nor a pawn.
+     */
+    public GameState withOccupantRemoved(Occupant occupant) throws IllegalArgumentException {
+        // TODO: Implement this method
+        return null; // Placeholder
+    }
+
+    /**
+     * Handles transitions from OCCUPY_TILE by adding the given occupant to the last placed tile,
+     * unless it is null indicating that the player does not wish to place an occupant.
+     * @param occupant The occupant to be added.
+     * @return The updated game state after adding the given occupant.
+     * @throws IllegalArgumentException If the next action is not OCCUPY_TILE.
+     */
+    public GameState withNewOccupant(Occupant occupant) throws IllegalArgumentException {
+        // TODO: Implement this method
+        return null; // Placeholder
     }
 }
