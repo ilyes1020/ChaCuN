@@ -68,13 +68,16 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
             switch (zone){
                 case Zone.Forest forest-> allOccupants.remove(board.forestArea(forest));
                 case Zone.Meadow meadow-> allOccupants.remove(board.meadowArea(meadow));
-                case Zone.River river-> allOccupants.remove(board.riverArea(river));
-                default -> {
-                    return allOccupants;
+                case Zone.River river -> {
+                    allOccupants.remove(board.riverSystemArea(river));
+                    if (river.hasLake()) {
+                        allOccupants.remove(board.riverSystemArea(river.lake()));
+                    }
                 }
+                case Zone.Lake lake -> allOccupants.remove(board.riverSystemArea(lake));
             }
         }
-        return allOccupants; //apparement pas
+        return allOccupants; //pas sur
     }
 
     /**
