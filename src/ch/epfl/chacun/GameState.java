@@ -61,7 +61,19 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
     public Set<Occupant> lastTilePotentialOccupants(){
         Preconditions.checkArgument(board.lastPlacedTile() != null);
+        Tile lastTile = board.lastPlacedTile().tile();
         Set<Occupant> allOccupants = board.lastPlacedTile().potentialOccupants();
+
+        for (Zone zone : board.lastPlacedTile().tile().zones()) {
+            switch (zone){
+                case Zone.Forest forest-> allOccupants.remove(board.forestArea(forest));
+                case Zone.Meadow meadow-> allOccupants.remove(board.meadowArea(meadow));
+                case Zone.River river-> allOccupants.remove(board.riverArea(river));
+                default -> {
+                    return allOccupants;
+                }
+            }
+        }
         return allOccupants; //apparement pas
     }
 
