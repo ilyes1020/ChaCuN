@@ -122,7 +122,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
      * @return The updated game state after placing the starting tile.
      * @throws IllegalArgumentException If the next action is not START_GAME.
      */
-    public GameState withStartingTilePlaced() throws IllegalArgumentException {
+    public GameState withStartingTilePlaced(){
         Preconditions.checkArgument(nextAction == Action.START_GAME);
 
         PlacedTile placedStartTile = new PlacedTile(tileDecks.topTile(Tile.Kind.START), null, Rotation.NONE, new Pos(0, 0));
@@ -150,7 +150,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
      * @return The updated game state after placing the given tile.
      * @throws IllegalArgumentException If the next action is not PLACE_TILE or if the given tile is already occupied.
      */
-    public GameState withPlacedTile(PlacedTile tile) throws IllegalArgumentException {
+    public GameState withPlacedTile(PlacedTile tile){
         Preconditions.checkArgument(nextAction == Action.PLACE_TILE);
         Preconditions.checkArgument(tile.occupant() == null);
 
@@ -243,7 +243,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
      * @return The updated game state after removing the given occupant.
      * @throws IllegalArgumentException If the next action is not RETAKE_PAWN or if the given occupant is neither null nor a pawn.
      */
-    public GameState withOccupantRemoved(Occupant occupant) throws IllegalArgumentException {
+    public GameState withOccupantRemoved(Occupant occupant){
         // TODO: Implement this method
         return null; // Placeholder
     }
@@ -255,7 +255,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
      * @return The updated game state after adding the given occupant.
      * @throws IllegalArgumentException If the next action is not OCCUPY_TILE.
      */
-    public GameState withNewOccupant(Occupant occupant) throws IllegalArgumentException {
+    public GameState withNewOccupant(Occupant occupant){
         // TODO: Implement this method
         return null; // Placeholder
     }
