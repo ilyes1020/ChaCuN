@@ -1,31 +1,35 @@
 package ch.epfl.chacun;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
- * record representing the game state
+ * Record representing the game state
  *
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding (379902)
  *
- * @param players the list of players in the game
- * @param tileDecks the three different tile decks
- * @param tileToPlace the eventual tile to place (null if no tile to place)
- * @param board the board of the game
- * @param nextAction the next action to execute
- * @param messageBoard the message board of the game
+ * @param players the list of players in the game.
+ * @param tileDecks the three different tile decks.
+ * @param tileToPlace the eventual tile to place (null if no tile to place).
+ * @param board the board of the game.
+ * @param nextAction the next action to execute.
+ * @param messageBoard the message board of the game.
  */
 
 public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile tileToPlace, Board board, Action nextAction, MessageBoard messageBoard) {
 
     /**
-     * compact constructor
+     * Compact constructor of {@code GameState}.
+     * @param players the list of players in the game.
+     * @param tileDecks the three different tile decks.
+     * @param tileToPlace the eventual tile to place (null if no tile to place).
+     * @param board the board of the game.
+     * @param nextAction the next action to execute.
+     * @param messageBoard the message board of the game.
      * @throws IllegalArgumentException if the number of players is less than 2
      * or if the tile to place is null and the next action is PLACE_TILE
      * or if neither the tile to place is null, nor the next action is PLACE_TILE
-     * or if the tile decks, the board, the next action or the message board is null
+     * or if the tile decks, the board, the next action or the message board is null.
      */
     public GameState {
         Preconditions.checkArgument(players.size() >= 2);
@@ -35,18 +39,18 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
     }
 
     /**
-     * creates the initial game state
-     * @param players the given list of players in the game
-     * @param tileDecks the given three different tile decks
-     * @param textMaker the given text maker
-     * @return the initial game state
+     * Creates the initial game state.
+     * @param players the given list of players in the game.
+     * @param tileDecks the given three different tile decks.
+     * @param textMaker the given text maker.
+     * @return the initial game state.
      */
     public static GameState initial(List<PlayerColor> players, TileDecks tileDecks, TextMaker textMaker){
         return new GameState(players, tileDecks, null, Board.EMPTY, Action.START_GAME, new MessageBoard(textMaker, List.of()));
     }
 
     /**
-     * enum representing the different actions that can be executed
+     * Enum representing the different actions that can be executed.
      */
 
 
@@ -59,8 +63,8 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
     }
 
     /**
-     * return the current player or null if the next action is START_GAME or END_GAME
-     * @return the current player or null if the next action is START_GAME or END_GAME
+     * Returns the current player or null if the next action is START_GAME or END_GAME.
+     * @return the current player or null if the next action is START_GAME or END_GAME.
      */
     public PlayerColor currentPlayer(){
         if (nextAction == Action.START_GAME || nextAction == Action.END_GAME){
@@ -119,8 +123,21 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
      * @throws IllegalArgumentException If the next action is not START_GAME.
      */
     public GameState withStartingTilePlaced() throws IllegalArgumentException {
-        // TODO: Implement this method
-        return null; // Placeholder
+        Preconditions.checkArgument(nextAction == Action.START_GAME);
+
+        PlacedTile placedStartTile = new PlacedTile(tileDecks.topTile(Tile.Kind.START), null, Rotation.NONE, new Pos(0, 0));
+        Board updatedBoard = board.withNewTile(placedStartTile);
+
+        TileDecks updatedTileDecks = tileDecks.withTopTileDrawn(Tile.Kind.START);
+        updatedTileDecks = tileDecks.withTopTileDrawn(Tile.Kind.NORMAL);
+
+        return new GameState(
+                  players
+                , updatedTileDecks
+                , tileDecks.topTile(Tile.Kind.START)
+                , updatedBoard
+                , Action.PLACE_TILE
+                , messageBoard);
     }
 
     /**
@@ -131,13 +148,94 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
      * @throws IllegalArgumentException If the next action is not PLACE_TILE or if the given tile is already occupied.
      */
     public GameState withPlacedTile(PlacedTile tile) throws IllegalArgumentException {
-        // TODO: Implement this method
-        return null; // Placeholder
+        Preconditions.checkArgument(nextAction == Action.PLACE_TILE);
+        Preconditions.checkArgument(tile.occupant() == null);
+
+        Board updatedBoard = board.withNewTile(tile);
+
+        Action updatedNextAction = Action.OCCUPY_TILE;
+
+        TileDecks updatedTileDecks = tileDecks;
+
+        Tile updatedTileToPlace = tileToPlace;
+
+        MessageBoard updatedMessageBoard = messageBoard;
+
+        if (tile.tile().kind() == Tile.Kind.MENHIR){
+
+            updatedTileDecks = updatedTileDecks.withTopTileDrawnUntil(Tile.Kind.NORMAL, board::couldPlaceTile);
+            updatedTileToPlace = updatedTileDecks.topTile(Tile.Kind.NORMAL);
+            updatedTileDecks = updatedTileDecks.withTopTileDrawn(Tile.Kind.NORMAL);
+
+            Zone.SpecialPower specialPower = null;
+            Zone zoneWithSpecialPower = null;
+            for (Zone zone : tile.tile().zones()) {
+                if (zone.specialPower() != null) {
+                    specialPower = zone.specialPower();
+                    zoneWithSpecialPower = zone;}
+            }
+
+            switch (specialPower){
+                case SHAMAN -> updatedNextAction  = Action.RETAKE_PAWN;
+                case LOGBOAT -> updatedMessageBoard = updatedMessageBoard.withScoredLogboat(tile.placer(), board.riverSystemArea((Zone.Water) zoneWithSpecialPower));
+                case HUNTING_TRAP -> {
+                    //TODO: vraiment suspecte cette partie
+                    Set<Animal> cancelledAnimals = new HashSet<>(board.cancelledAnimals());
+                    Set<Animal> notCancelledYetAnimals = Area.animals(board.adjacentMeadow(tile.pos(), (Zone.Meadow) zoneWithSpecialPower), board.cancelledAnimals());
+
+                    Map<Animal.Kind, Integer> animalCountMap = new HashMap<>();
+                    for (Animal animal : notCancelledYetAnimals) {
+                        animalCountMap.merge(animal.kind(), 1, Integer::sum);
+                    }
+
+
+                    Iterator<Animal> notCancelledYetAnimalIterator = notCancelledYetAnimals.iterator();
+                    int smilodonCount = animalCountMap.getOrDefault(Animal.Kind.TIGER, 0);
+                    int deerCount = animalCountMap.getOrDefault(Animal.Kind.DEER, 0);
+                    int cancelledDeerCount = 0;
+                    while (notCancelledYetAnimalIterator.hasNext() && cancelledDeerCount < smilodonCount && deerCount > 0) {
+
+                        Animal notCancelledYetAnimal = notCancelledYetAnimalIterator.next();
+
+                        if (notCancelledYetAnimal.kind() == Animal.Kind.DEER) {
+                            cancelledAnimals.add(notCancelledYetAnimal);
+                            cancelledDeerCount++;
+                            deerCount--;
+                        }
+                    }
+                    updatedMessageBoard = updatedMessageBoard.withScoredHuntingTrap(tile.placer(), board.adjacentMeadow(tile.pos(), (Zone.Meadow) zoneWithSpecialPower));
+                }
+                case null, default -> {}
+            }
+        } else {
+            for (Zone zone : tile.tile().zones()) {
+                if (zone instanceof Zone.Forest forestZone) {
+                    Area<Zone.Forest> forestArea = board.forestArea(forestZone);
+                    if (forestArea.isClosed() && Area.hasMenhir(forestArea)) {
+                        updatedTileDecks = tileDecks.withTopTileDrawnUntil(Tile.Kind.MENHIR, board::couldPlaceTile);
+                        updatedTileToPlace = updatedTileDecks.topTile(Tile.Kind.MENHIR);
+                        updatedNextAction = Action.PLACE_TILE;
+                        updatedMessageBoard = messageBoard.withClosedForestWithMenhir(tile.placer(), forestArea);
+                    } else {
+                        updatedTileDecks = tileDecks.withTopTileDrawnUntil(Tile.Kind.NORMAL, board::couldPlaceTile);
+                        updatedTileToPlace = updatedTileDecks.topTile(Tile.Kind.NORMAL);
+                        updatedTileDecks = updatedTileDecks.withTopTileDrawn(Tile.Kind.NORMAL);
+                    }
+                }
+            }
+        }
+        return new GameState(
+                  players
+                , updatedTileDecks
+                , updatedTileToPlace
+                , updatedBoard
+                , updatedNextAction
+                , updatedMessageBoard);
     }
 
     /**
      * Handles transitions from RETAKE_PAWN by removing the given occupant, unless it is null
-     * indicating that the player does not wish to retake a pawn.
+     * which indicates that the player does not wish to retake a pawn.
      * @param occupant The occupant to be removed.
      * @return The updated game state after removing the given occupant.
      * @throws IllegalArgumentException If the next action is not RETAKE_PAWN or if the given occupant is neither null nor a pawn.

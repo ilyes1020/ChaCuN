@@ -3,6 +3,8 @@ package ch.epfl.chacun;
 import java.util.*;
 
 /**
+ * Record representing the message board.
+ *
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding (379902)
  */
