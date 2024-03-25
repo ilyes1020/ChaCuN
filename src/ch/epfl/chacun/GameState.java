@@ -217,6 +217,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                     if (forestArea.isClosed() && Area.hasMenhir(forestArea)) {
                         updatedTileDecks = tileDecks.withTopTileDrawnUntil(Tile.Kind.MENHIR, board::couldPlaceTile);
                         updatedTileToPlace = updatedTileDecks.topTile(Tile.Kind.MENHIR);
+                        updatedTileDecks = updatedTileDecks.withTopTileDrawn(Tile.Kind.MENHIR);
                         updatedNextAction = Action.PLACE_TILE;
                         updatedMessageBoard = messageBoard.withClosedForestWithMenhir(tile.placer(), forestArea);
                     } else {
