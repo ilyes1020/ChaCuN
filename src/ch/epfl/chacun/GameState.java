@@ -129,14 +129,17 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
         Board updatedBoard = board.withNewTile(placedStartTile);
 
         TileDecks updatedTileDecks = tileDecks.withTopTileDrawn(Tile.Kind.START);
-        updatedTileDecks = tileDecks.withTopTileDrawn(Tile.Kind.NORMAL);
+        Tile updatedTileToPlace = updatedTileDecks.topTile(Tile.Kind.NORMAL);
+        updatedTileDecks = updatedTileDecks.withTopTileDrawn(Tile.Kind.NORMAL);
+
+        Action updatedNextAction = Action.PLACE_TILE;
 
         return new GameState(
                   players
                 , updatedTileDecks
-                , tileDecks.topTile(Tile.Kind.START)
+                , updatedTileToPlace
                 , updatedBoard
-                , Action.PLACE_TILE
+                , updatedNextAction
                 , messageBoard);
     }
 
