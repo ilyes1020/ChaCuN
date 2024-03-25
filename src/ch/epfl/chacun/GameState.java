@@ -249,7 +249,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
             }
         }
         return new GameState(
-                  players
+                  updatedPlayers
                 , updatedTileDecks
                 , updatedTileToPlace
                 , updatedBoard
