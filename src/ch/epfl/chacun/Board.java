@@ -82,7 +82,7 @@ public final class Board {
                 totalOccupants.add(placedTiles[placedTileIndex].occupant());
             }
         }
-        return totalOccupants;
+        return Set.copyOf(totalOccupants);
     }
 
     /**
