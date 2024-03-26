@@ -246,7 +246,7 @@ public final class Board {
                 }
             }
         }
-        return closedForestAreas;
+        return Set.copyOf(closedForestAreas);
     }
 
     /**
@@ -268,7 +268,7 @@ public final class Board {
                 }
             }
         }
-        return closedRiverAreas;
+        return Set.copyOf(closedRiverAreas);
     }
 
     /**
