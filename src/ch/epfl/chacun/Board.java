@@ -1,9 +1,6 @@
 package ch.epfl.chacun;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents the board in ChaCuN
@@ -156,18 +153,13 @@ public final class Board {
      */
     public Area<Zone.Meadow> adjacentMeadow(Pos pos, Zone.Meadow meadowZone) {
         Area<Zone.Meadow> initialMeadowArea = zonePartitions.meadows().areaContaining(meadowZone);
-        Set<Zone.Meadow> adjacentMeadowZones = new HashSet<>();
+        Set<Zone.Meadow> adjacentMeadowZones = new HashSet<>(initialMeadowArea.zones());
 
-        for (Zone.Meadow meadowInInitialMeadowArea : initialMeadowArea.zones()){
-            for (int x = -1; x <= 1; x++) {
-                for (int y = -1; y <= 1; y++) {
-                    PlacedTile adjacentTile = tileAt(pos.translated(x, y));
-                    if (adjacentTile != null && adjacentTile.meadowZones().contains(meadowInInitialMeadowArea)){
-                        adjacentMeadowZones.add(meadowZone);
-                    }
-                }
+        adjacentMeadowZones.removeIf(z -> {
+            Pos zTilePosition = tileWithId(z.tileId()).pos();
+            return (Math.abs(zTilePosition.x() - pos.x()) > 1) || (Math.abs(zTilePosition.y() - pos.y()) > 1);
             }
-        }
+        );
         return new Area<>(adjacentMeadowZones, initialMeadowArea.occupants(), 0);
     }
 
