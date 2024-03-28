@@ -258,7 +258,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
      */
     private GameState withTurnFinishedIfOccupationImpossible(){
 
-        if (!lastTilePotentialOccupants().isEmpty())
+        if (lastTilePotentialOccupants().isEmpty())
             return withTurnFinished();
 
         return new GameState(
