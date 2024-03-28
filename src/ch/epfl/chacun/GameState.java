@@ -98,8 +98,8 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
         Set<Occupant> lastTilePotentialOccupants = lastPlacedTile.potentialOccupants();
 
         Arrays.stream(Occupant.Kind.values()).forEach(kind -> {
-            int playersFreeOccupantsCount = freeOccupantsCount(lastPlacedTile.placer(), kind);
-            lastTilePotentialOccupants.removeIf(occupant -> playersFreeOccupantsCount == 0 && occupant.kind() == kind);
+            if (freeOccupantsCount(lastPlacedTile.placer(), kind) == 0)
+                lastTilePotentialOccupants.removeIf(occupant -> occupant.kind() == kind);
         });
 
         lastTilePotentialOccupants.removeIf(occupant -> {
@@ -157,31 +157,71 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
         Board updatedBoard = board.withNewTile(tile);
 
-        GameState updatedGameState = new GameState(players
+        MessageBoard updatedMessageBoard = messageBoard;
+
+        if (tile.tile().kind() == Tile.Kind.MENHIR){
+
+            Zone zoneWithSpecialPower = tile.specialPowerZone();
+            Zone.SpecialPower specialPower = null;
+            if (zoneWithSpecialPower != null) {
+                specialPower = zoneWithSpecialPower.specialPower();
+            }
+
+            switch (specialPower){
+
+                case SHAMAN -> {
+                    if (freeOccupantsCount(tile.placer(), Occupant.Kind.PAWN) != Occupant.occupantsCount(Occupant.Kind.PAWN)) {
+                        return new GameState(
+                                  players
+                                , tileDecks
+                                , null
+                                , updatedBoard
+                                , Action.RETAKE_PAWN
+                                , messageBoard);
+                    }
+                }
+                case LOGBOAT -> updatedMessageBoard = updatedMessageBoard.withScoredLogboat(tile.placer(), updatedBoard.riverSystemArea((Zone.Water) zoneWithSpecialPower));
+                case HUNTING_TRAP -> {
+                    //TODO: vraiment suspecte cette partie
+                    Set<Animal> newlyCancelledAnimals = new HashSet<>(updatedBoard.cancelledAnimals());
+                    Area<Zone.Meadow> adjacentMeadow = updatedBoard.adjacentMeadow(tile.pos(), (Zone.Meadow) zoneWithSpecialPower);
+
+                    Set<Animal> notCancelledYetAnimals = Area.animals(adjacentMeadow, updatedBoard.cancelledAnimals());
+
+                    Map<Animal.Kind, Integer> animalCountMap = new HashMap<>();
+                    for (Animal animal : notCancelledYetAnimals) {
+                        animalCountMap.merge(animal.kind(), 1, Integer::sum);
+                    }
+
+                    Iterator<Animal> notCancelledYetAnimalIterator = notCancelledYetAnimals.iterator();
+                    int smilodonCount = animalCountMap.getOrDefault(Animal.Kind.TIGER, 0);
+                    int deerCount = animalCountMap.getOrDefault(Animal.Kind.DEER, 0);
+                    int cancelledDeerCount = 0;
+                    while (notCancelledYetAnimalIterator.hasNext() && cancelledDeerCount < smilodonCount && deerCount > 0) {
+
+                        Animal notCancelledYetAnimal = notCancelledYetAnimalIterator.next();
+
+                        if (notCancelledYetAnimal.kind() == Animal.Kind.DEER) {
+                            newlyCancelledAnimals.add(notCancelledYetAnimal);
+                            cancelledDeerCount++;
+                            deerCount--;
+                        }
+                    }
+                    updatedMessageBoard = updatedMessageBoard.withScoredHuntingTrap(tile.placer(), adjacentMeadow);
+                    newlyCancelledAnimals.addAll(notCancelledYetAnimals);
+                    updatedBoard = updatedBoard.withMoreCancelledAnimals(newlyCancelledAnimals);
+                }
+                case null, default -> {}
+            }
+        }
+        GameState updatedGameState = new GameState(
+                  players
                 , tileDecks
                 , null
                 , updatedBoard
                 , nextAction
-                , messageBoard);
+                , updatedMessageBoard);
 
-        if (tile.tile().kind() == Tile.Kind.MENHIR) {
-            Zone.SpecialPower specialPower = null;
-            for (Zone zone : tile.tile().zones()) {
-                if (zone.specialPower() != null) {
-                    specialPower = zone.specialPower();
-                }
-            }
-            if (specialPower == Zone.SpecialPower.SHAMAN
-                    && (freeOccupantsCount(tile.placer(), Occupant.Kind.PAWN) != Occupant.occupantsCount(Occupant.Kind.PAWN))) {
-                return new GameState(
-                          players
-                        , tileDecks
-                        , null
-                        , updatedBoard
-                        , Action.RETAKE_PAWN
-                        , messageBoard);
-            }
-        }
         return updatedGameState.withTurnFinishedIfOccupationImpossible();
     }
 
@@ -206,7 +246,6 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
      */
     public GameState withNewOccupant(Occupant occupant){
         // TODO: Implement this method
-
         return null; // Placeholder
     }
 
@@ -219,24 +258,11 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
      */
     private GameState withTurnFinishedIfOccupationImpossible(){
 
-        int playerPawnCount = (freeOccupantsCount(currentPlayer(), Occupant.Kind.PAWN));
-        int playerHutCount = freeOccupantsCount(currentPlayer(), Occupant.Kind.HUT);
-
-        Map<Occupant.Kind, Set<Occupant>> lastTilePotentialOccupantsMap = lastTilePotentialOccupants()
-                .stream()
-                .collect(Collectors.groupingBy(Occupant::kind, Collectors.toSet()));
-
-        Set<Occupant> lastTilePotentialPawn = lastTilePotentialOccupantsMap.getOrDefault(Occupant.Kind.PAWN, Set.of());
-        Set<Occupant> lastTilePotentialHut = lastTilePotentialOccupantsMap.getOrDefault(Occupant.Kind.HUT, Set.of());
-
-        if ((playerPawnCount == 0 && playerHutCount == 0)
-                || lastTilePotentialOccupants().isEmpty()
-                || (!lastTilePotentialPawn.isEmpty() && lastTilePotentialHut.isEmpty() && playerPawnCount == 0)
-                || (!lastTilePotentialHut.isEmpty() && lastTilePotentialPawn.isEmpty() && playerHutCount == 0)) {
+        if (!lastTilePotentialOccupants().isEmpty())
             return withTurnFinished();
-        }
+
         return new GameState(
-                players
+                  players
                 , tileDecks
                 , tileToPlace
                 , board
@@ -258,8 +284,6 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
         PlacedTile lastPlacedTile = board.lastPlacedTile();
         PlayerColor lastTilePlacer = lastPlacedTile.placer();
-
-
 
         boolean hasClosedForestWithMenhir = false;
         Area<Zone.Forest> closedForestAreaWithMenhir = null;
@@ -290,48 +314,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                 updatedTileDecks = updatedTileDecks.withTopTileDrawn(Tile.Kind.NORMAL);
             }
         }
-        if (board.lastPlacedTile().kind() == Tile.Kind.MENHIR){
 
-            Zone.SpecialPower specialPower = null;
-            Zone zoneWithSpecialPower = null;
-            for (Zone zone : lastPlacedTile.tile().zones()) {
-                if (zone.specialPower() != null) {
-                    specialPower = zone.specialPower();
-                    zoneWithSpecialPower = zone; }
-            }
-
-            switch (specialPower){
-                case LOGBOAT -> updatedMessageBoard = updatedMessageBoard.withScoredLogboat(lastTilePlacer, board.riverSystemArea((Zone.Water) zoneWithSpecialPower));
-                case HUNTING_TRAP -> {
-                    //TODO: vraiment suspecte cette partie
-                    Set<Animal> cancelledAnimals = new HashSet<>(board.cancelledAnimals());
-                    Set<Animal> notCancelledYetAnimals = Area.animals(board.adjacentMeadow(lastPlacedTile.pos(), (Zone.Meadow) zoneWithSpecialPower), board.cancelledAnimals());
-
-                    Map<Animal.Kind, Integer> animalCountMap = new HashMap<>();
-                    for (Animal animal : notCancelledYetAnimals) {
-                        animalCountMap.merge(animal.kind(), 1, Integer::sum);
-                    }
-
-                    Iterator<Animal> notCancelledYetAnimalIterator = notCancelledYetAnimals.iterator();
-                    int smilodonCount = animalCountMap.getOrDefault(Animal.Kind.TIGER, 0);
-                    int deerCount = animalCountMap.getOrDefault(Animal.Kind.DEER, 0);
-                    int cancelledDeerCount = 0;
-                    while (notCancelledYetAnimalIterator.hasNext() && cancelledDeerCount < smilodonCount && deerCount > 0) {
-
-                        Animal notCancelledYetAnimal = notCancelledYetAnimalIterator.next();
-
-                        if (notCancelledYetAnimal.kind() == Animal.Kind.DEER) {
-                            cancelledAnimals.add(notCancelledYetAnimal);
-                            cancelledDeerCount++;
-                            deerCount--;
-                        }
-                    }
-                    Board updatedBoard = board.withMoreCancelledAnimals(cancelledAnimals);
-                    updatedMessageBoard = updatedMessageBoard.withScoredHuntingTrap(lastTilePlacer, board.adjacentMeadow(lastPlacedTile.pos(), (Zone.Meadow) zoneWithSpecialPower));
-                }
-                case null, default -> {}
-            }
-        }
         return null; // Placeholder
     }
     private GameState withFinalPointsCounted(){
