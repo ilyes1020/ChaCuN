@@ -396,8 +396,143 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
             }
         }
     }
-    private GameState withFinalPointsCounted(){
-        //TODO: Implement this method
-        return null;
+    private GameState withFinalPointsCounted() {
+
+        MessageBoard updatedMessageBoard = messageBoard;
+        Board updatedBoard = board;
+
+        // Compute the points for the meadows
+        Set<Animal> cancelledAnimals = new HashSet<>(board.cancelledAnimals());
+
+        for (Area<Zone.Meadow> meadowArea : board.meadowAreas()) {
+            // Check if the zone has the WILD_FIRE special power
+            if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.WILD_FIRE)) {
+
+                // Check if there is a PitTrap in the zone
+                if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.PIT_TRAP)) {
+                    // No cancelled deers, call withScoredPitTrap and withScoredMeadow
+
+                    updatedMessageBoard = updatedMessageBoard.withScoredPitTrap(meadowArea, cancelledAnimals);
+                    updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, cancelledAnimals);
+                } else {
+                    // No PitTrap, no cancelled deers, call withScoredMeadow
+                    updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, cancelledAnimals);
+                }
+            } else {
+                if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.PIT_TRAP)) {
+
+                    Zone pitTrapZone = meadowArea.zoneWithSpecialPower(Zone.SpecialPower.PIT_TRAP);
+
+                    Set<Animal> newlyCancelledAnimals = new HashSet<>(board.cancelledAnimals());
+                    Area<Zone.Meadow> adjacentMeadow = board.adjacentMeadow(board.tileWithId(pitTrapZone.tileId()).pos(), (Zone.Meadow) pitTrapZone);
+
+                    Set<Animal> notCancelledYetAnimals = Area.animals(adjacentMeadow, board.cancelledAnimals());
+
+                    Map<Animal.Kind, Integer> animalCountMap = new HashMap<>();
+
+                    for (Animal animal : notCancelledYetAnimals) {
+                        animalCountMap.merge(animal.kind(), 1, Integer::sum);
+                    }
+                    int smilodonCount = animalCountMap.getOrDefault(Animal.Kind.TIGER, 0);
+
+                    Set<Animal> adjacentDeers = Area.animals(adjacentMeadow, cancelledAnimals)
+                            .stream()
+                            .filter(animal -> animal.kind() == Animal.Kind.DEER)
+                            .collect(Collectors.toSet());
+
+                    Set<Animal> notAdjacentDeers = Area.animals(meadowArea, cancelledAnimals)
+                            .stream()
+                            .filter(animal -> animal.kind() == Animal.Kind.DEER)
+                            .filter(animal -> !adjacentDeers.contains(animal))
+                            .collect(Collectors.toSet());
+
+                    int adjacentDeerCount = adjacentDeers.size();
+                    int notAdjacentDeerCount = notAdjacentDeers.size();
+
+                    if (smilodonCount >= notAdjacentDeerCount) {
+                        newlyCancelledAnimals.addAll(notAdjacentDeers);
+
+                        int remainingAdjDeersToCancel = smilodonCount - notAdjacentDeerCount;
+                        int cancelledAdjDeerCount = 0;
+
+                        Iterator<Animal> notCancelledYetAdjDeersIterator = adjacentDeers.iterator();
+                        while (notCancelledYetAdjDeersIterator.hasNext() && cancelledAdjDeerCount < remainingAdjDeersToCancel && adjacentDeerCount < 0) {
+                            newlyCancelledAnimals.add(notCancelledYetAdjDeersIterator.next());
+                            cancelledAdjDeerCount++;
+                            adjacentDeerCount--;
+                        }
+                    } else {
+
+                        int cancelledExtDeerCount = 0;
+
+                        Iterator<Animal> notCancelledYetAdjDeersIterator = adjacentDeers.iterator();
+                        while (notCancelledYetAdjDeersIterator.hasNext() && cancelledExtDeerCount < smilodonCount) {
+                            newlyCancelledAnimals.add(notCancelledYetAdjDeersIterator.next());
+                            cancelledExtDeerCount++;
+                        }
+                    }
+                    updatedBoard = updatedBoard.withMoreCancelledAnimals(newlyCancelledAnimals);
+                    updatedMessageBoard = updatedMessageBoard.withScoredPitTrap(adjacentMeadow, newlyCancelledAnimals);
+                    updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, newlyCancelledAnimals);
+
+                } else {
+
+                    Set<Animal> newlyCancelledAnimals = new HashSet<>(updatedBoard.cancelledAnimals());
+
+                    Set<Animal> notCancelledYetAnimals = Area.animals(meadowArea, board.cancelledAnimals());
+
+                    Map<Animal.Kind, Integer> animalCountMap = new HashMap<>();
+                    for (Animal animal : notCancelledYetAnimals) {
+                        animalCountMap.merge(animal.kind(), 1, Integer::sum);
+                    }
+
+                    Iterator<Animal> notCancelledYetAnimalIterator = notCancelledYetAnimals.iterator();
+                    int smilodonCount = animalCountMap.getOrDefault(Animal.Kind.TIGER, 0);
+                    int deerCount = animalCountMap.getOrDefault(Animal.Kind.DEER, 0);
+                    int cancelledDeerCount = 0;
+                    while (notCancelledYetAnimalIterator.hasNext() && cancelledDeerCount < smilodonCount && deerCount > 0) {
+
+                        Animal notCancelledYetAnimal = notCancelledYetAnimalIterator.next();
+
+                        if (notCancelledYetAnimal.kind() == Animal.Kind.DEER) {
+                            newlyCancelledAnimals.add(notCancelledYetAnimal);
+                            cancelledDeerCount++;
+                            deerCount--;
+                        }
+                    }
+                    newlyCancelledAnimals.addAll(notCancelledYetAnimals);
+
+                    updatedBoard = updatedBoard.withMoreCancelledAnimals(newlyCancelledAnimals);
+                    updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, newlyCancelledAnimals);
+                }
+            }
+        }
+        // Compute the points for the river systems
+        for (Area<Zone.Water> riverSystemArea : board.riverSystemAreas()) {
+            if (riverSystemArea.zoneWithSpecialPower(Zone.SpecialPower.RAFT) != null) {
+                updatedMessageBoard = updatedMessageBoard.withScoredRaft(riverSystemArea);
+            }
+            updatedMessageBoard = updatedMessageBoard.withScoredRiverSystem(riverSystemArea);
+        }
+
+        int maxPoints = updatedMessageBoard.points().values().stream().mapToInt(Integer::intValue).max().orElse(0);
+
+        Set<PlayerColor> topPlayers = updatedMessageBoard
+                .points()
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getValue() == maxPoints)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+
+        updatedMessageBoard = updatedMessageBoard.withWinners(topPlayers, maxPoints);
+
+        return new GameState(
+                  players
+                , tileDecks
+                , tileToPlace
+                , updatedBoard
+                , Action.END_GAME
+                , updatedMessageBoard);
     }
 }
