@@ -182,7 +182,6 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                 }
                 case LOGBOAT -> updatedMessageBoard = updatedMessageBoard.withScoredLogboat(tile.placer(), updatedBoard.riverSystemArea((Zone.Water) zoneWithSpecialPower));
                 case HUNTING_TRAP -> {
-                    //TODO: vraiment suspecte cette partie
                     Set<Animal> newlyCancelledAnimals = new HashSet<>(updatedBoard.cancelledAnimals());
                     Area<Zone.Meadow> adjacentMeadow = updatedBoard.adjacentMeadow(tile.pos(), (Zone.Meadow) zoneWithSpecialPower);
 
@@ -300,23 +299,23 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
      * @return The updated game state after the current players turn.
      */
     private GameState withTurnFinished(){
-        // TODO: donner des points pour le pit trap (jcrois que c'est dans endgame enft)
 
         List<PlayerColor> updatedPlayers = new LinkedList<>(players);
         TileDecks updatedTileDecks = tileDecks;
-        Tile updatedTileToPlace;
-        Action updatedNextAction = nextAction;
+        Tile updatedTileToPlace = null;
+        Board updatedBoard = board;
+        Action updatedNextAction = Action.PLACE_TILE;
         MessageBoard updatedMessageBoard = messageBoard;
 
-
         PlacedTile lastPlacedTile = board.lastPlacedTile();
+
         boolean canPlayAgain = false;
         Area<Zone.Forest> closedForestAreaWithMenhir = null;
         if (!board.forestsClosedByLastTile().isEmpty()){
             for (Area<Zone.Forest> closedForestArea : board.forestsClosedByLastTile()) {
                 updatedMessageBoard = updatedMessageBoard.withScoredForest(closedForestArea);
 
-                if (Area.hasMenhir(closedForestArea) && board.lastPlacedTile().kind() != Tile.Kind.MENHIR && !tileDecks.menhirTiles().isEmpty()){
+                if (Area.hasMenhir(closedForestArea) && lastPlacedTile.kind() != Tile.Kind.MENHIR && !tileDecks.menhirTiles().isEmpty()){
                     if (!updatedTileDecks.withTopTileDrawnUntil(Tile.Kind.MENHIR, board::couldPlaceTile).menhirTiles().isEmpty()){
                         canPlayAgain = true;
                         closedForestAreaWithMenhir = closedForestArea;
@@ -331,34 +330,71 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
             }
         }
 
+        updatedBoard = updatedBoard.withoutGatherersOrFishersIn(board.forestsClosedByLastTile(), board.riversClosedByLastTile());
+
+
         if (canPlayAgain){
-            updatedMessageBoard = messageBoard.withClosedForestWithMenhir(board.lastPlacedTile().placer(), closedForestAreaWithMenhir);
+            updatedMessageBoard = messageBoard.withClosedForestWithMenhir(currentPlayer(), closedForestAreaWithMenhir);
 
-            updatedNextAction = Action.PLACE_TILE;
-
-            updatedTileDecks = updatedTileDecks.withTopTileDrawnUntil(Tile.Kind.MENHIR, board::couldPlaceTile);
+            updatedTileDecks = updatedTileDecks.withTopTileDrawnUntil(Tile.Kind.MENHIR, updatedBoard::couldPlaceTile);
             updatedTileToPlace = updatedTileDecks.topTile(Tile.Kind.MENHIR);
-            updatedTileDecks = updatedTileDecks.withTopTileDrawn(Tile.Kind.MENHIR);
+            if (!updatedTileDecks.menhirTiles().isEmpty()) {
+                updatedTileDecks = updatedTileDecks.withTopTileDrawn(Tile.Kind.MENHIR);
+            }
+
+            return new GameState(
+                      players
+                    , updatedTileDecks
+                    , updatedTileToPlace
+                    , updatedBoard
+                    , updatedNextAction
+                    , updatedMessageBoard);
 
         } else {
+
             updatedPlayers.addLast(updatedPlayers.removeFirst());
 
-            updatedNextAction = Action.PLACE_TILE;
+            if (tileDecks.normalTiles().isEmpty()){
 
-            updatedTileDecks = updatedTileDecks.withTopTileDrawnUntil(Tile.Kind.NORMAL, board::couldPlaceTile);
+                GameState updatedGameState = new GameState(
+                          updatedPlayers
+                        , updatedTileDecks
+                        , updatedTileToPlace
+                        , updatedBoard
+                        , Action.END_GAME
+                        , updatedMessageBoard);
+
+                return updatedGameState.withFinalPointsCounted();
+            }
+
+            updatedTileDecks = updatedTileDecks.withTopTileDrawnUntil(Tile.Kind.NORMAL, updatedBoard::couldPlaceTile);
             updatedTileToPlace = updatedTileDecks.topTile(Tile.Kind.NORMAL);
-            updatedTileDecks = updatedTileDecks.withTopTileDrawn(Tile.Kind.NORMAL);
+
+            if (updatedTileDecks.normalTiles().isEmpty()) {
+
+                GameState updatedGameState = new GameState(
+                          updatedPlayers
+                        , updatedTileDecks
+                        , updatedTileToPlace
+                        , updatedBoard
+                        , Action.END_GAME
+                        , updatedMessageBoard);
+
+                return updatedGameState.withFinalPointsCounted();
+
+            } else {
+
+                updatedTileDecks = updatedTileDecks.withTopTileDrawn(Tile.Kind.NORMAL);
+
+                return new GameState(
+                          updatedPlayers
+                        , updatedTileDecks
+                        , updatedTileToPlace
+                        , updatedBoard
+                        , updatedNextAction
+                        , updatedMessageBoard);
+            }
         }
-
-        //TODO: terminer la partie si le joueur courant a terminé son ou ses tour(s) et qu'il ne reste plus de tuile normale jouable.
-
-        return new GameState(
-                  updatedPlayers
-                , updatedTileDecks
-                , updatedTileToPlace
-                , board
-                , updatedNextAction
-                , updatedMessageBoard);
     }
     private GameState withFinalPointsCounted(){
         //TODO: Implement this method

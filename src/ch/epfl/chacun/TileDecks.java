@@ -94,7 +94,6 @@ public record TileDecks(List<Tile> startTiles, List<Tile> normalTiles, List<Tile
      * @param kind      The type of tile deck (START, NORMAL, or MENHIR).
      * @param predicate The predicate specifying the condition that the top tile must satisfy to be removed.
      * @return A new TileDecks record with tiles removed from the specified tile deck until the predicate returns false.
-     * @throws IllegalArgumentException If the specified tile deck is empty.
      */
     public TileDecks withTopTileDrawnUntil(Tile.Kind kind, Predicate<Tile> predicate) {
         List<Tile> updatedStartTiles = startTiles;
@@ -103,25 +102,16 @@ public record TileDecks(List<Tile> startTiles, List<Tile> normalTiles, List<Tile
 
         switch (kind) {
             case START:
-                if (startTiles.isEmpty()) {
-                    throw new IllegalArgumentException("Start tiles deck is empty");
-                }
                 while (!updatedStartTiles.isEmpty() && !predicate.test(updatedStartTiles.getFirst())) {
                     updatedStartTiles = updatedStartTiles.subList(1, updatedStartTiles.size());
                 }
                 break;
             case NORMAL:
-                if (normalTiles.isEmpty()) {
-                    throw new IllegalArgumentException("Normal tiles deck is empty");
-                }
                 while (!updatedNormalTiles.isEmpty() && !predicate.test(updatedNormalTiles.getFirst())) {
                     updatedNormalTiles = updatedNormalTiles.subList(1, updatedNormalTiles.size());
                 }
                 break;
             case MENHIR:
-                if (menhirTiles.isEmpty()) {
-                    throw new IllegalArgumentException("Menhir tiles deck is empty");
-                }
                 while (!updatedMenhirTiles.isEmpty() && !predicate.test(updatedMenhirTiles.getFirst())) {
                     updatedMenhirTiles = updatedMenhirTiles.subList(1, updatedMenhirTiles.size());
                 }
