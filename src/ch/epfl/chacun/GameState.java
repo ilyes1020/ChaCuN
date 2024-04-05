@@ -216,7 +216,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
         GameState updatedGameState = new GameState(
                   players
                 , tileDecks
-                , null
+                , tileToPlace
                 , updatedBoard
                 , nextAction
                 , updatedMessageBoard);
@@ -235,7 +235,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
         Preconditions.checkArgument(nextAction == Action.RETAKE_PAWN);
         Preconditions.checkArgument(occupant.kind() == Occupant.Kind.PAWN || occupant == null);
         if (occupant == null){
-            return withTurnFinished();
+            return withTurnFinishedIfOccupationImpossible();
         }
 
         GameState updatedGamestate = new GameState(
@@ -288,7 +288,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
         return new GameState(
                   players
                 , tileDecks
-                , tileToPlace
+                , null
                 , board
                 , Action.OCCUPY_TILE
                 , messageBoard);

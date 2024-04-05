@@ -67,6 +67,7 @@ public class MyGameStateTest01 {
         //part 1 : place tile 64 at pos 1,0
         PlacedTile p = new PlacedTile(s.tileToPlace(), s.currentPlayer(), Rotation.NONE, new Pos(1,0));
         s = s.withPlacedTile(p);
+        System.out.println("firstTile : " + p.id());
 
         //occupy it
         Occupant o = new Occupant(Occupant.Kind.PAWN, 642);
@@ -83,6 +84,7 @@ public class MyGameStateTest01 {
         //second tile placed
         p = new PlacedTile(s.tileToPlace(), s.currentPlayer(), Rotation.NONE, new Pos(0,1));
         s = s.withPlacedTile(p);
+        System.out.println("secondTile : " + p.id());
 
         Set<Occupant> potOccupantTest = new HashSet<>(Set.of(new Occupant(Occupant.Kind.PAWN, 781)));
         assertEquals(potOccupantTest, s.lastTilePotentialOccupants());
@@ -99,13 +101,14 @@ public class MyGameStateTest01 {
 
         p = new PlacedTile(s.tileToPlace(), PlayerColor.GREEN, Rotation.HALF_TURN, new Pos(1,1));
         s = s.withPlacedTile(p);
-
         assertEquals(GameState.Action.OCCUPY_TILE, s.nextAction());
 
         assertEquals(PlayerColor.GREEN, s.currentPlayer());
-
+        //green occupies zone
         o = new Occupant(Occupant.Kind.PAWN, 672);
         s = s.withNewOccupant(o);
+
+        System.out.println("thirdTile : " + p.id());
 
         //green now has to place special tile
         assertEquals(4, s.freeOccupantsCount(PlayerColor.GREEN, Occupant.Kind.PAWN));
@@ -128,10 +131,9 @@ public class MyGameStateTest01 {
         assertEquals(Tiles.TILES.get(26), s.tileToPlace());
         assertEquals(GameState.Action.PLACE_TILE, s.nextAction());
 
-
+        System.out.println(s.messageBoard());
         //il a sauter la bonne tuile
         assertEquals( 8,s.messageBoard().points().get(PlayerColor.RED));
-
 
 
 
