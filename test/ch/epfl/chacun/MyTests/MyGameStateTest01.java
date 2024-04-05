@@ -150,7 +150,7 @@ public class MyGameStateTest01 {
 
         System.out.println("Placing tile " +  s.tileToPlace().id());
         PlacedTile tile = new PlacedTile(s.tileToPlace(), s.currentPlayer(), Rotation.NONE, new Pos(1,0));
-        s = s.withPlacedTile(tile);
+       s = s.withPlacedTile(tile);
         System.out.println("Successfully PlacedTile, placing occupant");
         Occupant newOcc = new Occupant(Occupant.Kind.PAWN, 4);
         s = s.withNewOccupant(newOcc);
