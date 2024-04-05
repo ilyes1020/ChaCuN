@@ -1,8 +1,12 @@
 package ch.epfl.chacun;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import ch.epfl.chacun.Animal;
+import ch.epfl.chacun.Direction;
+import ch.epfl.chacun.Tile;
+import ch.epfl.chacun.TileSide;
+import ch.epfl.chacun.Zone;
+
+import java.util.*;
 
 public final class Tiles {
     public static final List<Tile> TILES = createTiles();
@@ -20,7 +24,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z2);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.Forest(z4);
-            assert tiles.size() == 0;
             tiles.add(new Tile(0, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 1
@@ -35,7 +38,6 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.River(z4, z5, z0);
-            assert tiles.size() == 1;
             tiles.add(new Tile(1, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 2
@@ -48,7 +50,6 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.Forest(z3);
-            assert tiles.size() == 2;
             tiles.add(new Tile(2, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 3
@@ -63,7 +64,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z3, z4);
             var sS = new TileSide.Meadow(z4);
             var sW = new TileSide.River(z4, z5, z0);
-            assert tiles.size() == 3;
             tiles.add(new Tile(3, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 4
@@ -79,7 +79,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z3);
             var sS = new TileSide.River(z4, z5, z0);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 4;
             tiles.add(new Tile(4, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 5
@@ -95,7 +94,6 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.River(z2, z3, z4);
             var sW = new TileSide.River(z4, z5, z0);
-            assert tiles.size() == 5;
             tiles.add(new Tile(5, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 6
@@ -111,7 +109,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z3, z4);
             var sS = new TileSide.Meadow(z4);
             var sW = new TileSide.River(z4, z5, z0);
-            assert tiles.size() == 6;
             tiles.add(new Tile(6, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 7
@@ -127,7 +124,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z3, z4);
             var sS = new TileSide.River(z4, z5, z0);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 7;
             tiles.add(new Tile(7, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 8
@@ -144,7 +140,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z3, z4);
             var sS = new TileSide.Meadow(z4);
             var sW = new TileSide.River(z4, z5, z0);
-            assert tiles.size() == 8;
             tiles.add(new Tile(8, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 9
@@ -153,14 +148,12 @@ public final class Tiles {
             var z1 = new Zone.River(9_1, 0, l1);
             var z2 = new Zone.Meadow(9_2, List.of(), null);
             var z3 = new Zone.River(9_3, 0, l1);
-            var a4_0 = new Animal(9_4_0, Animal.Kind.DEER);
-            var z4 = new Zone.Meadow(9_4, List.of(a4_0), null);
+            var z4 = new Zone.Meadow(9_4, List.of(), null);
             var z5 = new Zone.River(9_5, 0, l1);
             var sN = new TileSide.River(z0, z1, z2);
-            var sE = new TileSide.Meadow(z2);
-            var sS = new TileSide.River(z2, z3, z4);
-            var sW = new TileSide.River(z4, z5, z0);
-            assert tiles.size() == 9;
+            var sE = new TileSide.River(z2, z3, z4);
+            var sS = new TileSide.River(z4, z5, z0);
+            var sW = new TileSide.Meadow(z0);
             tiles.add(new Tile(9, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 10
@@ -176,7 +169,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z3, z4);
             var sS = new TileSide.Meadow(z4);
             var sW = new TileSide.River(z4, z5, z0);
-            assert tiles.size() == 10;
             tiles.add(new Tile(10, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 11
@@ -193,7 +185,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z3, z4);
             var sS = new TileSide.Forest(z5);
             var sW = new TileSide.River(z6, z7, z0);
-            assert tiles.size() == 11;
             tiles.add(new Tile(11, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 12
@@ -209,7 +200,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z2);
             var sS = new TileSide.River(z2, z3, z4);
             var sW = new TileSide.River(z4, z5, z0);
-            assert tiles.size() == 12;
             tiles.add(new Tile(12, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 13
@@ -228,7 +218,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z3, z4);
             var sS = new TileSide.River(z4, z5, z6);
             var sW = new TileSide.River(z6, z7, z0);
-            assert tiles.size() == 13;
             tiles.add(new Tile(13, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 14
@@ -243,7 +232,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z3);
             var sS = new TileSide.Forest(z4);
             var sW = new TileSide.Forest(z5);
-            assert tiles.size() == 14;
             tiles.add(new Tile(14, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 15
@@ -255,7 +243,6 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.River(z2, z1, z0);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 15;
             tiles.add(new Tile(15, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 16
@@ -267,7 +254,6 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.River(z2, z1, z0);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 16;
             tiles.add(new Tile(16, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 17
@@ -282,7 +268,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z1, z0);
             var sS = new TileSide.River(z0, z3, z4);
             var sW = new TileSide.River(z4, z3, z0);
-            assert tiles.size() == 17;
             tiles.add(new Tile(17, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 18
@@ -294,7 +279,6 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.River(z2, z1, z0);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 18;
             tiles.add(new Tile(18, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 19
@@ -306,7 +290,6 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.River(z2, z1, z0);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 19;
             tiles.add(new Tile(19, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 20
@@ -320,7 +303,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z1, z3);
             var sS = new TileSide.Forest(z4);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 20;
             tiles.add(new Tile(20, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 21
@@ -332,7 +314,6 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.River(z2, z1, z0);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 21;
             tiles.add(new Tile(21, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 22
@@ -345,7 +326,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z2);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.River(z2, z1, z0);
-            assert tiles.size() == 22;
             tiles.add(new Tile(22, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 23
@@ -358,23 +338,21 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z1, z0);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.Forest(z3);
-            assert tiles.size() == 23;
             tiles.add(new Tile(23, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 24
             var l1 = new Zone.Lake(24_8, 1, null);
             var z0 = new Zone.Meadow(24_0, List.of(), null);
-            var z1 = new Zone.River(24_1, 0, null);
+            var z1 = new Zone.River(24_1, 0, l1);
             var a2_0 = new Animal(24_2_0, Animal.Kind.AUROCHS);
             var z2 = new Zone.Meadow(24_2, List.of(a2_0), null);
             var z3 = new Zone.Forest(24_3, Zone.Forest.Kind.PLAIN);
             var z4 = new Zone.Meadow(24_4, List.of(), null);
-            var z5 = new Zone.River(24_5, 0, null);
+            var z5 = new Zone.River(24_5, 0, l1);
             var sN = new TileSide.River(z0, z1, z2);
             var sE = new TileSide.Meadow(z2);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.River(z4, z5, z0);
-            assert tiles.size() == 24;
             tiles.add(new Tile(24, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 25
@@ -387,7 +365,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z1, z0);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 25;
             tiles.add(new Tile(25, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 26
@@ -400,7 +377,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z1, z0);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.Forest(z4);
-            assert tiles.size() == 26;
             tiles.add(new Tile(26, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 27
@@ -413,7 +389,6 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.River(z2, z1, z0);
             var sW = new TileSide.Forest(z3);
-            assert tiles.size() == 27;
             tiles.add(new Tile(27, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 28
@@ -425,11 +400,10 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z2);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.River(z2, z1, z0);
-            assert tiles.size() == 28;
             tiles.add(new Tile(28, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 29
-            var z0 = new Zone.Forest(29_0, Zone.Forest.Kind.PLAIN);
+            var z0 = new Zone.Forest(29_0, Zone.Forest.Kind.WITH_MENHIR);
             var z1 = new Zone.Meadow(29_1, List.of(), null);
             var z2 = new Zone.River(29_2, 0, null);
             var z3 = new Zone.Meadow(29_3, List.of(), null);
@@ -437,7 +411,6 @@ public final class Tiles {
             var sE = new TileSide.River(z1, z2, z3);
             var sS = new TileSide.River(z3, z2, z1);
             var sW = new TileSide.Forest(z0);
-            assert tiles.size() == 29;
             tiles.add(new Tile(29, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 30
@@ -448,7 +421,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z0);
             var sS = new TileSide.Forest(z1);
             var sW = new TileSide.Forest(z1);
-            assert tiles.size() == 30;
             tiles.add(new Tile(30, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 31
@@ -459,7 +431,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z1);
             var sS = new TileSide.Meadow(z1);
             var sW = new TileSide.Forest(z0);
-            assert tiles.size() == 31;
             tiles.add(new Tile(31, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 32
@@ -470,7 +441,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z1);
             var sS = new TileSide.Meadow(z1);
             var sW = new TileSide.Forest(z0);
-            assert tiles.size() == 32;
             tiles.add(new Tile(32, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 33
@@ -480,7 +450,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z1);
             var sS = new TileSide.Meadow(z1);
             var sW = new TileSide.Forest(z0);
-            assert tiles.size() == 33;
             tiles.add(new Tile(33, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 34
@@ -493,7 +462,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z1);
             var sS = new TileSide.Meadow(z2);
             var sW = new TileSide.Forest(z3);
-            assert tiles.size() == 34;
             tiles.add(new Tile(34, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 35
@@ -504,7 +472,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z1);
             var sS = new TileSide.Meadow(z0);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 35;
             tiles.add(new Tile(35, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 36
@@ -515,7 +482,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z0);
             var sS = new TileSide.Forest(z1);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 36;
             tiles.add(new Tile(36, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 37
@@ -526,7 +492,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z1);
             var sS = new TileSide.Meadow(z1);
             var sW = new TileSide.Meadow(z1);
-            assert tiles.size() == 37;
             tiles.add(new Tile(37, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 38
@@ -538,7 +503,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z1);
             var sS = new TileSide.Meadow(z2);
             var sW = new TileSide.Forest(z1);
-            assert tiles.size() == 38;
             tiles.add(new Tile(38, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 39
@@ -549,7 +513,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z1);
             var sS = new TileSide.Meadow(z2);
             var sW = new TileSide.Forest(z1);
-            assert tiles.size() == 39;
             tiles.add(new Tile(39, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 40
@@ -560,7 +523,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z1);
             var sS = new TileSide.Meadow(z2);
             var sW = new TileSide.Forest(z1);
-            assert tiles.size() == 40;
             tiles.add(new Tile(40, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 41
@@ -572,7 +534,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z1);
             var sS = new TileSide.Meadow(z0);
             var sW = new TileSide.Forest(z2);
-            assert tiles.size() == 41;
             tiles.add(new Tile(41, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 42
@@ -583,19 +544,16 @@ public final class Tiles {
             var sE = new TileSide.Forest(z0);
             var sS = new TileSide.Meadow(z1);
             var sW = new TileSide.Meadow(z2);
-            assert tiles.size() == 42;
             tiles.add(new Tile(42, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 43
             var z0 = new Zone.Forest(43_0, Zone.Forest.Kind.WITH_MENHIR);
-            var z1 = new Zone.Forest(43_1, Zone.Forest.Kind.WITH_MENHIR);
-            var z2 = new Zone.Forest(43_2, Zone.Forest.Kind.PLAIN);
-            var z3 = new Zone.Meadow(43_3, List.of(), null);
+            var z1 = new Zone.Forest(43_1, Zone.Forest.Kind.PLAIN);
+            var z2 = new Zone.Meadow(43_2, List.of(), null);
             var sN = new TileSide.Forest(z0);
             var sE = new TileSide.Forest(z0);
             var sS = new TileSide.Forest(z1);
-            var sW = new TileSide.Meadow(z3);
-            assert tiles.size() == 43;
+            var sW = new TileSide.Meadow(z2);
             tiles.add(new Tile(43, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 44
@@ -607,7 +565,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z1);
             var sS = new TileSide.Meadow(z2);
             var sW = new TileSide.Forest(z0);
-            assert tiles.size() == 44;
             tiles.add(new Tile(44, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 45
@@ -623,7 +580,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z3);
             var sS = new TileSide.River(z4, z1, z5);
             var sW = new TileSide.Forest(z6);
-            assert tiles.size() == 45;
             tiles.add(new Tile(45, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 46
@@ -635,7 +591,6 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.River(z2, z1, z0);
-            assert tiles.size() == 46;
             tiles.add(new Tile(46, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 47
@@ -648,7 +603,6 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.River(z2, z1, z0);
-            assert tiles.size() == 47;
             tiles.add(new Tile(47, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 48
@@ -660,7 +614,6 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.Meadow(z2);
             var sW = new TileSide.River(z2, z1, z0);
-            assert tiles.size() == 48;
             tiles.add(new Tile(48, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 49
@@ -673,7 +626,6 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.Meadow(z2);
             var sW = new TileSide.River(z2, z1, z0);
-            assert tiles.size() == 49;
             tiles.add(new Tile(49, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 50
@@ -685,7 +637,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z2);
             var sS = new TileSide.River(z2, z1, z0);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 50;
             tiles.add(new Tile(50, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 51
@@ -697,7 +648,6 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.Meadow(z2);
             var sW = new TileSide.River(z2, z1, z0);
-            assert tiles.size() == 51;
             tiles.add(new Tile(51, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 52
@@ -709,20 +659,17 @@ public final class Tiles {
             var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.Meadow(z2);
             var sW = new TileSide.River(z2, z1, z0);
-            assert tiles.size() == 52;
             tiles.add(new Tile(52, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 53
-            var a0_0 = new Animal(53_0_0, Animal.Kind.AUROCHS);
-            var z0 = new Zone.Meadow(53_0, List.of(a0_0), null);
-            var z1 = new Zone.Forest(53_1, Zone.Forest.Kind.WITH_MENHIR);
-            var z2 = new Zone.Meadow(53_2, List.of(), null);
-            var z3 = new Zone.River(53_3, 0, null);
+            var z0 = new Zone.Meadow(53_0, List.of(), null);
+            var z1 = new Zone.River(53_1, 0, null);
+            var a2_0 = new Animal(53_2_0, Animal.Kind.MAMMOTH);
+            var z2 = new Zone.Meadow(53_2, List.of(a2_0), null);
             var sN = new TileSide.Meadow(z0);
-            var sE = new TileSide.River(z0, z3, z2);
+            var sE = new TileSide.River(z0, z1, z2);
             var sS = new TileSide.Meadow(z2);
-            var sW = new TileSide.River(z2, z3, z0);
-            assert tiles.size() == 53;
+            var sW = new TileSide.River(z2, z1, z0);
             tiles.add(new Tile(53, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 54
@@ -736,7 +683,6 @@ public final class Tiles {
             var sE = new TileSide.River(z1, z2, z3);
             var sS = new TileSide.River(z3, z2, z4);
             var sW = new TileSide.Forest(z0);
-            assert tiles.size() == 54;
             tiles.add(new Tile(54, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 55
@@ -749,7 +695,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z0);
             var sS = new TileSide.Forest(z1);
             var sW = new TileSide.River(z2, z3, z4);
-            assert tiles.size() == 55;
             tiles.add(new Tile(55, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 56
@@ -763,7 +708,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z1);
             var sS = new TileSide.Forest(z1);
             var sW = new TileSide.River(z2, z3, z0);
-            assert tiles.size() == 56;
             tiles.add(new Tile(56, Tile.Kind.START, sN, sE, sS, sW));
         }
         {   // Tile 57
@@ -777,7 +721,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z3);
             var sS = new TileSide.Forest(z4);
             var sW = new TileSide.Forest(z4);
-            assert tiles.size() == 57;
             tiles.add(new Tile(57, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 58
@@ -790,7 +733,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z0);
             var sS = new TileSide.River(z1, z2, z3);
             var sW = new TileSide.Forest(z0);
-            assert tiles.size() == 58;
             tiles.add(new Tile(58, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 59
@@ -804,7 +746,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z2);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 59;
             tiles.add(new Tile(59, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 60
@@ -816,7 +757,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z1);
             var sS = new TileSide.Meadow(z2);
             var sW = new TileSide.Forest(z1);
-            assert tiles.size() == 60;
             tiles.add(new Tile(60, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 61
@@ -826,7 +766,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z0);
             var sS = new TileSide.Meadow(z0);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 61;
             tiles.add(new Tile(61, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 62
@@ -836,7 +775,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z0);
             var sS = new TileSide.Meadow(z0);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 62;
             tiles.add(new Tile(62, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 63
@@ -846,7 +784,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z0);
             var sS = new TileSide.Meadow(z1);
             var sW = new TileSide.Forest(z0);
-            assert tiles.size() == 63;
             tiles.add(new Tile(63, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 64
@@ -857,7 +794,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z0);
             var sS = new TileSide.Meadow(z1);
             var sW = new TileSide.Forest(z2);
-            assert tiles.size() == 64;
             tiles.add(new Tile(64, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 65
@@ -868,7 +804,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z0);
             var sS = new TileSide.Meadow(z1);
             var sW = new TileSide.Forest(z0);
-            assert tiles.size() == 65;
             tiles.add(new Tile(65, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 66
@@ -881,7 +816,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z0);
             var sS = new TileSide.River(z1, z2, z3);
             var sW = new TileSide.Meadow(z4);
-            assert tiles.size() == 66;
             tiles.add(new Tile(66, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 67
@@ -893,7 +827,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z1);
             var sS = new TileSide.Meadow(z2);
             var sW = new TileSide.Meadow(z2);
-            assert tiles.size() == 67;
             tiles.add(new Tile(67, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 68
@@ -905,7 +838,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z1);
             var sS = new TileSide.River(z1, z2, z3);
             var sW = new TileSide.Meadow(z3);
-            assert tiles.size() == 68;
             tiles.add(new Tile(68, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 69
@@ -917,7 +849,6 @@ public final class Tiles {
             var sE = new TileSide.River(z1, z2, z3);
             var sS = new TileSide.River(z3, z2, z1);
             var sW = new TileSide.Forest(z0);
-            assert tiles.size() == 69;
             tiles.add(new Tile(69, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 70
@@ -931,7 +862,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z3, z4);
             var sS = new TileSide.Forest(z5);
             var sW = new TileSide.Forest(z5);
-            assert tiles.size() == 70;
             tiles.add(new Tile(70, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 71
@@ -947,7 +877,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z3);
             var sS = new TileSide.River(z4, z5, z6);
             var sW = new TileSide.Forest(z3);
-            assert tiles.size() == 71;
             tiles.add(new Tile(71, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 72
@@ -961,7 +890,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z3);
             var sS = new TileSide.River(z2, z1, z0);
             var sW = new TileSide.Forest(z4);
-            assert tiles.size() == 72;
             tiles.add(new Tile(72, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 73
@@ -975,7 +903,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z3);
             var sS = new TileSide.River(z2, z1, z0);
             var sW = new TileSide.Forest(z4);
-            assert tiles.size() == 73;
             tiles.add(new Tile(73, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 74
@@ -988,7 +915,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z3);
             var sS = new TileSide.River(z2, z1, z0);
             var sW = new TileSide.Forest(z4);
-            assert tiles.size() == 74;
             tiles.add(new Tile(74, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 75
@@ -998,7 +924,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z1);
             var sS = new TileSide.Forest(z1);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 75;
             tiles.add(new Tile(75, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 76
@@ -1009,7 +934,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z0);
             var sS = new TileSide.Forest(z1);
             var sW = new TileSide.Forest(z1);
-            assert tiles.size() == 76;
             tiles.add(new Tile(76, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 77
@@ -1019,7 +943,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z1);
             var sS = new TileSide.Forest(z1);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 77;
             tiles.add(new Tile(77, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 78
@@ -1030,7 +953,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z0);
             var sS = new TileSide.Meadow(z1);
             var sW = new TileSide.Meadow(z1);
-            assert tiles.size() == 78;
             tiles.add(new Tile(78, Tile.Kind.NORMAL, sN, sE, sS, sW));
         }
         {   // Tile 79
@@ -1043,22 +965,20 @@ public final class Tiles {
             var sE = new TileSide.Forest(z1);
             var sS = new TileSide.River(z2, z3, z4);
             var sW = new TileSide.Forest(z1);
-            assert tiles.size() == 79;
             tiles.add(new Tile(79, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 80
             var l1 = new Zone.Lake(80_8, 1, null);
             var z0 = new Zone.Meadow(80_0, List.of(), null);
             var z1 = new Zone.River(80_1, 0, l1);
-            var a2_0 = new Animal(80_2_0, Animal.Kind.AUROCHS);
-            var a2_1 = new Animal(80_2_1, Animal.Kind.MAMMOTH);
+            var a2_0 = new Animal(80_2_0, Animal.Kind.MAMMOTH);
+            var a2_1 = new Animal(80_2_1, Animal.Kind.AUROCHS);
             var z2 = new Zone.Meadow(80_2, List.of(a2_0, a2_1), null);
             var z3 = new Zone.River(80_3, 0, l1);
             var sN = new TileSide.River(z0, z1, z2);
             var sE = new TileSide.Meadow(z2);
             var sS = new TileSide.Meadow(z2);
             var sW = new TileSide.River(z2, z3, z0);
-            assert tiles.size() == 80;
             tiles.add(new Tile(80, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 81
@@ -1070,7 +990,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z1);
             var sS = new TileSide.Forest(z1);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 81;
             tiles.add(new Tile(81, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 82
@@ -1084,7 +1003,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z2);
             var sS = new TileSide.Meadow(z2);
             var sW = new TileSide.Forest(z3);
-            assert tiles.size() == 82;
             tiles.add(new Tile(82, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 83
@@ -1103,7 +1021,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z3, z0);
             var sS = new TileSide.River(z0, z4, z5);
             var sW = new TileSide.River(z5, z6, z0);
-            assert tiles.size() == 83;
             tiles.add(new Tile(83, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 84
@@ -1116,17 +1033,14 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z1, z0);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 84;
             tiles.add(new Tile(84, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 85
-            var a0_0 = new Animal(85_0_0, Animal.Kind.TIGER);
-            var z0 = new Zone.Meadow(85_0, List.of(a0_0), Zone.SpecialPower.WILD_FIRE);
+            var z0 = new Zone.Meadow(85_0, List.of(), Zone.SpecialPower.WILD_FIRE);
             var sN = new TileSide.Meadow(z0);
             var sE = new TileSide.Meadow(z0);
             var sS = new TileSide.Meadow(z0);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 85;
             tiles.add(new Tile(85, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 86
@@ -1143,7 +1057,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z3, z4);
             var sS = new TileSide.River(z4, z5, z0);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 86;
             tiles.add(new Tile(86, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 87
@@ -1156,7 +1069,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z1);
             var sS = new TileSide.Forest(z1);
             var sW = new TileSide.River(z2, z3, z0);
-            assert tiles.size() == 87;
             tiles.add(new Tile(87, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 88
@@ -1168,7 +1080,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z1, z0);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 88;
             tiles.add(new Tile(88, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 89
@@ -1183,19 +1094,17 @@ public final class Tiles {
             var sE = new TileSide.Forest(z3);
             var sS = new TileSide.Forest(z3);
             var sW = new TileSide.River(z4, z5, z0);
-            assert tiles.size() == 89;
             tiles.add(new Tile(89, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 90
-            var a0_0 = new Animal(90_0_0, Animal.Kind.AUROCHS);
-            var a0_1 = new Animal(90_0_1, Animal.Kind.MAMMOTH);
+            var a0_0 = new Animal(90_0_0, Animal.Kind.MAMMOTH);
+            var a0_1 = new Animal(90_0_1, Animal.Kind.AUROCHS);
             var z0 = new Zone.Meadow(90_0, List.of(a0_0, a0_1), null);
             var z1 = new Zone.Forest(90_1, Zone.Forest.Kind.PLAIN);
             var sN = new TileSide.Meadow(z0);
             var sE = new TileSide.Meadow(z0);
             var sS = new TileSide.Forest(z1);
             var sW = new TileSide.Meadow(z0);
-            assert tiles.size() == 90;
             tiles.add(new Tile(90, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 91
@@ -1210,7 +1119,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z3, z4);
             var sS = new TileSide.Meadow(z4);
             var sW = new TileSide.River(z4, z5, z0);
-            assert tiles.size() == 91;
             tiles.add(new Tile(91, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 92
@@ -1220,7 +1128,6 @@ public final class Tiles {
             var sE = new TileSide.Forest(z0);
             var sS = new TileSide.Meadow(z1);
             var sW = new TileSide.Meadow(z1);
-            assert tiles.size() == 92;
             tiles.add(new Tile(92, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 93
@@ -1235,7 +1142,6 @@ public final class Tiles {
             var sE = new TileSide.River(z2, z3, z4);
             var sS = new TileSide.Meadow(z4);
             var sW = new TileSide.River(z4, z5, z0);
-            assert tiles.size() == 93;
             tiles.add(new Tile(93, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         {   // Tile 94
@@ -1245,7 +1151,6 @@ public final class Tiles {
             var sE = new TileSide.Meadow(z1);
             var sS = new TileSide.Meadow(z1);
             var sW = new TileSide.Meadow(z1);
-            assert tiles.size() == 94;
             tiles.add(new Tile(94, Tile.Kind.MENHIR, sN, sE, sS, sW));
         }
         tiles.trimToSize();

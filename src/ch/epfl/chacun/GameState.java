@@ -35,7 +35,10 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
     public GameState {
         Preconditions.checkArgument(players.size() >= 2);
         Preconditions.checkArgument(tileToPlace == null ^ nextAction == Action.PLACE_TILE);
-        Preconditions.checkArgument(tileDecks != null && board != null && nextAction != null && messageBoard != null);
+        Objects.requireNonNull(tileDecks);
+        Objects.requireNonNull(board);
+        Objects.requireNonNull(nextAction);
+        Objects.requireNonNull(messageBoard);
         players = List.copyOf(players);
     }
 
@@ -233,7 +236,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
      */
     public GameState withOccupantRemoved(Occupant occupant){
         Preconditions.checkArgument(nextAction == Action.RETAKE_PAWN);
-        Preconditions.checkArgument(occupant.kind() == Occupant.Kind.PAWN || occupant == null);
+        Preconditions.checkArgument(occupant == null || occupant.kind() == Occupant.Kind.PAWN);
         if (occupant == null){
             return withTurnFinishedIfOccupationImpossible();
         }
@@ -334,7 +337,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
 
         if (canPlayAgain){
-            updatedMessageBoard = messageBoard.withClosedForestWithMenhir(currentPlayer(), closedForestAreaWithMenhir);
+            updatedMessageBoard = updatedMessageBoard.withClosedForestWithMenhir(currentPlayer(), closedForestAreaWithMenhir);
 
             updatedTileDecks = updatedTileDecks.withTopTileDrawnUntil(Tile.Kind.MENHIR, updatedBoard::couldPlaceTile);
             updatedTileToPlace = updatedTileDecks.topTile(Tile.Kind.MENHIR);
@@ -402,29 +405,25 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
         Board updatedBoard = board;
 
         // Compute the points for the meadows
-        Set<Animal> cancelledAnimals = new HashSet<>(board.cancelledAnimals());
+        Set<Animal> cancelledAnimals = board.cancelledAnimals();
 
         for (Area<Zone.Meadow> meadowArea : board.meadowAreas()) {
-            // Check if the zone has the WILD_FIRE special power
-            if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.WILD_FIRE)) {
+            // Check if there is a PitTrap in the zone
+            if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.PIT_TRAP)) {
 
-                // Check if there is a PitTrap in the zone
-                if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.PIT_TRAP)) {
+                Zone pitTrapZone = meadowArea.zoneWithSpecialPower(Zone.SpecialPower.PIT_TRAP);
+                Area<Zone.Meadow> adjacentMeadow = board.adjacentMeadow(board.tileWithId(pitTrapZone.tileId()).pos(), (Zone.Meadow) pitTrapZone);
+
+                // Check if the zone has the WILD_FIRE special power
+                if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.WILD_FIRE)) {
+
                     // No cancelled deers, call withScoredPitTrap and withScoredMeadow
-
-                    updatedMessageBoard = updatedMessageBoard.withScoredPitTrap(meadowArea, cancelledAnimals);
+                    updatedMessageBoard = updatedMessageBoard.withScoredPitTrap(adjacentMeadow, cancelledAnimals);
                     updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, cancelledAnimals);
+
                 } else {
-                    // No PitTrap, no cancelled deers, call withScoredMeadow
-                    updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, cancelledAnimals);
-                }
-            } else {
-                if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.PIT_TRAP)) {
-
-                    Zone pitTrapZone = meadowArea.zoneWithSpecialPower(Zone.SpecialPower.PIT_TRAP);
 
                     Set<Animal> newlyCancelledAnimals = new HashSet<>(board.cancelledAnimals());
-                    Area<Zone.Meadow> adjacentMeadow = board.adjacentMeadow(board.tileWithId(pitTrapZone.tileId()).pos(), (Zone.Meadow) pitTrapZone);
 
                     Set<Animal> notCancelledYetAnimals = Area.animals(adjacentMeadow, board.cancelledAnimals());
 
@@ -456,7 +455,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                         int cancelledAdjDeerCount = 0;
 
                         Iterator<Animal> notCancelledYetAdjDeersIterator = adjacentDeers.iterator();
-                        while (notCancelledYetAdjDeersIterator.hasNext() && cancelledAdjDeerCount < remainingAdjDeersToCancel && adjacentDeerCount < 0) {
+                        while (notCancelledYetAdjDeersIterator.hasNext() && cancelledAdjDeerCount < remainingAdjDeersToCancel && adjacentDeerCount > 0) {
                             newlyCancelledAnimals.add(notCancelledYetAdjDeersIterator.next());
                             cancelledAdjDeerCount++;
                             adjacentDeerCount--;
@@ -474,6 +473,13 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                     updatedBoard = updatedBoard.withMoreCancelledAnimals(newlyCancelledAnimals);
                     updatedMessageBoard = updatedMessageBoard.withScoredPitTrap(adjacentMeadow, newlyCancelledAnimals);
                     updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, newlyCancelledAnimals);
+                }
+
+            } else {
+
+                if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.WILD_FIRE)) {
+                    // No PitTrap, no cancelled deers, call withScoredMeadow
+                    updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, cancelledAnimals);
 
                 } else {
 
