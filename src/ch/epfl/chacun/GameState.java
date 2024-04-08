@@ -244,9 +244,9 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
         GameState updatedGamestate = new GameState(
                   players
                 , tileDecks
-                , tileToPlace
+                , null
                 , board.withoutOccupant(occupant)
-                , nextAction
+                , Action.OCCUPY_TILE
                 , messageBoard);
 
         return updatedGamestate.withTurnFinishedIfOccupationImpossible();
@@ -412,7 +412,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
             if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.PIT_TRAP)) {
 
                 Zone pitTrapZone = meadowArea.zoneWithSpecialPower(Zone.SpecialPower.PIT_TRAP);
-                Area<Zone.Meadow> adjacentMeadow = board.adjacentMeadow(board.tileWithId(pitTrapZone.tileId()).pos(), (Zone.Meadow) pitTrapZone);
+                Area<Zone.Meadow> adjacentMeadow = updatedBoard.adjacentMeadow(board.tileWithId(pitTrapZone.tileId()).pos(), (Zone.Meadow) pitTrapZone);
 
                 // Check if the zone has the WILD_FIRE special power
                 if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.WILD_FIRE)) {
@@ -423,9 +423,9 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
                 } else {
 
-                    Set<Animal> newlyCancelledAnimals = new HashSet<>(board.cancelledAnimals());
+                    Set<Animal> newlyCancelledAnimals = new HashSet<>(updatedBoard.cancelledAnimals());
 
-                    Set<Animal> notCancelledYetAnimals = Area.animals(adjacentMeadow, board.cancelledAnimals());
+                    Set<Animal> notCancelledYetAnimals = Area.animals(meadowArea, updatedBoard.cancelledAnimals());
 
                     Map<Animal.Kind, Integer> animalCountMap = new HashMap<>();
 
@@ -451,23 +451,23 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                     if (smilodonCount >= notAdjacentDeerCount) {
                         newlyCancelledAnimals.addAll(notAdjacentDeers);
 
-                        int remainingAdjDeersToCancel = smilodonCount - notAdjacentDeerCount;
+                        int remainingAdjDeerToCancelCount = smilodonCount - notAdjacentDeerCount;
                         int cancelledAdjDeerCount = 0;
 
                         Iterator<Animal> notCancelledYetAdjDeersIterator = adjacentDeers.iterator();
-                        while (notCancelledYetAdjDeersIterator.hasNext() && cancelledAdjDeerCount < remainingAdjDeersToCancel && adjacentDeerCount > 0) {
+                        while (notCancelledYetAdjDeersIterator.hasNext() && cancelledAdjDeerCount < remainingAdjDeerToCancelCount && adjacentDeerCount > 0) {
                             newlyCancelledAnimals.add(notCancelledYetAdjDeersIterator.next());
                             cancelledAdjDeerCount++;
                             adjacentDeerCount--;
                         }
                     } else {
 
-                        int cancelledExtDeerCount = 0;
+                        int cancelledNotAdjDeerCount = 0;
 
-                        Iterator<Animal> notCancelledYetAdjDeersIterator = adjacentDeers.iterator();
-                        while (notCancelledYetAdjDeersIterator.hasNext() && cancelledExtDeerCount < smilodonCount) {
-                            newlyCancelledAnimals.add(notCancelledYetAdjDeersIterator.next());
-                            cancelledExtDeerCount++;
+                        Iterator<Animal> notCancelledYetNotAdjDeersIterator = notAdjacentDeers.iterator();
+                        while (notCancelledYetNotAdjDeersIterator.hasNext() && cancelledNotAdjDeerCount < smilodonCount) {
+                            newlyCancelledAnimals.add(notCancelledYetNotAdjDeersIterator.next());
+                            cancelledNotAdjDeerCount++;
                         }
                     }
                     updatedBoard = updatedBoard.withMoreCancelledAnimals(newlyCancelledAnimals);
@@ -506,7 +506,6 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                             deerCount--;
                         }
                     }
-                    newlyCancelledAnimals.addAll(notCancelledYetAnimals);
 
                     updatedBoard = updatedBoard.withMoreCancelledAnimals(newlyCancelledAnimals);
                     updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, newlyCancelledAnimals);
