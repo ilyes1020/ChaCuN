@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Represents the board in ChaCuN
+ * Represents the board in ChaCuN.
  *
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding(379902)
