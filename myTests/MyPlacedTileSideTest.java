@@ -1,11 +1,7 @@
-package ch.epfl.chacun.MyTests;
-
 import ch.epfl.chacun.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 

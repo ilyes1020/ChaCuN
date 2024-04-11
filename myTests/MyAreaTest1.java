@@ -1,5 +1,3 @@
-package ch.epfl.chacun.MyTests;
-
 /**
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding (379902)
@@ -16,7 +14,6 @@ import java.util.*;
 
 import static ch.epfl.chacun.Animal.Kind.DEER;
 import static ch.epfl.chacun.Area.*;
-import static ch.epfl.chacun.Area.lakeCount;
 import static ch.epfl.chacun.PlayerColor.*;
 import static ch.epfl.chacun.Zone.SpecialPower.SHAMAN;
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,5 +1,3 @@
-package ch.epfl.chacun.MyTests;
-
 import ch.epfl.chacun.Tile;
 import ch.epfl.chacun.TileSide;
 import ch.epfl.chacun.Zone;

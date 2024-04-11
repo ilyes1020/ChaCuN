@@ -1,9 +1,6 @@
-package ch.epfl.chacun.MyTests;
-
 import ch.epfl.chacun.Animal;
 import ch.epfl.chacun.PlayerColor;
 import ch.epfl.chacun.TextMaker;
-import ch.epfl.chacun.Zone;
 
 import java.util.Map;
 import java.util.Set;

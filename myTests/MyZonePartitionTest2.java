@@ -1,5 +1,3 @@
-package ch.epfl.chacun.MyTests;
-
 import ch.epfl.chacun.Area;
 import ch.epfl.chacun.PlayerColor;
 import ch.epfl.chacun.Zone;

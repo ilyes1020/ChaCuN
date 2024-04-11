@@ -1,10 +1,7 @@
-package ch.epfl.chacun.MyTests;
-
 import ch.epfl.chacun.Animal;
 import ch.epfl.chacun.PlayerColor;
 import ch.epfl.chacun.TextMaker;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;

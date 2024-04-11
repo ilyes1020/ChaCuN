@@ -1,5 +1,3 @@
-package ch.epfl.chacun.MyTests;
-
 import ch.epfl.chacun.*;
 import ch.epfl.chacun.utils.ChaCuNUtils;
 import ch.epfl.chacun.utils.Tuples;

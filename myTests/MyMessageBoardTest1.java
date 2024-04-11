@@ -1,5 +1,3 @@
-package ch.epfl.chacun.MyTests;
-
 import ch.epfl.chacun.*;
 import org.junit.jupiter.api.Test;
 

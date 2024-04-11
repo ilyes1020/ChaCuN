@@ -96,27 +96,11 @@ public record TileDecks(List<Tile> startTiles, List<Tile> normalTiles, List<Tile
      * @return A new TileDecks record with tiles removed from the specified tile deck until the predicate returns false.
      */
     public TileDecks withTopTileDrawnUntil(Tile.Kind kind, Predicate<Tile> predicate) {
-        List<Tile> updatedStartTiles = startTiles;
-        List<Tile> updatedNormalTiles = normalTiles;
-        List<Tile> updatedMenhirTiles = menhirTiles;
-
-        switch (kind) {
-            case START:
-                while (!updatedStartTiles.isEmpty() && !predicate.test(updatedStartTiles.getFirst())) {
-                    updatedStartTiles = updatedStartTiles.subList(1, updatedStartTiles.size());
-                }
-                break;
-            case NORMAL:
-                while (!updatedNormalTiles.isEmpty() && !predicate.test(updatedNormalTiles.getFirst())) {
-                    updatedNormalTiles = updatedNormalTiles.subList(1, updatedNormalTiles.size());
-                }
-                break;
-            case MENHIR:
-                while (!updatedMenhirTiles.isEmpty() && !predicate.test(updatedMenhirTiles.getFirst())) {
-                    updatedMenhirTiles = updatedMenhirTiles.subList(1, updatedMenhirTiles.size());
-                }
-                break;
+        TileDecks updatedDecks = this;
+        while (updatedDecks.deckSize(kind) > 0 && !predicate.test(updatedDecks.topTile(kind))) {
+            updatedDecks = updatedDecks.withTopTileDrawn(kind);
         }
-        return new TileDecks(updatedStartTiles, updatedNormalTiles, updatedMenhirTiles);
+        return updatedDecks;
     }
+
 }

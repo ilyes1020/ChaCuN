@@ -1,17 +1,12 @@
-package ch.epfl.chacun.MyTests;
-
-
 import ch.epfl.chacun.*;
-import ch.epfl.chacun.TextMade;
 import org.junit.jupiter.api.Test;
-import ch.epfl.chacun.Tiles;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MyGameStateTest2 {
 

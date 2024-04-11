@@ -31,14 +31,10 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
      * @throws IllegalArgumentException if the zone does not belong to any area in the partition
      */
     public Area<Z> areaContaining(Z zone){
-        Area<Z> areaWithZone = null;
-        for (Area<Z> area : areas){
-            if (area.zones().contains(zone)){
-                areaWithZone = area;
-            }
-        }
-        Preconditions.checkArgument(areaWithZone != null);
-        return areaWithZone;
+        return areas.stream()
+                .filter(area -> area.zones().contains(zone))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Zone does not belong to any area in the partition"));
     }
 
     /**

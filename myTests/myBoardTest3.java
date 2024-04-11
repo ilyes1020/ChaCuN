@@ -1,9 +1,7 @@
-package ch.epfl.chacun.MyTests;
-
-
 import ch.epfl.chacun.*;
-import org.junit.jupiter.api.Test;
 import ch.epfl.chacun.utils.ChaCuNUtils;
+import org.junit.jupiter.api.Test;
+
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
