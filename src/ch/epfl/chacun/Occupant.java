@@ -3,7 +3,8 @@ package ch.epfl.chacun;
 import java.util.Objects;
 
 /**
- * Record that represents the occupant of a zone
+ * Record that represents the occupant of a zone.
+ *
  * @param kind the kind of the occupant (defined by the inner enum Kind)
  * @param zoneId the id of the zone the occupant occupies
  *
@@ -13,12 +14,12 @@ import java.util.Objects;
 public record Occupant(Kind kind, int zoneId) {
 
     /**
-     * enum representing the 2 kinds of occupant
+     * Enum representing the 2 kinds of occupant
      */
     public enum Kind {
 
         /**
-         * Represents a pawn occupant
+         * Represents a pawn occupant.
          */
         PAWN,
 
@@ -29,9 +30,11 @@ public record Occupant(Kind kind, int zoneId) {
     }
 
     /**
-     * compact constructor that throws an IllegalArgumentException if the zoneId is null or < 0
+     * Compact constructor.
+     *
      * @param kind the kind of the occupant
      * @param zoneId the id of the zone the occupant occupies
+     * @throws IllegalArgumentException if the zoneId is null or < 0
      */
     public Occupant {
         Objects.requireNonNull(kind);
@@ -39,7 +42,8 @@ public record Occupant(Kind kind, int zoneId) {
     }
 
     /**
-     * count the number total of occupant
+     * Count the number total of occupant.
+     *
      * @param kind the kind of the occupant
      * @return the total number of occupant (int)
      */

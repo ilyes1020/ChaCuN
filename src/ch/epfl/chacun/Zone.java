@@ -3,7 +3,7 @@ package ch.epfl.chacun;
 import java.util.List;
 
 /**
- * interface representing the zones in game
+ * Interface representing the zones in game.
  *
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding(379902)
@@ -11,42 +11,43 @@ import java.util.List;
 public sealed interface Zone {
 
     /**
-     * enum representing the special powers of the zones
+     * Enum representing the special powers of the zones.
      */
     enum SpecialPower {
 
         /**
-         * Represents the shaman special power
+         * Represents the shaman special power.
          */
         SHAMAN,
 
         /**
-         * Represents the logboat special power
+         * Represents the logboat special power.
          */
         LOGBOAT,
 
         /**
-         * Represents the hunting trap special power
+         * Represents the hunting trap special power.
          */
         HUNTING_TRAP,
 
         /**
-         * Represents the pit trap special power
+         * Represents the pit trap special power.
          */
         PIT_TRAP,
 
         /**
-         * Represents the wildfire special power
+         * Represents the wildfire special power.
          */
         WILD_FIRE,
 
         /**
-         * Represents the raft special power
+         * Represents the raft special power.
          */
         RAFT;
     }
     /**
-     * gives the id of his tile
+     * Gives the id of his tile.
+     *
      * @param zoneId the id of the zone
      * @return the id of the tile (int)
      */
@@ -55,7 +56,8 @@ public sealed interface Zone {
     }
 
     /**
-     * gives the local id of the zone in his tile
+     * Gives the local id of the zone in his tile.
+     *
      * @param zoneId the id of the zone
      * @return the local id of the zone (int)
      */
@@ -64,27 +66,31 @@ public sealed interface Zone {
     }
 
     /**
-     * abstract method that gives the id of the zone
+     * Abstract method that gives the id of the zone.
+     *
      * @return the id of the zone (int)
      */
     int id();
 
     /**
-     * default method that gives the id of the tile
+     * Default method that gives the id of the tile.
+     *
      * @return the id of the tile (int)
      */
     default int tileId(){
         return id() / 10;
     }
     /**
-     * default method that gives the local id of the zone
+     * Default method that gives the local id of the zone.
+     *
      * @return the local id of the zone (int)
      */
     default int localId(){
         return id() % 10;
     }
     /**
-     * default method that gives the special power of the zone
+     * Default method that gives the special power of the zone.
+     *
      * @return the special power of the zone (SpecialPower)
      */
     default SpecialPower specialPower(){
@@ -92,7 +98,7 @@ public sealed interface Zone {
     }
 
     /**
-     * Record representing a forest
+     * Record representing a forest.
      *
      * @param id the id of the forest
      * @param kind the kind of the forest
@@ -107,7 +113,8 @@ public sealed interface Zone {
     }
 
     /**
-     * record representing a meadow
+     * Record representing a meadow.
+     *
      * @param id the id of the meadow
      * @param animals list of animals in the meadow
      * @param specialPower the special power of the meadow
@@ -119,7 +126,7 @@ public sealed interface Zone {
     }
 
     /**
-     * interface representing aquatic areas
+     * Interface representing aquatic areas.
      */
     sealed interface Water extends Zone{
         /**
@@ -130,7 +137,8 @@ public sealed interface Zone {
     }
 
     /**
-     * record representing a lake
+     * Record representing a lake.
+     *
      * @param id the id of the lake
      * @param fishCount the number of fish in the lake
      * @param specialPower the special power of the lake
@@ -138,7 +146,8 @@ public sealed interface Zone {
     record Lake (int id, int fishCount, SpecialPower specialPower) implements Water{}
 
     /**
-     * record representing a river
+     * Record representing a river.
+     *
      * @param id the id of the river
      * @param fishCount the number of fish in the river
      * @param lake the lake which is linked to the river

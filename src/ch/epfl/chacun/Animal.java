@@ -38,6 +38,8 @@ public record Animal(int id, Kind kind) {
     }
 
     /**
+     * Returns the id of the tile on which the animal is standing
+     *
      * @return the id of the tile on which the animal is standing
      */
     public int tileId(){

@@ -13,6 +13,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
 
     /**
      * Compact constructor for the immutable Area record, sorts the occupants by player colors.
+     *
      * @param zones the set of zones in the area
      * @param occupants the list of player occupying the area
      * @param openConnections the number of open connections of the area

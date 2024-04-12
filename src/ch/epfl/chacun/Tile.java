@@ -3,9 +3,12 @@ package ch.epfl.chacun;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
- * record representing a tile
+ * Record representing a tile.
+ *
  * @param id the id of the tile
  * @param kind the kind of the tile
  * @param n the north side of the tile
@@ -19,28 +22,29 @@ import java.util.Set;
 public record Tile(int id, Kind kind, TileSide n, TileSide e, TileSide s, TileSide w) {
 
     /**
-     * enum representing the three kinds of tiles
+     * Enum representing the three kinds of tiles.
      */
     public enum Kind{
 
         /**
-         * Represents the starting tile
+         * Represents the starting tile.
          */
         START,
 
         /**
-         * Represents a normal tile
+         * Represents a normal tile.
          */
         NORMAL,
 
         /**
-         * Represents a tile with a menhir
+         * Represents a tile with a menhir.
          */
         MENHIR;
     }
 
     /**
-     * gives a list of the tile sides of the tile
+     * Gives a list of the tile sides of the tile.
+     *
      * @return the tile sides of the tile (List)
      */
     public List<TileSide> sides(){
@@ -48,29 +52,25 @@ public record Tile(int id, Kind kind, TileSide n, TileSide e, TileSide s, TileSi
     }
 
     /**
-     * gives the zones that are in contact with at least one side of the tile (exluding lakes)
+     * Gives the zones that are in contact with at least one side of the tile (excluding lakes).
+     *
      * @return the zones that are in contact with at least one side of the tile (Set)
      */
     public Set<Zone> sideZones(){
-        Set<Zone> zones = new HashSet<>();
-        for (TileSide tileSide: sides()) {
-            zones.addAll(tileSide.zones());
-        }
-        return zones;
+        return sides().stream()
+                .flatMap(tileSide -> tileSide.zones().stream())
+                .collect(Collectors.toSet());
     }
 
     /**
-     * gives all the zones on the tile
+     * Gives all the zones on the tile.
+     *
      * @return all the zones on the tile (Set)
      */
     public Set<Zone> zones(){
-        Set<Zone> zones = new HashSet<>();
-        for (Zone zone: sideZones()) {
-            zones.add(zone);
-            if (zone instanceof Zone.River river && river.hasLake()) {
-                zones.add(river.lake());
-            }
-        }
-        return zones;
+        return sideZones().stream()
+                .flatMap(zone -> zone instanceof Zone.River river && river.hasLake() ?
+                        Stream.of(zone, river.lake()) : Stream.of(zone))
+                .collect(Collectors.toSet());
     }
 }

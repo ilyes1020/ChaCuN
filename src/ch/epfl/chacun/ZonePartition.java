@@ -3,8 +3,8 @@ package ch.epfl.chacun;
 import java.util.*;
 
 /**
- * record representing a zone partition of a specific type of Zone
- * (Set of Areas forming a partition)
+ * Record representing a zone partition of a specific type of Zone
+ * (Set of Areas forming a partition).
  *
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding(379902)
@@ -12,7 +12,8 @@ import java.util.*;
 public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
 
     /**
-     * Compact constructor that makes ZonePartition immutable
+     * Compact constructor that makes ZonePartition immutable.
+     *
      * @param areas the set of areas in the partition
      */
     public ZonePartition {
@@ -23,8 +24,7 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
     }
 
     /**
-     * Gets the area containing the given zone
-     * Throws IllegalArgumentException if the zone does not belong to any area in the partition
+     * Gets the area containing the given zone.
      *
      * @param zone the zone in the area we want
      * @return the area containing the zone
@@ -38,8 +38,8 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
     }
 
     /**
-     * A builder class for constructing instances of the {@code ZonePartition} class
-     * This builder allows for the modification and creation of a {@code ZonePartition} by manipulating its internal areas
+     * A builder class for constructing instances of the {@code ZonePartition} class.
+     * This builder allows for the modification and creation of a {@code ZonePartition} by manipulating its internal areas.
      *
      * @param <Z> the type of zones in the ZonePartition
      */
@@ -47,7 +47,8 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
         private Set<Area<Z>> areas;
 
         /**
-         * Constructor to instantiate a ZonePartition's Builder from an existing ZonePartition
+         * Constructor to instantiate a ZonePartition's Builder from an existing ZonePartition.
+         *
          * @param zonePartition the existing ZonePartition
          */
         public Builder(ZonePartition<Z> zonePartition) {
@@ -66,11 +67,11 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
         }
 
         /**
-         * Adds an initial occupant of the specified color to the area containing the given zone
-         * Throws IllegalArgumentException if the zone does not belong to any area in the partition or if the area is already occupied
+         * Adds an initial occupant of the specified color to the area containing the given zone.
          *
          * @param zone the zone to add the initial occupant to
          * @param color the color of the initial occupant
+         * @throws IllegalArgumentException if the zone does not belong to any area in the partition or if the area is already occupied
          */
         public void addInitialOccupant(Z zone, PlayerColor color){
             Area<Z> areaWithZone = build().areaContaining(zone);
@@ -80,10 +81,10 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
 
         /**
          * Removes an occupant of the specified color from the area containing the given zone
-         * Throws IllegalArgumentException if the zone does not belong to any area in the partition or if the area is not occupied by an occupant of the specified color
          *
          * @param zone the zone to remove the occupant from
          * @param color the color of the occupant to be removed
+         * @throws IllegalArgumentException if the zone does not belong to any area in the partition or if the area is not occupied by an occupant of the specified color
          */
         public void removeOccupant(Z zone, PlayerColor color){
             Area<Z> areaWithZone = build().areaContaining(zone);
@@ -93,9 +94,9 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
 
         /**
          * Removes all occupants from the given area
-         * Throws IllegalArgumentException if the given area is not in the partition
          *
          * @param area the area from which all occupants should be removed
+         * @throws IllegalArgumentException if the area is not in the partition
          */
         public void removeAllOccupantsOf(Area<Z> area){
             Preconditions.checkArgument(areas.contains(area));
@@ -104,11 +105,12 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
         }
 
         /**
-         * Connects the two areas containing the two distinct zones to form a new area
-         * The areas containing the two zones can be the same. Throws IllegalArgumentException if either zone does not belong to an area in the partition
+         * Connects the two areas containing the two distinct zones to form a new area.
+         * The areas containing the two zones can be the same.
          *
          * @param zone1 the zone in the first area
          * @param zone2 the zone in the second area
+         * @throws IllegalArgumentException if either zone does not belong to an area in the partition
          */
         public void union(Z zone1, Z zone2){
             Area<Z> areaWithZone1 = build().areaContaining(zone1);
@@ -120,7 +122,7 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
         }
 
         /**
-         * Builds the zone partition
+         * Builds the zone partition.
          *
          * @return the new zone partition
          */

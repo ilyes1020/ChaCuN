@@ -9,14 +9,14 @@ package ch.epfl.chacun;
 public final class Preconditions {
 
     /**
-     * Private constructor to prevent instantiation
+     * Private constructor to prevent instantiation.
      */
     private Preconditions() {}
 
     /**
      * Throws an exception if the given argument is false
-     * @param shouldBeTrue
-     * @throws IllegalArgumentException
+     * @param shouldBeTrue the condition to check
+     * @throws IllegalArgumentException if the condition is false
      */
     public static void checkArgument(boolean shouldBeTrue) throws IllegalArgumentException{
         if (!shouldBeTrue) {

@@ -1,7 +1,8 @@
 package ch.epfl.chacun;
 
 /**
- * record that represent a position
+ * Record that represent a position.
+ *
  * @param x coordinate x
  * @param y coordinate y
  *
@@ -12,7 +13,8 @@ public record Pos(int x, int y) {
     public final static Pos ORIGIN = new Pos(0, 0);
 
     /**
-     * translates the position
+     * Translates the position.
+     *
      * @param dX delta x
      * @param dY delta y
      * @return translated position (Pos)
@@ -22,7 +24,8 @@ public record Pos(int x, int y) {
     }
 
     /**
-     * gives the neighbor position
+     * Gives the neighbor position.
+     *
      * @param direction the direction in which we want the neighbor position
      * @return the neighbor position (Pos)
      */
