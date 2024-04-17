@@ -1,9 +1,10 @@
 package ch.epfl.chacun;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * record representing an area
+ * Record representing an area.
  *
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding(379902)
@@ -12,6 +13,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
 
     /**
      * Compact constructor for the immutable Area record, sorts the occupants by player colors.
+     *
      * @param zones the set of zones in the area
      * @param occupants the list of player occupying the area
      * @param openConnections the number of open connections of the area
@@ -28,104 +30,93 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
     }
 
     /**
-     * Checks if a forest area has at least one menhir
+     * Checks if a forest area has at least one menhir.
      *
      * @param forest the forest area to check
      * @return true if the forest contains at least one menhir, false otherwise
      */
-    public static boolean hasMenhir(Area<Zone.Forest> forest){
-        for(Zone.Forest aForest : forest.zones()){
-            if (aForest.kind() == Zone.Forest.Kind.WITH_MENHIR){
-                return true;
-            }
-        }
-        return false;
+    public static boolean hasMenhir(Area<Zone.Forest> forest) {
+        return forest.zones().stream()
+                .anyMatch(aForest -> aForest.kind() == Zone.Forest.Kind.WITH_MENHIR);
     }
 
     /**
-     * Counts the number of mushroom groups in a forest area
+     * Counts the number of mushroom groups in a forest area.
      *
      * @param forest the forest area to count mushroom groups in
      * @return the number of mushroom groups in the forest
      */
-    public static int mushroomGroupCount(Area<Zone.Forest> forest){
-        int count = 0;
-        for(Zone.Forest aForest : forest.zones()){
-            if (aForest.kind() == Zone.Forest.Kind.WITH_MUSHROOMS){
-                count++;
-            }
-        }
-        return count;
+
+    public static int mushroomGroupCount(Area<Zone.Forest> forest) {
+        return (int) forest.zones().stream()
+                .filter(aForest -> aForest.kind() == Zone.Forest.Kind.WITH_MUSHROOMS)
+                .count();
     }
 
     /**
-     * Gets the set of animals in a meadow area excluding a set of cancelled animals
+     * Gets the set of animals in a meadow area excluding a set of cancelled animals.
      *
      * @param meadow the meadow area to get animals from
      * @param cancelledAnimals the set of cancelled animals
      * @return the set of animals in the meadow excluding the cancelled ones
      */
     public static Set<Animal> animals(Area<Zone.Meadow> meadow, Set<Animal> cancelledAnimals){
-        Set <Animal> animals = new HashSet<>();
-        for(Zone.Meadow aMeadow : meadow.zones()){
-            animals.addAll(aMeadow.animals());
-        }
+        Set<Animal> animals = meadow.zones().stream()
+                .flatMap(aMeadow -> aMeadow.animals().stream())
+                .collect(Collectors.toSet());
+
         if (cancelledAnimals != null){
             animals.removeAll(cancelledAnimals);
         }
+
         return animals;
     }
 
     /**
-     * Counts the number of river fish in a river area
+     * Counts the number of river fish in a river area.
      *
      * @param river the river area to count fish in
      * @return the number of river fish
      */
     public static int riverFishCount(Area<Zone.River> river) {
         Set<Zone.Lake> lakesEncountered = new HashSet<>();
-        int fishCount = 0;
-
-        for (Zone.River aRiver : river.zones()) {
-            fishCount += aRiver.fishCount();
-            if (aRiver.hasLake() && lakesEncountered.add(aRiver.lake())) {
-                fishCount += aRiver.lake().fishCount();
-            }
-        }
-        return fishCount;
+        return river.zones().stream()
+                .mapToInt(aRiver -> {
+                    int fishCount = aRiver.fishCount();
+                    if (aRiver.hasLake() && lakesEncountered.add(aRiver.lake())) {
+                        fishCount += aRiver.lake().fishCount();
+                    }
+                    return fishCount;
+                })
+                .sum();
     }
 
     /**
-     * Counts the total number of fish in a water area representing a river system
+     * Counts the total number of fish in a water area representing a river system.
      *
      * @param riverSystem the water area representing the river system
      * @return the total number of fish in the river system
      */
     public static int riverSystemFishCount(Area<Zone.Water> riverSystem){
-        int fishCount = 0;
-        for(Zone.Water aWater : riverSystem.zones()){
-            fishCount += aWater.fishCount();
-        }
-        return fishCount;
+        return riverSystem.zones().stream()
+                .mapToInt(Zone.Water::fishCount)
+                .sum();
     }
 
     /**
-     * Counts the number of lakes in a water area representing a river system
+     * Counts the number of lakes in a water area representing a river system.
      *
      * @param riverSystem the water area representing the river system
      * @return the number of lakes in the river system
      */
     public static int lakeCount(Area<Zone.Water> riverSystem){
-        int lakeCount = 0;
-        for(Zone.Water aWater : riverSystem.zones()){
-            if (aWater instanceof Zone.Lake){
-                lakeCount++;
-            }
-        }
-        return lakeCount;
+        return (int) riverSystem.zones().stream()
+                .filter(aWater -> aWater instanceof Zone.Lake)
+                .count();
     }
+
     /**
-     * Checks if the area is closed (has no open connections)
+     * Checks if the area is closed (has no open connections).
      *
      * @return true if the area is closed, false otherwise
      */
@@ -134,7 +125,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
     }
 
     /**
-     * Checks if the area is occupied by at least one occupant
+     * Checks if the area is occupied by at least one occupant.
      *
      * @return true if the area is occupied, false otherwise
      */
@@ -143,10 +134,11 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
     }
 
     /**
-     * Gets the set of majority occupants in the area
+     * Gets the set of majority occupants in the area.
      *
      * @return the set of majority occupants
      */
+
     public Set<PlayerColor> majorityOccupants() {
         int[] occupantsCount = new int[PlayerColor.values().length];
 
@@ -157,20 +149,16 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
         int maxOccupants = Arrays.stream(occupantsCount).max().orElse(0);
 
         if (maxOccupants > 0) {
-            Set<PlayerColor> majorityColors = new HashSet<>();
-            for (PlayerColor color : PlayerColor.values()) {
-                if (occupantsCount[color.ordinal()] == maxOccupants) {
-                    majorityColors.add(color);
-                }
-            }
-            return majorityColors;
+            return Arrays.stream(PlayerColor.values())
+                    .filter(color -> occupantsCount[color.ordinal()] == maxOccupants)
+                    .collect(Collectors.toSet());
         } else {
             return Set.of();
         }
     }
 
     /**
-     * Connects the area to another area and return the resulting area
+     * Connects the area to another area and return the resulting area.
      *
      * @param that the area to connect to
      * @return the area resulting from the connection
@@ -194,7 +182,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
 
 
     /**
-     * Creates a new area with an initial occupant of the specified color
+     * Creates a new area with an initial occupant of the specified color.
      *
      * @param occupant the color of the initial occupant
      * @return a new area with the initial occupant
@@ -205,7 +193,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
     }
 
     /**
-     * Creates a new area without an occupant of the specified color
+     * Creates a new area without an occupant of the specified color.
      *
      * @param occupant the color of the occupant to be removed
      * @return a new area without the specified occupant
@@ -221,7 +209,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
     }
 
     /**
-     * Creates a new area without any occupants
+     * Creates a new area without any occupants.
      *
      * @return a new area without any occupants
      */
@@ -230,30 +218,26 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
     }
 
     /**
-     * Gets the set of tile IDs associated with the zones in the area
+     * Gets the set of tile IDs associated with the zones in the area.
      *
      * @return the set of tile IDs
      */
     public Set<Integer> tileIds(){
-        Set<Integer> tileIds = new HashSet<>();
-        for(Z zone : zones){
-            tileIds.add(zone.tileId());
-        }
-        return tileIds;
+        return zones.stream()
+                .map(Zone::tileId)
+                .collect(Collectors.toSet());
     }
 
     /**
-     * Gets the zone with a specific special power in the area
+     * Gets the zone with a specific special power in the area.
      *
      * @param specialPower the special power to search for
      * @return the zone with the specified special power, or null if not found
      */
     public Zone zoneWithSpecialPower(Zone.SpecialPower specialPower){
-        for (Z zone : zones) {
-            if (zone.specialPower() == specialPower) {
-                return zone;
-            }
-        }
-        return null;
+        return zones.stream()
+                .filter(zone -> zone.specialPower() == specialPower)
+                .findFirst()
+                .orElse(null);
     }
 }

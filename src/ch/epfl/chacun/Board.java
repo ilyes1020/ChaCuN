@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Represents the board in ChaCuN
+ * Represents the board in ChaCuN.
  *
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding(379902)
@@ -16,6 +16,7 @@ public final class Board {
     private final Set<Animal> cancelledAnimals;
 
     public static final int REACH = 12;
+    public static final int BOARD_SIZE = 25;
     public static final Board EMPTY = new Board(new PlacedTile[625], new int[0], ZonePartitions.EMPTY, new HashSet<>());
 
     public Board(PlacedTile[] placedTiles, int[] tilesIndex, ZonePartitions zonePartitions, Set<Animal> cancelledAnimals) {
@@ -31,17 +32,10 @@ public final class Board {
      * @param pos The position to check for the tile.
      * @return The tile at the given position, or null if no tile is found or the position is invalid.
      */
+
     public PlacedTile tileAt(Pos pos) {
-        if (pos.x() < -REACH ||
-                pos.y() < -REACH ||
-                pos.x() > REACH ||
-                pos.y() > REACH){
-            return null;
-        }
-        int BOARD_SIZE = 25;
-        int tileIndex = (pos.y() + REACH) * BOARD_SIZE +
-                (pos.x() + REACH);
-        return placedTiles[tileIndex];
+        int tileIndex = (pos.y() + REACH) * BOARD_SIZE + (pos.x() + REACH);
+        return (isValidPos(pos)) ? placedTiles[tileIndex] : null;
     }
 
     /**
@@ -51,12 +45,13 @@ public final class Board {
      * @return The tile with the given ID.
      * @throws IllegalArgumentException if the tile is not found on the board.
      */
+
     public PlacedTile tileWithId(int tileId) {
-        for (int placedTileIndex : tilesIndex) {
-            if (placedTiles[placedTileIndex].tile().id() == tileId)
-                return placedTiles[placedTileIndex];
-        }
-        throw new IllegalArgumentException("Tile with such ID is not on the board");
+        return Arrays.stream(tilesIndex)
+                .mapToObj(i -> placedTiles[i])
+                .filter(tile -> tile.tile().id() == tileId)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Tile with such ID is not on the board"));
     }
 
     /**
@@ -74,13 +69,10 @@ public final class Board {
      * @return The set of all occupants on the board.
      */
     public Set<Occupant> occupants() {
-        Set<Occupant> totalOccupants = new HashSet<>();
-        for (int placedTileIndex : tilesIndex) {
-            if (placedTiles[placedTileIndex].occupant() != null) {
-                totalOccupants.add(placedTiles[placedTileIndex].occupant());
-            }
-        }
-        return Set.copyOf(totalOccupants);
+        return Arrays.stream(tilesIndex)
+            .mapToObj(i -> placedTiles[i].occupant())
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -173,16 +165,11 @@ public final class Board {
      * @param occupantKind  The kind of occupant to count.
      * @return The number of occupants of the specified kind belonging to the given player on the board.
      */
+
     public int occupantCount(PlayerColor player, Occupant.Kind occupantKind) {
-        int occupantCount = 0;
-        for (int placedTileIndex : tilesIndex) {
-            if ((placedTiles[placedTileIndex].placer() == player) &&
-                    (placedTiles[placedTileIndex].occupant() != null) &&
-                    (placedTiles[placedTileIndex].occupant().kind() == occupantKind)){
-                occupantCount++;
-            }
-        }
-        return occupantCount;
+        return (int) Arrays.stream(tilesIndex)
+                .filter(i -> placedTiles[i].placer() == player && placedTiles[i].occupant() != null && placedTiles[i].occupant().kind() == occupantKind)
+                .count();
     }
 
     /**
@@ -190,25 +177,17 @@ public final class Board {
      *
      * @return The set of insertion positions on the board.
      */
+
     public Set<Pos> insertionPositions() {
-        Set<Pos> insertionPositions = new HashSet<>();
-        for (int placedTileIndex : tilesIndex) {
-            for (Direction direction : Direction.values()){
-
-                Pos placedTileNeighborPos = placedTiles[placedTileIndex].pos().neighbor(direction);
-
-                if (placedTileNeighborPos.x() >= -REACH &&
-                        placedTileNeighborPos.y() >= -REACH &&
-                        placedTileNeighborPos.x() <= REACH &&
-                        placedTileNeighborPos.y() <= REACH) {
-                    if (tileAt(placedTileNeighborPos) == null) {
-                        insertionPositions.add(placedTileNeighborPos);
-                    }
-                }
-            }
-        }
-        return insertionPositions;
+        return Arrays.stream(tilesIndex)
+                .mapToObj(this::indexToPos)
+                .flatMap(pos -> Arrays.stream(Direction.values())
+                        .map(pos::neighbor)
+                        .filter(this::isValidPos)
+                        .filter(neighbor -> tileAt(neighbor) == null))
+                .collect(Collectors.toSet());
     }
+
 
     /**
      * Returns the last placed tile on the board, or null if the board is empty.
@@ -216,10 +195,7 @@ public final class Board {
      * @return The last placed tile on the board, or null if the board is empty.
      */
     public PlacedTile lastPlacedTile() {
-        if (tilesIndex.length == 0){
-            return null;
-        }
-        return placedTiles[tilesIndex[tilesIndex.length - 1]];
+        return (tilesIndex.length == 0) ? null : placedTiles[tilesIndex[tilesIndex.length - 1]];
     }
 
     /**
@@ -231,17 +207,11 @@ public final class Board {
         if (lastPlacedTile() == null){
             return Set.of();
         }
-        PlacedTile lastPlacedTile = lastPlacedTile();
-        Set<Area<Zone.Forest>> closedForestAreas = new HashSet<>();
-
-        for (Direction direction : Direction.values()) {
-            if (lastPlacedTile.side(direction) instanceof TileSide.Forest lastTileForestSide){
-                if (forestArea(lastTileForestSide.forest()).isClosed()){
-                    closedForestAreas.add(forestArea(lastTileForestSide.forest()));
-                }
-            }
-        }
-        return Set.copyOf(closedForestAreas);
+        return Arrays.stream(Direction.values())
+                .filter(direction -> lastPlacedTile().side(direction) instanceof TileSide.Forest)
+                .map(direction -> forestArea(((TileSide.Forest) lastPlacedTile().side(direction)).forest()))
+                .filter(Area::isClosed)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -253,17 +223,11 @@ public final class Board {
         if (lastPlacedTile() == null){
             return Set.of();
         }
-        PlacedTile lastPlacedTile = lastPlacedTile();
-        Set<Area<Zone.River>> closedRiverAreas = new HashSet<>();
-
-        for (Direction direction : Direction.values()) {
-            if (lastPlacedTile.side(direction) instanceof TileSide.River lastTileRiverSide){
-                if (riverArea(lastTileRiverSide.river()).isClosed()){
-                    closedRiverAreas.add(riverArea(lastTileRiverSide.river()));
-                }
-            }
-        }
-        return Set.copyOf(closedRiverAreas);
+        return Arrays.stream(Direction.values())
+                .filter(direction -> lastPlacedTile().side(direction) instanceof TileSide.River)
+                .map(direction -> riverArea(((TileSide.River) lastPlacedTile().side(direction)).river()))
+                .filter(Area::isClosed)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -276,13 +240,11 @@ public final class Board {
         if (!insertionPositions().contains(tile.pos())){
             return false;
         }
-        for (Direction direction : Direction.values()) {
-            PlacedTile neighborTile = tileAt(tile.pos().neighbor(direction));
-            if (neighborTile != null && !tile.side(direction).isSameKindAs(neighborTile.side(direction.opposite()))){
-                return false;
-            }
-        }
-        return true;
+        return Arrays.stream(Direction.values())
+                .allMatch(direction -> {
+                    PlacedTile neighborTile = tileAt(tile.pos().neighbor(direction));
+                    return neighborTile == null || tile.side(direction).isSameKindAs(neighborTile.side(direction.opposite()));
+                });
     }
 
     /**
@@ -292,15 +254,10 @@ public final class Board {
      * @return True if the tile can be placed, false otherwise.
      */
     public boolean couldPlaceTile(Tile tile) {
-        for (Pos insertionPosition : insertionPositions()) {
-            for (Rotation rotation : Rotation.values()) {
-                PlacedTile placedTileRotated = new PlacedTile(tile, null, rotation, insertionPosition);
-                if (canAddTile(placedTileRotated)){
-                    return true;
-                }
-            }
-        }
-        return false;
+        return insertionPositions().stream()
+                .flatMap(pos -> Arrays.stream(Rotation.values())
+                .map(rot -> new PlacedTile(tile, null, rot, pos)))
+                .anyMatch(this::canAddTile);
     }
 
     /**
@@ -313,9 +270,7 @@ public final class Board {
     public Board withNewTile(PlacedTile tile) {
         Preconditions.checkArgument(tilesIndex.length == 0 || canAddTile(tile));
 
-        int BOARD_SIZE = 25;
-        int newTileIndex = (tile.pos().y() + REACH) * BOARD_SIZE +
-                (tile.pos().x() + REACH);
+        int newTileIndex = indexOf(tile);
 
         //updating the tileIndex table
         int[] updatedTilesIndex = Arrays.copyOf(tilesIndex, tilesIndex.length + 1);
@@ -330,12 +285,13 @@ public final class Board {
         zonePartitionsBuilder.addTile(tile.tile());
 
         //connecting the new tiles side's with the placed neighbors
-        for (Direction direction : Direction.values()) {
-            PlacedTile neighborTile = tileAt(tile.pos().neighbor(direction));
-            if (neighborTile != null){
-                zonePartitionsBuilder.connectSides(tile.side(direction), neighborTile.side(direction.opposite()));
-            }
-        }
+        Arrays.stream(Direction.values())
+                .forEach(direction -> {
+                    PlacedTile neighborTile = tileAt(tile.pos().neighbor(direction));
+                    if (neighborTile != null) {
+                        zonePartitionsBuilder.connectSides(tile.side(direction), neighborTile.side(direction.opposite()));
+                    }
+                });
 
         ZonePartitions updatedZonePartitions = zonePartitionsBuilder.build();
 
@@ -349,17 +305,16 @@ public final class Board {
      * @return A new board with the given occupant added.
      * @throws IllegalArgumentException if the tile on which the occupant would be placed is already occupied or if the tile on which the occupant stands is not on the board.
      */
+
     public Board withOccupant(Occupant occupant) {
         PlacedTile occupantsTile = tileWithId(Zone.tileId(occupant.zoneId()));
         //withOccupant throws the exception if the tile is already occupied
         PlacedTile occupantsTileWithOccupant = occupantsTile.withOccupant(occupant);
 
         //updating the placedTiles table
-        int BOARD_SIZE = 25;
-        int occupantsTileIndex = (occupantsTile.pos().y() + REACH) * BOARD_SIZE +
-                (occupantsTile.pos().x() + REACH);
-        PlacedTile[] updatedPlacedTiles = placedTiles.clone();
+        int occupantsTileIndex = indexOf(occupantsTile);
 
+        PlacedTile[] updatedPlacedTiles = placedTiles.clone();
         updatedPlacedTiles[occupantsTileIndex] = occupantsTileWithOccupant;
 
         //updating the zonePartitions
@@ -384,11 +339,8 @@ public final class Board {
         PlacedTile occupantsTileWithoutOccupant = occupantsTile.withNoOccupant();
 
         //updating the placedTiles table
-        int BOARD_SIZE = 25;
-        int occupantsTileIndex = (occupantsTile.pos().y() + REACH) * BOARD_SIZE +
-                (occupantsTile.pos().x() + REACH);
+        int occupantsTileIndex = indexOf(occupantsTile);
         PlacedTile[] updatedPlacedTiles = placedTiles.clone();
-
         updatedPlacedTiles[occupantsTileIndex] = occupantsTileWithoutOccupant;
 
         //updating the zonePartitions
@@ -412,46 +364,24 @@ public final class Board {
         PlacedTile[] updatedPlacedTiles = placedTiles.clone();
         ZonePartitions.Builder zonePartitionsBuilder = new ZonePartitions.Builder(zonePartitions);
 
-        for (Area<Zone.Forest> forestArea : forests) {
+        forests.forEach(forestArea -> {
             zonePartitionsBuilder.clearGatherers(forestArea);
+            forestArea.tileIds().stream()
+                    .map(this::tileWithId)
+                    .filter(tile -> tile.idOfZoneOccupiedBy(Occupant.Kind.PAWN) != -1)
+                    .filter(tile -> forestArea.zones().contains(tile.zoneWithId(tile.idOfZoneOccupiedBy(Occupant.Kind.PAWN))))
+                    .forEach(tile -> updatedPlacedTiles[indexOf(tile)] = tile.withNoOccupant());
+        });
 
-            for (int forestAreaTilesIds: forestArea.tileIds()) {
-                PlacedTile forestAreaTile = tileWithId(forestAreaTilesIds);
-
-                if (forestAreaTile.idOfZoneOccupiedBy(Occupant.Kind.PAWN) != -1){
-
-                    int zoneContainingGathererId = forestAreaTile.idOfZoneOccupiedBy(Occupant.Kind.PAWN);
-                    Zone zoneContainingGatherer = forestAreaTile.zoneWithId(zoneContainingGathererId);
-
-                    if (forestArea.zones().contains(zoneContainingGatherer)){
-                        int BOARD_SIZE = 25;
-                        int forestAreaTileIndex = (forestAreaTile.pos().y() + REACH) * BOARD_SIZE +
-                                (forestAreaTile.pos().x() + REACH);
-                        updatedPlacedTiles[forestAreaTileIndex] = forestAreaTile.withNoOccupant();
-                    }
-                }
-            }
-        }
-        for (Area<Zone.River> riverArea : rivers) {
+        rivers.forEach(riverArea -> {
             zonePartitionsBuilder.clearFishers(riverArea);
+            riverArea.tileIds().stream()
+                    .map(this::tileWithId)
+                    .filter(tile -> tile.idOfZoneOccupiedBy(Occupant.Kind.PAWN) != -1)
+                    .filter(tile -> riverArea.zones().contains(tile.zoneWithId(tile.idOfZoneOccupiedBy(Occupant.Kind.PAWN))))
+                    .forEach(tile -> updatedPlacedTiles[indexOf(tile)] = tile.withNoOccupant());
+        });
 
-            for (int riverAreaTilesIds : riverArea.tileIds()) {
-                PlacedTile riverAreaTile = tileWithId(riverAreaTilesIds);
-
-                if (riverAreaTile.idOfZoneOccupiedBy(Occupant.Kind.PAWN) != -1){
-
-                    int zoneContainingFisherId = riverAreaTile.idOfZoneOccupiedBy(Occupant.Kind.PAWN);
-                    Zone zoneContainingFisher = riverAreaTile.zoneWithId(zoneContainingFisherId);
-
-                    if (riverArea.zones().contains(zoneContainingFisher)){
-                        int BOARD_SIZE = 25;
-                        int riverAreaTileIndex = (riverAreaTile.pos().y() + REACH) * BOARD_SIZE +
-                                (riverAreaTile.pos().x() + REACH);
-                        updatedPlacedTiles[riverAreaTileIndex] = riverAreaTile.withNoOccupant();
-                    }
-                }
-            }
-        }
         ZonePartitions updatedZonePartitions = zonePartitionsBuilder.build();
 
         return new Board(updatedPlacedTiles, tilesIndex, updatedZonePartitions, cancelledAnimals);
@@ -466,24 +396,54 @@ public final class Board {
     public Board withMoreCancelledAnimals(Set<Animal> newlyCancelledAnimals) {
         Set<Animal> updatedCancelledAnimals = new HashSet<>(cancelledAnimals);
         updatedCancelledAnimals.addAll(newlyCancelledAnimals);
-        return new Board(placedTiles, tilesIndex, zonePartitions, Set.copyOf(updatedCancelledAnimals));
+        return new Board(placedTiles, tilesIndex, zonePartitions, updatedCancelledAnimals);
+    }
+
+    /**
+     * Returns the index of the given placed tile on the board.
+     *
+     * @param placedTile The placed tile whose index is to be returned.
+     * @return The index of the given placed tile on the board.
+     */
+    private int indexOf(PlacedTile placedTile) {
+        return (placedTile.pos().y() + REACH) * BOARD_SIZE + (placedTile.pos().x() + REACH);
+    }
+
+    /**
+     * Converts a given index to a position on the board.
+     *
+     * @param index The index to be converted.
+     * @return The position on the board corresponding to the given index.
+     */
+    private Pos indexToPos(int index) {
+        int x = index % BOARD_SIZE - REACH;
+        int y = index / BOARD_SIZE - REACH;
+        return new Pos(x, y);
+    }
+
+    /**
+     * Checks if a given position is valid on the board.
+     *
+     * @param pos The position to be checked.
+     * @return True if the position is valid, false otherwise.
+     */
+    private boolean isValidPos(Pos pos) {
+        return pos.x() >= -REACH && pos.y() >= -REACH && pos.x() <= REACH && pos.y() <= REACH;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Board board)) return false;
-        return Arrays.equals(placedTiles, board.placedTiles) &&
-                Arrays.equals(tilesIndex, board.tilesIndex) &&
-                zonePartitions.equals(board.zonePartitions) &&
-                cancelledAnimals.equals(board.cancelledAnimals);
+        return Arrays.equals(placedTiles, board.placedTiles)
+                && Arrays.equals(tilesIndex, board.tilesIndex)
+                && zonePartitions.equals(board.zonePartitions)
+                && cancelledAnimals.equals(board.cancelledAnimals);
     }
 
     @Override
     public int hashCode() {
-        int placedTilesHashCode = Arrays.hashCode(placedTiles);
-        int tileIndexHashCode = Arrays.hashCode(tilesIndex);
-        return Objects.hash(placedTilesHashCode, tileIndexHashCode, zonePartitions, cancelledAnimals);
+        return Objects.hash(Arrays.hashCode(placedTiles), Arrays.hashCode(tilesIndex), zonePartitions, cancelledAnimals);
     }
 }
 

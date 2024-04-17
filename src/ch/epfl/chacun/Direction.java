@@ -3,7 +3,7 @@ package ch.epfl.chacun;
 import java.util.List;
 
 /**
- * enum representing the directions
+ * Enum representing the directions.
  *
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding(379902)
@@ -11,37 +11,37 @@ import java.util.List;
 public enum Direction {
 
     /**
-     * Represents the North direction
+     * Represents the North direction.
      */
     N,
 
     /**
-     * Represents the East direction
+     * Represents the East direction.
      */
     E,
 
     /**
-     * Represents the South direction
+     * Represents the South direction.
      */
     S,
 
     /**
-     * Represents the West direction
+     * Represents the West direction.
      */
     W;
 
     /**
-     * Immutable list of all directions
+     * Immutable list of all directions.
      */
     public static final List<Direction> ALL = List.of(values());
 
     /**
-     * Total number of directions
+     * Total number of directions.
      */
     public static final int COUNT = ALL.size();
 
     /**
-     * Rotates the direction based on the specified rotation
+     * Rotates the direction based on the specified rotation.
      *
      * @param rotation the rotation to apply
      * @return the rotated direction
@@ -51,7 +51,7 @@ public enum Direction {
     }
 
     /**
-     * Gets the opposite direction
+     * Gets the opposite direction.
      *
      * @return the opposite direction
      */

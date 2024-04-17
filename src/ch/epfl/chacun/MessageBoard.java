@@ -1,6 +1,7 @@
 package ch.epfl.chacun;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Record representing the message board.
@@ -19,12 +20,10 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @return A map associating each player with the total number of points they have earned.
      */
     public Map<PlayerColor, Integer> points(){
-        Map<PlayerColor,Integer> playerPoints = new HashMap<>();
-        for (Message message: messages) {
-            for (PlayerColor playerColor: message.scorers()) {
-                playerPoints.put(playerColor, playerPoints.getOrDefault(playerColor, 0) + message.points());
-            }
-        }
+        Map<PlayerColor, Integer> playerPoints = new HashMap<>();
+        messages.forEach(message ->
+                message.scorers().forEach(scorer ->
+                        playerPoints.merge(scorer, message.points(), Integer::sum)));
         return playerPoints;
     }
 
@@ -43,9 +42,7 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
             int points = Points.forClosedForest(tileCount, mushroomGroupCount);
             String text = textMaker.playersScoredForest(forest.majorityOccupants(), points, mushroomGroupCount, tileCount);
 
-            List<Message> updatedMessages = new ArrayList<>(this.messages);
-            updatedMessages.add(new Message(text, points, forest.majorityOccupants(), forest.tileIds()));
-            return new MessageBoard(textMaker , updatedMessages);
+            return addMessageAndReturnNewBoard(text, points, forest.majorityOccupants(), forest.tileIds());
         }
         return this;
     }
@@ -60,12 +57,8 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @return A new message board reflecting the changes.
      */
     public MessageBoard withClosedForestWithMenhir(PlayerColor player, Area<Zone.Forest> forest){
-
-            String text = textMaker.playerClosedForestWithMenhir(player);
-
-            List<Message> updatedMessages = new ArrayList<>(this.messages);
-            updatedMessages.add(new Message(text, 0, Set.of(), forest.tileIds()));
-            return new MessageBoard(textMaker , updatedMessages);
+        String text = textMaker.playerClosedForestWithMenhir(player);
+        return addMessageAndReturnNewBoard(text, 0, Set.of(), forest.tileIds());
     }
 
     /**
@@ -77,14 +70,13 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      */
     public MessageBoard withScoredRiver(Area<Zone.River> river){
         if (river.isOccupied()){
+
             int tileCount = river.tileIds().size();
             int fishCount = Area.riverFishCount(river);
             int points = Points.forClosedRiver(tileCount, fishCount);
             String text = textMaker.playersScoredRiver(river.majorityOccupants(), points, fishCount, tileCount);
 
-            List<Message> updatedMessages = new ArrayList<>(this.messages);
-            updatedMessages.add(new Message(text, points, river.majorityOccupants(), river.tileIds()));
-            return new MessageBoard(textMaker , updatedMessages);
+            return addMessageAndReturnNewBoard(text, points, river.majorityOccupants(), river.tileIds());
         }
         return this;
     }
@@ -98,20 +90,12 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @return A new message board reflecting the changes, if any.
      */
     public MessageBoard withScoredHuntingTrap(PlayerColor scorer, Area<Zone.Meadow> adjacentMeadow){
+        Map<Animal.Kind, Integer> animalCountMap = countAnimals(adjacentMeadow, Set.of());
+        int points = calculatePoints(animalCountMap);
 
-        Set<Animal> animals = Area.animals(adjacentMeadow, Set.of());
-        Map<Animal.Kind, Integer> animalCountMap = new HashMap<>();
-        for (Animal animal : animals) {
-            animalCountMap.put(animal.kind(), animalCountMap.getOrDefault(animal.kind(), 0) + 1);
-        }
-
-        int points = Points.forMeadow(animalCountMap.getOrDefault(Animal.Kind.MAMMOTH,0), animalCountMap.getOrDefault(Animal.Kind.AUROCHS,0), animalCountMap.getOrDefault(Animal.Kind.DEER,0));
         if (points > 0){
             String text = textMaker.playerScoredHuntingTrap(scorer, points, animalCountMap);
-
-            List<Message> updatedMessages = new ArrayList<>(this.messages);
-            updatedMessages.add(new Message(text, points, Set.of(scorer), adjacentMeadow.tileIds()));
-            return new MessageBoard(textMaker , updatedMessages);
+            return addMessageAndReturnNewBoard(text, points, Set.of(scorer), adjacentMeadow.tileIds());
         }
         return this;
     }
@@ -125,14 +109,11 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @return A new message board reflecting the changes.
      */
     public MessageBoard withScoredLogboat(PlayerColor scorer, Area<Zone.Water> riverSystem){
-
         int lakeCount = Area.lakeCount(riverSystem);
         int points = Points.forLogboat(lakeCount);
         String text = textMaker.playerScoredLogboat(scorer, points, lakeCount);
 
-        List<Message> updatedMessages = new ArrayList<>(this.messages);
-        updatedMessages.add(new Message(text, points, Set.of(scorer), riverSystem.tileIds()));
-        return new MessageBoard(textMaker , updatedMessages);
+        return addMessageAndReturnNewBoard(text, points, Set.of(scorer), riverSystem.tileIds());
     }
 
     /**
@@ -144,20 +125,12 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @return A new message board reflecting the changes, if any.
      */
     public MessageBoard withScoredMeadow(Area<Zone.Meadow> meadow, Set<Animal> cancelledAnimals){
-        Set<Animal> animals = Area.animals(meadow,cancelledAnimals);
-        Map<Animal.Kind, Integer> animalCountMap = new TreeMap<>();
-        for (Animal animal : animals) {
-            animalCountMap.put(animal.kind(), animalCountMap.getOrDefault(animal.kind(), 0) + 1);
-        }
+        Map<Animal.Kind, Integer> animalCountMap = countAnimals(meadow, cancelledAnimals);
+        int points = calculatePoints(animalCountMap);
 
-        int points = Points.forMeadow(animalCountMap.getOrDefault(Animal.Kind.MAMMOTH,0), animalCountMap.getOrDefault(Animal.Kind.AUROCHS,0), animalCountMap.getOrDefault(Animal.Kind.DEER, 0));
         if (meadow.isOccupied() && points > 0){
-
             String text = textMaker.playersScoredMeadow(meadow.majorityOccupants(), points, animalCountMap);
-
-            List<Message> updatedMessages = new ArrayList<>(this.messages);
-            updatedMessages.add(new Message(text, points, meadow.majorityOccupants(), meadow.tileIds()));
-            return new MessageBoard(textMaker , updatedMessages);
+            return addMessageAndReturnNewBoard(text, points, meadow.majorityOccupants(), meadow.tileIds());
         }
         return this;
     }
@@ -175,10 +148,7 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
 
         if (riverSystem.isOccupied() && points > 0) {
             String text = textMaker.playersScoredRiverSystem(riverSystem.majorityOccupants(), points, fishCount);
-
-            List<Message> updatedMessages = new ArrayList<>(this.messages);
-            updatedMessages.add(new Message(text, points, riverSystem.majorityOccupants(), riverSystem.tileIds()));
-            return new MessageBoard(textMaker , updatedMessages);
+            return addMessageAndReturnNewBoard(text, points, riverSystem.majorityOccupants(), riverSystem.tileIds());
         }
         return this;
     }
@@ -193,23 +163,14 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @return A new message board reflecting the changes, if any.
      */
     public MessageBoard withScoredPitTrap(Area<Zone.Meadow> adjacentMeadow, Set<Animal> cancelledAnimals){
+        Map<Animal.Kind, Integer> animalCountMap = countAnimals(adjacentMeadow, cancelledAnimals);
+        int points = calculatePoints(animalCountMap);
 
-            Set<Animal> animals = Area.animals(adjacentMeadow, cancelledAnimals);
-            Map<Animal.Kind, Integer> animalCountMap = new TreeMap<>();
-            for (Animal animal : animals) {
-                animalCountMap.put(animal.kind(), animalCountMap.getOrDefault(animal.kind(), 0) + 1);
-            }
-
-            int points = Points.forMeadow(animalCountMap.getOrDefault(Animal.Kind.MAMMOTH,0), animalCountMap.getOrDefault(Animal.Kind.AUROCHS,0), animalCountMap.getOrDefault(Animal.Kind.DEER,0));
-
-            if (adjacentMeadow.isOccupied() && points > 0){
-                String text = textMaker.playersScoredPitTrap(adjacentMeadow.majorityOccupants(), points, animalCountMap);
-
-                List<Message> updatedMessages = new ArrayList<>(this.messages);
-                updatedMessages.add(new Message(text, points, adjacentMeadow.majorityOccupants(), adjacentMeadow.tileIds()));
-                return new MessageBoard(textMaker , updatedMessages);
-            }
-            return this;
+        if (adjacentMeadow.isOccupied() && points > 0){
+            String text = textMaker.playersScoredPitTrap(adjacentMeadow.majorityOccupants(), points, animalCountMap);
+            return addMessageAndReturnNewBoard(text, points, adjacentMeadow.majorityOccupants(), adjacentMeadow.tileIds());
+        }
+        return this;
     }
 
     /**
@@ -220,16 +181,13 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @return A new message board reflecting the changes.
      */
     public MessageBoard withScoredRaft(Area<Zone.Water> riverSystem){
-
         if (riverSystem.isOccupied()) {
             int lakeCount = Area.lakeCount(riverSystem);
             int points = Points.forRaft(lakeCount);
 
             String text = textMaker.playersScoredRaft(riverSystem.majorityOccupants(), points, lakeCount);
 
-            List<Message> updatedMessages = new ArrayList<>(this.messages);
-            updatedMessages.add(new Message(text, points, riverSystem.majorityOccupants(), riverSystem.tileIds()));
-            return new MessageBoard(textMaker , updatedMessages);
+            return addMessageAndReturnNewBoard(text, points, riverSystem.majorityOccupants(), riverSystem.tileIds());
         }
         return this;
     }
@@ -244,10 +202,51 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      */
     public MessageBoard withWinners(Set<PlayerColor> winners, int points){
         String text = textMaker.playersWon(winners, points);
+        return addMessageAndReturnNewBoard(text, 0, Set.of(), Set.of());
+    }
 
+    /**
+     * Adds a new message to the message board and returns a new message board with the updated messages.
+     *
+     * @param text   The text content of the message.t
+     * @param points The points associated with the message.
+     * @param scorers The set of players who scored points with this message.
+     * @param tileIds The set of tile IDs related to this message.
+     * @return A new message board with the updated messages.
+     */
+    private MessageBoard addMessageAndReturnNewBoard(String text, int points, Set<PlayerColor> scorers, Set<Integer> tileIds) {
         List<Message> updatedMessages = new ArrayList<>(this.messages);
-        updatedMessages.add(new Message(text, 0, Set.of(), Set.of()));
-        return new MessageBoard(textMaker , updatedMessages);
+        updatedMessages.add(new Message(text, points, scorers, tileIds));
+        return new MessageBoard(textMaker, updatedMessages);
+    }
+
+    /**
+     * Counts the number of animals in the given meadow area, excluding the animals in the cancelled set.
+     *
+     * @param area The meadow area to count the animals from.
+     * @param cancelledAnimals The set of animals to exclude from the count.
+     * @return A map associating each animal kind with the number of occurrences in the meadow area.
+     */
+
+    private Map<Animal.Kind, Integer> countAnimals(Area<Zone.Meadow> area, Set<Animal> cancelledAnimals) {
+        return Area.animals(area, cancelledAnimals)
+                .stream()
+                .collect(Collectors.toMap(Animal::kind, animal -> 1, Integer::sum));
+    }
+
+    /**
+     * Calculates the points scored in a meadow area based on the number of animals present.
+     *
+     * @param animalCountMap  A map associating each animal kind with the number of occurrences in the meadow area.
+     * @return The total number of points scored with the numbers of animal in the meadow area.
+     */
+
+    private int calculatePoints(Map<Animal.Kind, Integer> animalCountMap) {
+        return Points.forMeadow(
+                animalCountMap.getOrDefault(Animal.Kind.MAMMOTH, 0),
+                animalCountMap.getOrDefault(Animal.Kind.AUROCHS, 0),
+                animalCountMap.getOrDefault(Animal.Kind.DEER, 0)
+        );
     }
 
 

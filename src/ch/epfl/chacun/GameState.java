@@ -21,6 +21,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
     /**
      * Compact constructor of {@code GameState}.
+     *
      * @param players the list of players in the game.
      * @param tileDecks the three different tile decks.
      * @param tileToPlace the eventual tile to place (null if no tile to place).
@@ -44,6 +45,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
     /**
      * Creates the initial game state.
+     *
      * @param players the given list of players in the game.
      * @param tileDecks the given three different tile decks.
      * @param textMaker the given text maker.
@@ -68,6 +70,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
     /**
      * Returns the current player or null if the next action is START_GAME or END_GAME.
+     *
      * @return the current player or null if the next action is START_GAME or END_GAME.
      */
     public PlayerColor currentPlayer(){
@@ -79,6 +82,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
     /**
      * Returns the number of free occupants of the given kind belonging to the given player.
+     *
      * Free occupants are those not currently placed on the game board.
      * @param player The player color.
      * @param kind The kind of occupant.
@@ -90,6 +94,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
     /**
      * Returns the set of potential occupants of the last placed tile.
+     *
      * @return The set of potential occupants of the last placed tile.
      * @throws IllegalArgumentException If the board is empty.
      */
@@ -123,6 +128,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
     /**
      * Handles the transition from START_GAME to PLACE_TILE by placing the starting tile
      * in the center of the board and drawing the first normal tile from the tile deck.
+     *
      * @return The updated game state after placing the starting tile.
      * @throws IllegalArgumentException If the next action is not START_GAME.
      */
@@ -150,6 +156,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
     /**
      * Handles transitions from PLACE_TILE by adding the given tile to the board, assigning any points
      * obtained from placing the canoe or pit trap, and determining the next action.
+     *
      * @param tile The tile to be placed.
      * @return The updated game state after placing the given tile.
      * @throws IllegalArgumentException If the next action is not PLACE_TILE or if the given tile is already occupied.
@@ -171,7 +178,6 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
             }
 
             switch (specialPower){
-
                 case SHAMAN -> {
                     if (freeOccupantsCount(tile.placer(), Occupant.Kind.PAWN) != Occupant.occupantsCount(Occupant.Kind.PAWN)) {
                         return new GameState(
@@ -185,30 +191,17 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                 }
                 case LOGBOAT -> updatedMessageBoard = updatedMessageBoard.withScoredLogboat(tile.placer(), updatedBoard.riverSystemArea((Zone.Water) zoneWithSpecialPower));
                 case HUNTING_TRAP -> {
-                    Set<Animal> newlyCancelledAnimals = new HashSet<>(updatedBoard.cancelledAnimals());
                     Area<Zone.Meadow> adjacentMeadow = updatedBoard.adjacentMeadow(tile.pos(), (Zone.Meadow) zoneWithSpecialPower);
-
                     Set<Animal> notCancelledYetAnimals = Area.animals(adjacentMeadow, updatedBoard.cancelledAnimals());
+                    Set<Animal> newlyCancelledAnimals = new HashSet<>(updatedBoard.cancelledAnimals());
 
-                    Map<Animal.Kind, Integer> animalCountMap = new HashMap<>();
-                    for (Animal animal : notCancelledYetAnimals) {
-                        animalCountMap.merge(animal.kind(), 1, Integer::sum);
-                    }
+                    Map<Animal.Kind, Integer> animalCountMap = countAnimals(notCancelledYetAnimals);
 
-                    Iterator<Animal> notCancelledYetAnimalIterator = notCancelledYetAnimals.iterator();
                     int smilodonCount = animalCountMap.getOrDefault(Animal.Kind.TIGER, 0);
                     int deerCount = animalCountMap.getOrDefault(Animal.Kind.DEER, 0);
-                    int cancelledDeerCount = 0;
-                    while (notCancelledYetAnimalIterator.hasNext() && cancelledDeerCount < smilodonCount && deerCount > 0) {
 
-                        Animal notCancelledYetAnimal = notCancelledYetAnimalIterator.next();
+                    newlyCancelledAnimals.addAll(cancelDeers(smilodonCount, deerCount, notCancelledYetAnimals.iterator()));
 
-                        if (notCancelledYetAnimal.kind() == Animal.Kind.DEER) {
-                            newlyCancelledAnimals.add(notCancelledYetAnimal);
-                            cancelledDeerCount++;
-                            deerCount--;
-                        }
-                    }
                     updatedMessageBoard = updatedMessageBoard.withScoredHuntingTrap(tile.placer(), adjacentMeadow);
                     newlyCancelledAnimals.addAll(notCancelledYetAnimals);
                     updatedBoard = updatedBoard.withMoreCancelledAnimals(newlyCancelledAnimals);
@@ -230,6 +223,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
     /**
      * Handles transitions from RETAKE_PAWN by removing the given occupant, unless it is null
      * which indicates that the player does not wish to retake a pawn.
+     *
      * @param occupant The occupant to be removed.
      * @return The updated game state after removing the given occupant.
      * @throws IllegalArgumentException If the next action is not RETAKE_PAWN or if the given occupant is neither null nor a pawn.
@@ -255,6 +249,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
     /**
      * Handles transitions from OCCUPY_TILE by adding the given occupant to the last placed tile,
      * unless it is null indicating that the player does not wish to place an occupant.
+     *
      * @param occupant The occupant to be added.
      * @return The updated game state after adding the given occupant.
      * @throws IllegalArgumentException If the next action is not OCCUPY_TILE.
@@ -281,6 +276,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
      * If the player who should occupy can not, or if the tile does not permit it,
      * skips the {@code OCCUPY_TILE} action and returns a game state with turn finished.
      * If the player can occupy, then return the game state with the next action being {@code OCCUPY_TILE}
+     *
      * @return The updated game state.
      */
     private GameState withTurnFinishedIfOccupationImpossible(){
@@ -299,6 +295,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
     /**
      * Ends the turn of the current player, calculate the points earned in the turn and makes decision of who should be the next player.
+     *
      * @return The updated game state after the current players turn.
      */
     private GameState withTurnFinished(){
@@ -399,6 +396,13 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
             }
         }
     }
+
+    /**
+     * Computing the total points at the end of the game and determining the winners.
+     *
+     * @return The updated game state after counting the final points.
+     * @throws IllegalArgumentException If the next action is not END_GAME.
+     */
     private GameState withFinalPointsCounted() {
 
         MessageBoard updatedMessageBoard = messageBoard;
@@ -422,16 +426,11 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                     updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, cancelledAnimals);
 
                 } else {
-
+                    Set<Animal> notCancelledYetAnimals = Area.animals(meadowArea, updatedBoard.cancelledAnimals());
                     Set<Animal> newlyCancelledAnimals = new HashSet<>(updatedBoard.cancelledAnimals());
 
-                    Set<Animal> notCancelledYetAnimals = Area.animals(meadowArea, updatedBoard.cancelledAnimals());
+                    Map<Animal.Kind, Integer> animalCountMap = countAnimals(notCancelledYetAnimals);
 
-                    Map<Animal.Kind, Integer> animalCountMap = new HashMap<>();
-
-                    for (Animal animal : notCancelledYetAnimals) {
-                        animalCountMap.merge(animal.kind(), 1, Integer::sum);
-                    }
                     int smilodonCount = animalCountMap.getOrDefault(Animal.Kind.TIGER, 0);
 
                     Set<Animal> adjacentDeers = Area.animals(adjacentMeadow, cancelledAnimals)
@@ -452,23 +451,10 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                         newlyCancelledAnimals.addAll(notAdjacentDeers);
 
                         int remainingAdjDeerToCancelCount = smilodonCount - notAdjacentDeerCount;
-                        int cancelledAdjDeerCount = 0;
 
-                        Iterator<Animal> notCancelledYetAdjDeersIterator = adjacentDeers.iterator();
-                        while (notCancelledYetAdjDeersIterator.hasNext() && cancelledAdjDeerCount < remainingAdjDeerToCancelCount && adjacentDeerCount > 0) {
-                            newlyCancelledAnimals.add(notCancelledYetAdjDeersIterator.next());
-                            cancelledAdjDeerCount++;
-                            adjacentDeerCount--;
-                        }
+                        newlyCancelledAnimals.addAll(cancelDeers(remainingAdjDeerToCancelCount, adjacentDeerCount, adjacentDeers.iterator()));
                     } else {
-
-                        int cancelledNotAdjDeerCount = 0;
-
-                        Iterator<Animal> notCancelledYetNotAdjDeersIterator = notAdjacentDeers.iterator();
-                        while (notCancelledYetNotAdjDeersIterator.hasNext() && cancelledNotAdjDeerCount < smilodonCount) {
-                            newlyCancelledAnimals.add(notCancelledYetNotAdjDeersIterator.next());
-                            cancelledNotAdjDeerCount++;
-                        }
+                        newlyCancelledAnimals.addAll(cancelDeers(smilodonCount, notAdjacentDeerCount, notAdjacentDeers.iterator()));
                     }
                     updatedBoard = updatedBoard.withMoreCancelledAnimals(newlyCancelledAnimals);
                     updatedMessageBoard = updatedMessageBoard.withScoredPitTrap(adjacentMeadow, newlyCancelledAnimals);
@@ -476,36 +462,20 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                 }
 
             } else {
-
+                // No PitTrap
                 if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.WILD_FIRE)) {
-                    // No PitTrap, no cancelled deers, call withScoredMeadow
                     updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, cancelledAnimals);
 
                 } else {
 
+                    Set<Animal> notCancelledYetAnimals = Area.animals(meadowArea, updatedBoard.cancelledAnimals());
                     Set<Animal> newlyCancelledAnimals = new HashSet<>(updatedBoard.cancelledAnimals());
+                    Map<Animal.Kind, Integer> animalCountMap = countAnimals(notCancelledYetAnimals);
 
-                    Set<Animal> notCancelledYetAnimals = Area.animals(meadowArea, board.cancelledAnimals());
-
-                    Map<Animal.Kind, Integer> animalCountMap = new HashMap<>();
-                    for (Animal animal : notCancelledYetAnimals) {
-                        animalCountMap.merge(animal.kind(), 1, Integer::sum);
-                    }
-
-                    Iterator<Animal> notCancelledYetAnimalIterator = notCancelledYetAnimals.iterator();
-                    int smilodonCount = animalCountMap.getOrDefault(Animal.Kind.TIGER, 0);
                     int deerCount = animalCountMap.getOrDefault(Animal.Kind.DEER, 0);
-                    int cancelledDeerCount = 0;
-                    while (notCancelledYetAnimalIterator.hasNext() && cancelledDeerCount < smilodonCount && deerCount > 0) {
+                    int smilodonCount = animalCountMap.getOrDefault(Animal.Kind.TIGER, 0);
 
-                        Animal notCancelledYetAnimal = notCancelledYetAnimalIterator.next();
-
-                        if (notCancelledYetAnimal.kind() == Animal.Kind.DEER) {
-                            newlyCancelledAnimals.add(notCancelledYetAnimal);
-                            cancelledDeerCount++;
-                            deerCount--;
-                        }
-                    }
+                    newlyCancelledAnimals.addAll(cancelDeers(smilodonCount, deerCount, notCancelledYetAnimals.iterator()));
 
                     updatedBoard = updatedBoard.withMoreCancelledAnimals(newlyCancelledAnimals);
                     updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, newlyCancelledAnimals);
@@ -540,4 +510,41 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                 , Action.END_GAME
                 , updatedMessageBoard);
     }
+
+    /**
+     * Counts the number of each kind of animal in the given set of animals.
+     *
+     * @param animals The set of animals to count.
+     * @return A map associating each kind of animal to the number of animals of that kind in the given set.
+     */
+    private Map<Animal.Kind, Integer> countAnimals(Set<Animal> animals) {
+        Map<Animal.Kind, Integer> animalCountMap = new HashMap<>();
+        for (Animal animal : animals) {
+            animalCountMap.merge(animal.kind(), 1, Integer::sum);
+        }
+        return animalCountMap;
+    }
+
+    /**
+     * Cancels the given number of deers from the given set of animals.
+     *
+     * @param deerToCancelCount The number of deers to cancel.
+     * @param deerCount The total number of deers.
+     * @param notCancelledYetAnimals The set of animals to cancel deers from.
+     * @return A set of the newly cancelled deers.
+     */
+    private Set<Animal> cancelDeers(int deerToCancelCount, int deerCount, Iterator<Animal> notCancelledYetAnimals) {
+        Set<Animal> newlyCancelledAnimals = new HashSet<>();
+        int cancelledDeerCount = 0;
+        while (notCancelledYetAnimals.hasNext() && cancelledDeerCount < deerToCancelCount && deerCount > 0) {
+            Animal notCancelledYetAnimal = notCancelledYetAnimals.next();
+            if (notCancelledYetAnimal.kind() == Animal.Kind.DEER) {
+                newlyCancelledAnimals.add(notCancelledYetAnimal);
+                cancelledDeerCount++;
+                deerCount--;
+            }
+        }
+        return newlyCancelledAnimals;
+    }
+
 }
