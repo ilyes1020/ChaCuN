@@ -82,8 +82,8 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
     /**
      * Returns the number of free occupants of the given kind belonging to the given player.
+     * Free occupants are those not currently placed on the game board
      *
-     * Free occupants are those not currently placed on the game board.
      * @param player The player color.
      * @param kind The kind of occupant.
      * @return The number of free occupants of the specified kind and belonging to the specified player.
