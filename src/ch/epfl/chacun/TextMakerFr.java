@@ -1,5 +1,6 @@
 package ch.epfl.chacun;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,52 +27,76 @@ public final class TextMakerFr implements TextMaker{
     }
 
     /**
-     * @param points le nombre de points
+     * @param points the number of points
      * @return
      */
     @Override
     public String points(int points) {
-        return null;
+        return Integer.toString(points);
     }
 
     /**
-     * @param player le joueur ayant fermé la forêt
-     * @return
+     * @param player the player who closed the forest
+     * @return the name of the player who closed the forest with a menhir in it
      */
     @Override
     public String playerClosedForestWithMenhir(PlayerColor player) {
-        return null;
+        return STR."\{playerName(player)} a fermé une forêt contenant un menhir et peut donc placer une tuile menhir.";
     }
 
     /**
-     * @param scorers            les occupants majoritaires de la forêt
-     * @param points             les points remportés
-     * @param mushroomGroupCount le nombre de groupes de champignons que la forêt contient
-     * @param tileCount          le nombre de tuiles qui constitue la forêt
-     * @return
+     * @param scorers            the majority occupant of the forest
+     * @param points             the scored points
+     * @param mushroomGroupCount the number of mushroom group in the forest
+     * @param tileCount          the number of tiles that constituting the forest
+     * @return                   a string message indicating the number of points that one or more player scored by closing a forest
      */
     @Override
     public String playersScoredForest(Set<PlayerColor> scorers, int points, int mushroomGroupCount, int tileCount) {
-        return null;
+        if (scorers.size() == 1) {
+            if (mushroomGroupCount == 0) {
+                return STR."\{scorersSyntax(scorers)} a remporté \{withSIfPlural("point", points)} en tant qu'occupant·e majoritaire d'une forêt composée de \{tileCount} tuiles.";
+            } else {
+                return STR."\{scorersSyntax(scorers)} a remporté \{withSIfPlural("point", points)} en tant qu'occupant·e majoritaire d'une forêt composée de \{tileCount} tuiles et de \{withSIfPlural("groupe", mushroomGroupCount)} de champignons.";
+            }
+        } else {
+            if (mushroomGroupCount == 0) {
+                return STR."\{scorersSyntax(scorers)} ont remporté \{withSIfPlural("point", points)} en tant qu'occupant·e·s majoritaires d'une forêt composée de \{tileCount} tuiles.";
+            } else {
+                return STR."\{scorersSyntax(scorers)} ont remporté \{withSIfPlural("point", points)} en tant qu'occupant·e·s majoritaires d'une forêt composée de \{tileCount} tuiles et de \{withSIfPlural("groupe", mushroomGroupCount)} de champignons.";
+            }
+        }
     }
 
     /**
-     * @param scorers   les occupants majoritaires de la rivière
-     * @param points    les points remportés
-     * @param fishCount le nombre de poissons nageant dans la rivière ou les lacs adjacents
-     * @param tileCount le nombre de tuiles qui constitue la rivière
-     * @return
+     * @param scorers   the majority occupant of the river
+     * @param points    the scored points
+     * @param fishCount the number of fishes swimming in the river or in the adjacent lake
+     * @param tileCount the number of tile constituting the river
+     * @return          a string message indicating the number of points that one or more player scored by closing a river
      */
     @Override
     public String playersScoredRiver(Set<PlayerColor> scorers, int points, int fishCount, int tileCount) {
-        return null;
+        if (scorers.size() == 1) {
+            if (fishCount == 0) {
+                return STR."\{scorersSyntax(scorers)} a remporté \{points} \{withSIfPlural("point", points)} en tant qu'occupant·e majoritaire d'une rivière composée de \{tileCount} tuiles.";
+            } else {
+                return STR."\{scorersSyntax(scorers)} a remporté \{points} \{withSIfPlural("point", points)} en tant qu'occupant·e majoritaire d'une rivière composée de \{tileCount} tuiles et contenant \{withSIfPlural("poisson", fishCount)}.";
+            }
+        } else {
+            if (fishCount == 0) {
+                return STR."\{scorersSyntax(scorers)} ont remporté \{points} \{withSIfPlural("point", points)} en tant qu'occupant·e·s majoritaires d'une rivière composée de \{tileCount} tuiles.";
+            } else {
+                return STR."\{scorersSyntax(scorers)} ont remporté \{points} \{withSIfPlural("point", points)} en tant qu'occupant·e·s majoritaires d'une rivière composée de \{tileCount} tuiles et de \{withSIfPlural("poisson", fishCount)}.";
+            }
+        }
     }
 
     /**
-     * @param scorer  le joueur ayant déposé la fosse à pieux
-     * @param points  les points remportés
-     * @param animals les animaux présents dans le même pré que la fosse et sur les 8 tuiles voisines
-     * @return
+     * @param scorer  the player who placed the hunting trap
+     * @param points  the scored points
+     * @param animals the animals present in the same meadow as the hunting trap and 8 tiles around it
+     * @return        a string message indicating the number of points that a player scored by placing a hunting trap
      */
     @Override
     public String playerScoredHuntingTrap(PlayerColor scorer, int points, Map<Animal.Kind, Integer> animals) {
@@ -157,5 +182,35 @@ public final class TextMakerFr implements TextMaker{
     @Override
     public String clickToUnoccupy() {
         return null;
+    }
+
+    private String scorersSyntax(Set<PlayerColor> scorers) {
+        StringBuilder stringBuilder = new StringBuilder();
+        Iterator<PlayerColor> scorerIterator = scorers.iterator();
+
+        int counter = 0;
+        while (scorerIterator.hasNext()) {
+            if (counter == 0) {
+                stringBuilder.append(playerName((scorerIterator.next())));
+                counter++;
+            } else if (counter != scorers.size() - 1) {
+                stringBuilder.append(", ");
+                stringBuilder.append(playerName((scorerIterator.next())));
+                counter++;
+            } else {
+                stringBuilder.append(" et ");
+                stringBuilder.append(playerName((scorerIterator.next())));
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    private String withSIfPlural(String noun, int count) {
+        Preconditions.checkArgument(count > 0);
+        if (count == 1) {
+            return STR."\{count} \{noun}";
+        } else {
+        return STR."\{count} \{noun}s";
+        }
     }
 }
