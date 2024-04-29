@@ -7,7 +7,7 @@ package ch.epfl.chacun;
  * @param kind the kind of the animal
  *
  * @author Ilyes Rouibi (372420)
- * @author Weifeng Ding(379902)
+ * @author Weifeng Ding (379902)
  */
 public record Animal(int id, Kind kind) {
 

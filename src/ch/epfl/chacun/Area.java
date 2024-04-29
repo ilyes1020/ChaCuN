@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
  * Record representing an area.
  *
  * @author Ilyes Rouibi (372420)
- * @author Weifeng Ding(379902)
+ * @author Weifeng Ding (379902)
  */
 public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, int openConnections) {
 
