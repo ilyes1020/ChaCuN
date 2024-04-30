@@ -18,10 +18,10 @@ public final class ImageLoader {
     private ImageLoader() {}
 
     public static Image normalImageForTile(int tileId){
-        return null;
+        return new Image(STR."/\{NORMAL_TILE_PIXEL_SIZE}/\{tileId}.jpg");
     }
 
     public static Image largeImageForTile(int tileId){
-        return null;
+        return new Image(STR."/\{LARGE_TILE_PIXEL_SIZE}/\{tileId}.jpg");
     }
 }
