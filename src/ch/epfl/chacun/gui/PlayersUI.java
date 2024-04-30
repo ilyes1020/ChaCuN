@@ -35,7 +35,7 @@ public final class PlayersUI {
 
         for (PlayerColor p: players){
             ObservableValue<String> pointsTextOV =
-                    pointsMapOV.map(pointsMap -> STR." \{textMaker.playerName(p)} : \{pointsMap.get(p)} point·s\n");
+                    pointsMapOV.map(pointsMap -> STR." \{textMaker.playerName(p)} : \{pointsMap.getOrDefault(p, 0)} point·s\n");
 
             Text playerPointsText = new Text();
             playerPointsText.textProperty().bind(pointsTextOV);
