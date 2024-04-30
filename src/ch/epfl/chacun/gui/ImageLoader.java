@@ -1,0 +1,27 @@
+package ch.epfl.chacun.gui;
+
+import javafx.scene.image.Image;
+
+/**
+ * @author Ilyes Rouibi (372420)
+ * @author Weifeng Ding (379902)
+ */
+public final class ImageLoader {
+
+    public static final int LARGE_TILE_PIXEL_SIZE = 512;
+    public static final int LARGE_TILE_FIT_SIZE = 256;
+    public static final int NORMAL_TILE_PIXEL_SIZE = 256;
+    public static final int NORMAL_TILE_FIT_SIZE = 128;
+    public static final int MARKER_PIXEL_SIZE = 96;
+    public static final int MARKER_FIT_SIZE = 48;
+
+    private ImageLoader() {}
+
+    public static Image normalImageForTile(int tileId){
+        return null;
+    }
+
+    public static Image largeImageForTile(int tileId){
+        return null;
+    }
+}
