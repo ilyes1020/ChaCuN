@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * User interface representing the list of all player, their respective occupants, and their scored points.
+ *
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding (379902)
  */
@@ -21,6 +23,13 @@ public final class PlayersUI {
 
     private PlayersUI() {}
 
+    /**
+     * Creates a JavaFx Node representing the Player User Interface.
+     *
+     * @param gameStateOV   An Observable value of the gameState.
+     * @param textMaker     A text maker.
+     * @return a JavaFx node of the user interface with all player, occupants and scored points.
+     */
     public static Node create(ObservableValue<GameState> gameStateOV, TextMaker textMaker){
 
         //---PlayersVB initializing---//

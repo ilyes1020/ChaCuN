@@ -16,12 +16,22 @@ import java.util.stream.Collectors;
 import static javafx.application.Platform.runLater;
 
 /**
+ * User interface representing the message board of the game.
+ *
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding (379902)
  */
 public final class MessageBoardUI {
 
     private MessageBoardUI() {}
+
+    /**
+     * Creates a JavaFx Node representing the Message Board User Interface.
+     *
+     * @param messagesOV    An Observable value of the messages
+     * @param tileIdsOP     An Object property of the tileIds
+     * @return a JavaFx Node representing all the messages sent in the game.
+     */
 
     public static Node create(ObservableValue<List<MessageBoard.Message>> messagesOV, ObjectProperty<Set<Integer>> tileIdsOP){
         //---VBox initialization---//
@@ -36,7 +46,10 @@ public final class MessageBoardUI {
         messagesOV.addListener((o, oldMessagesOV, newMessagesOV) -> {
 
             //---adding a new Text containing the newly added message---//
-            for (MessageBoard.Message newMessage : newMessagesOV.stream().filter(m -> !oldMessagesOV.contains(m)).collect(Collectors.toSet())) {
+            for (MessageBoard.Message newMessage : newMessagesOV
+                    .stream()
+                    .filter(m -> !oldMessagesOV.contains(m))
+                    .collect(Collectors.toSet())) {
 
                 //---new message Text initialization---//
                 Text newMessageText = new Text(newMessage.text());
