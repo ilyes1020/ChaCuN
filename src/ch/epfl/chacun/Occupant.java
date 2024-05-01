@@ -13,6 +13,7 @@ import java.util.Objects;
  */
 public record Occupant(Kind kind, int zoneId) {
 
+
     /**
      * Enum representing the 2 kinds of occupant
      */
