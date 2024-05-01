@@ -23,8 +23,10 @@ public final class PlayersUI {
 
     public static Node create(ObservableValue<GameState> gameStateOV, TextMaker textMaker){
 
+        //---PlayersVB initializing---//
         VBox playersVB = new VBox();
         playersVB.setId("players");
+        playersVB.getStylesheets().add("players.css");
 
         List<PlayerColor> players = new ArrayList<>(PlayerColor.ALL);
         players.removeIf(p -> textMaker.playerName(p) == null);
@@ -33,15 +35,24 @@ public final class PlayersUI {
 
         ObservableValue<Map<PlayerColor, Integer>> pointsMapOV = gameStateOV.map(o -> o.messageBoard().points());
 
+        //---playerNode creation---//
         for (PlayerColor p: players){
+
+            //---auto updating text for points initialization---//
             ObservableValue<String> pointsTextOV =
                     pointsMapOV.map(pointsMap -> STR." \{textMaker.playerName(p)} : \{pointsMap.getOrDefault(p, 0)} point·s\n");
 
             Text playerPointsText = new Text();
             playerPointsText.textProperty().bind(pointsTextOV);
 
+            //---spacing between occupants initialization---//
             Text occupantsSpacing = new Text("   ");
 
+            //---playerColorIndicator initializing---//
+            Circle playerColorIndicator = new Circle(5, ColorMap.fillColor(p));
+
+
+            //---Hut and Pawn SVGPaths initialization---//
             SVGPath hut1 = (SVGPath) Icon.newFor(p, Occupant.Kind.HUT);
             SVGPath hut2 = (SVGPath) Icon.newFor(p, Occupant.Kind.HUT);
             SVGPath hut3 = (SVGPath) Icon.newFor(p, Occupant.Kind.HUT);
@@ -52,24 +63,7 @@ public final class PlayersUI {
             SVGPath pawn4 = (SVGPath) Icon.newFor(p, Occupant.Kind.PAWN);
             SVGPath pawn5 = (SVGPath) Icon.newFor(p, Occupant.Kind.PAWN);
 
-            Circle playerColorIndicator = new Circle(5, ColorMap.fillColor(p));
-
-            TextFlow playerNode = new TextFlow(
-                    playerColorIndicator,
-                    playerPointsText,
-                    hut1, hut2, hut3,
-                    occupantsSpacing,
-                    pawn1, pawn2, pawn3, pawn4, pawn5);
-
-            currentPlayerOV.addListener((o, oldPlayer, newPlayer) -> {
-                if (oldPlayer == p) {
-                    playerNode.getStyleClass().remove("current");
-                }
-                if (newPlayer == p) {
-                    playerNode.getStyleClass().add("current");
-                }
-            });
-
+            //---Hut and Pawn icon opacity update setup---//
             ObservableValue<Double> hut1OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.HUT) >= 1 ? 1 : 0.1);
             ObservableValue<Double> hut2OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.HUT) >= 2 ? 1 : 0.1);
             ObservableValue<Double> hut3OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.HUT) >= 3 ? 1 : 0.1);
@@ -90,6 +84,26 @@ public final class PlayersUI {
             pawn4.opacityProperty().bind(pawn4OpacityOV);
             pawn5.opacityProperty().bind(pawn5OpacityOV);
 
+            //---PlayerNode initialization---//
+            TextFlow playerNode = new TextFlow(
+                    playerColorIndicator,
+                    playerPointsText,
+                    hut1, hut2, hut3,
+                    occupantsSpacing,
+                    pawn1, pawn2, pawn3, pawn4, pawn5);
+            playerNode.getStyleClass().add("player");
+
+            //---currentPlayer indicator update setup---//
+            currentPlayerOV.addListener((o, oldPlayer, newPlayer) -> {
+                if (oldPlayer == p) {
+                    playerNode.getStyleClass().remove("current");
+                }
+                if (newPlayer == p) {
+                    playerNode.getStyleClass().add("current");
+                }
+            });
+
+            //---adding playerNode to VBox children list---//
             playersVB.getChildren().add(playerNode);
         }
         return playersVB;
