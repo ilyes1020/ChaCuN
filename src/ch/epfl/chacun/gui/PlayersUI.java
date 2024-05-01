@@ -48,9 +48,8 @@ public final class PlayersUI {
             //---spacing between occupants initialization---//
             Text occupantsSpacing = new Text("   ");
 
-            //---playerColorIndicator initializing---//
+            //---playerColorIndicator initialization---//
             Circle playerColorIndicator = new Circle(5, ColorMap.fillColor(p));
-
 
             //---Hut and Pawn SVGPaths initialization---//
             SVGPath hut1 = (SVGPath) Icon.newFor(p, Occupant.Kind.HUT);
@@ -64,15 +63,15 @@ public final class PlayersUI {
             SVGPath pawn5 = (SVGPath) Icon.newFor(p, Occupant.Kind.PAWN);
 
             //---Hut and Pawn icon opacity update setup---//
-            ObservableValue<Double> hut1OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.HUT) >= 1 ? 1 : 0.1);
-            ObservableValue<Double> hut2OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.HUT) >= 2 ? 1 : 0.1);
-            ObservableValue<Double> hut3OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.HUT) >= 3 ? 1 : 0.1);
+            ObservableValue<Double> hut1OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.HUT) >= 1 ? 1.0d : 0.1d);
+            ObservableValue<Double> hut2OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.HUT) >= 2 ? 1.0d : 0.1d);
+            ObservableValue<Double> hut3OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.HUT) >= 3 ? 1.0d : 0.1d);
 
-            ObservableValue<Double> pawn1OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 1 ? 1 : 0.1);
-            ObservableValue<Double> pawn2OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 2 ? 1 : 0.1);
-            ObservableValue<Double> pawn3OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 3 ? 1 : 0.1);
-            ObservableValue<Double> pawn4OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 4 ? 1 : 0.1);
-            ObservableValue<Double> pawn5OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 5 ? 1 : 0.1);
+            ObservableValue<Double> pawn1OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 1 ? 1.0d : 0.1d);
+            ObservableValue<Double> pawn2OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 2 ? 1.0d : 0.1d);
+            ObservableValue<Double> pawn3OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 3 ? 1.0d : 0.1d);
+            ObservableValue<Double> pawn4OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 4 ? 1.0d : 0.1d);
+            ObservableValue<Double> pawn5OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 5 ? 1.0d : 0.1d);
 
             hut1.opacityProperty().bind(hut1OpacityOV);
             hut2.opacityProperty().bind(hut2OpacityOV);

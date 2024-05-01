@@ -546,5 +546,4 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
         }
         return newlyCancelledAnimals;
     }
-
 }
