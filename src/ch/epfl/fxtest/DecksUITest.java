@@ -1,5 +1,9 @@
-package ch.epfl.chacun;
+package ch.epfl.fxtest;
 
+import ch.epfl.chacun.Occupant;
+import ch.epfl.chacun.Tile;
+import ch.epfl.chacun.TileDecks;
+import ch.epfl.chacun.Tiles;
 import ch.epfl.chacun.gui.DecksUI;
 import javafx.application.Application;
 import javafx.beans.property.SimpleObjectProperty;

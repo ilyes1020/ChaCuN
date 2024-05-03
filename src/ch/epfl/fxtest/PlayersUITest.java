@@ -1,5 +1,6 @@
-package ch.epfl.chacun;
+package ch.epfl.fxtest;
 
+import ch.epfl.chacun.*;
 import ch.epfl.chacun.gui.PlayersUI;
 import javafx.application.Application;
 import javafx.beans.property.SimpleObjectProperty;
@@ -8,8 +9,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 /**
