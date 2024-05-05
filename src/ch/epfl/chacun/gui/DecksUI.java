@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -74,7 +75,7 @@ public final class DecksUI {
 
         //---adding the click on action to the text to display---/
         textToDisplay.setOnMouseClicked(mouseEvent -> {
-            clickableText.accept(null);
+            if (mouseEvent.getButton() == MouseButton.PRIMARY) clickableText.accept(null);
         });
 
         //---remaining tiles HBox initialization---//

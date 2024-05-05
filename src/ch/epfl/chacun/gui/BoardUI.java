@@ -1,13 +1,18 @@
 package ch.epfl.chacun.gui;
 
 import ch.epfl.chacun.*;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorInput;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
@@ -61,23 +66,21 @@ public final class BoardUI {
                 tileGroup.rotateProperty().bind(groupRotationOV);
 
                 tileGroup.setOnMouseClicked(event -> {
-                    if (event.isSecondaryButtonDown()){
+                    if (event.getButton() == MouseButton.SECONDARY){
                         if (event.isAltDown()) rotationHandler.accept(Rotation.RIGHT);
-                        else rotationHandler.accept(Rotation.LEFT);}
+                        else rotationHandler.accept(Rotation.LEFT);
+                    }
                 });
 
                 tileGroup.getChildren().add(new ImageView(emptyTileImage));
 
                 ObservableValue<PlacedTile> placedTileOV = gameStateOV.map(m -> m.board().tileAt(currentPos));
-
-                Map<Integer, Image> imageCache = new HashMap<>();
+                
                 placedTileOV.addListener((o, oldTile, newTile) -> {
                     if (newTile != null) {
                         //---Adding the image of the Tile---//
-                        if (!imageCache.containsKey(newTile.id())) {
-                            imageCache.put(newTile.id(), ImageLoader.normalImageForTile(newTile.id()));
-                        }
-                        tileGroup.getChildren().add(new ImageView(imageCache.get(newTile.id())));
+                        CellData.IMAGE_CACHE.putIfAbsent(newTile.id(), ImageLoader.normalImageForTile(newTile.id()));
+                        tileGroup.getChildren().add(new ImageView(CellData.IMAGE_CACHE.get(newTile.id())));
 
                         //---Adding the Cancelled Animals Markers---//
                         Set<Animal> animals = newTile
@@ -111,23 +114,27 @@ public final class BoardUI {
                             occupantNode.rotateProperty().bind(occupantRotationOV);
 
                             //---making the occupant clickable---//
-                            occupantNode.setOnMouseClicked(mouseEvent -> occupantSelectHandler.accept(occupant));
+                            occupantNode.setOnMouseClicked(event -> {
+                                if (event.getButton() == MouseButton.PRIMARY) occupantSelectHandler.accept(occupant);
+                            });
                         }
                     }
                 });
 
+                ColorInput veilImage = new ColorInput(x, y, ImageLoader.LARGE_TILE_FIT_SIZE, ImageLoader.LARGE_TILE_FIT_SIZE, Color.WHITE);
+                Blend veilEffect = new Blend(BlendMode.SRC_OVER, null, veilImage);
 
+                veilEffect.setOpacity(0.5);
 
-
-
-
-
-
-
-
+//                tileGroup.effectProperty().bind();
             }
         }
-
         return null;
     }
+
+    private record CellData(Image backgroundImage, Rotation rotation, Color veilColor) {
+        public static Map<Integer, Image> IMAGE_CACHE = new HashMap<>();
+    }
 }
+
+
