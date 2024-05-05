@@ -33,12 +33,12 @@ public final class BoardUI {
                               Consumer<Pos> placeTileHandler,
                               Consumer<Occupant> occupantSelectHandler){
 
-        //---ScrollPane instanciation---//
+        //---ScrollPane instantiation---//
         ScrollPane boardSP = new ScrollPane();
         boardSP.getStylesheets().add("board.css");
         boardSP.setId("board-scroll-pane");
 
-        //---GridPane instanciation---//
+        //---GridPane instantiation---//
         GridPane boardGP = new GridPane();
         boardGP.setId("board-grid");
         boardSP.setContent(boardGP);
@@ -60,9 +60,10 @@ public final class BoardUI {
                 ObservableValue<Integer> groupRotationOV = rotationOV.map(Rotation::degreesCW);
                 tileGroup.rotateProperty().bind(groupRotationOV);
 
-                tileGroup.setOnMouseClicked(event->{
-                    if (event.isSecondaryButtonDown() && event.isAltDown()) rotationHandler.accept(Rotation.RIGHT);
-                    else rotationHandler.accept(Rotation.LEFT);
+                tileGroup.setOnMouseClicked(event -> {
+                    if (event.isSecondaryButtonDown()){
+                        if (event.isAltDown()) rotationHandler.accept(Rotation.RIGHT);
+                        else rotationHandler.accept(Rotation.LEFT);}
                 });
 
                 tileGroup.getChildren().add(new ImageView(emptyTileImage));
