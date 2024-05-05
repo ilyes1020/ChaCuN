@@ -5,13 +5,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @author Ilyes Rouibi (372420)
@@ -36,23 +40,86 @@ public final class BoardUI {
 
         //---GridPane instanciation---//
         GridPane boardGP = new GridPane();
+        boardGP.setId("board-grid");
+        boardSP.setContent(boardGP);
+
+        //---Background image---//
+        WritableImage emptyTileImage = new WritableImage(1, 1);
+        emptyTileImage
+                .getPixelWriter()
+                .setColor(0, 0, Color.gray(0.98));
 
         // Iterate over the x and y indices of the board
-        for (int x = 0; x < reach; x++) {
-            for (int y = 0; y < reach; y++) {
-                final Pos currentPos = new Pos(x,y);
+        for (int y = 0 ; y <= 2 * reach ; y++) {
+            for (int x = 0 ; x <= 2 * reach ; x++) {
+                final Pos currentPos = new Pos(x - reach,y - reach);
 
-                Group tileGroup = new Group(new ImageView());
+                Group tileGroup = new Group();
+                boardGP.add(tileGroup, x, y);
 
-                boardGP.add(tileGroup,x,y);
+                tileGroup.getChildren().add(new ImageView(emptyTileImage));
 
-                ObservableValue<Tile> tileOV = gameStateOV.map(m -> m.board().tileAt(currentPos).tile());
+                ObservableValue<PlacedTile> placedTileOV = gameStateOV.map(m -> m.board().tileAt(currentPos));
 
-                //---Background image---//
-                WritableImage emptyTileImage = new WritableImage(1, 1);
-                emptyTileImage
-                        .getPixelWriter()
-                        .setColor(0, 0, Color.gray(0.98));
+                Map<Integer, Image> imageCache = new HashMap<>();
+                placedTileOV.addListener((o, oldTile, newTile) -> {
+                    if (newTile != null) {
+                        //---Adding the image of the Tile---//
+                        if (!imageCache.containsKey(newTile.id())) {
+                            imageCache.put(newTile.id(), ImageLoader.normalImageForTile(newTile.id()));
+                        }
+                        tileGroup.getChildren().add(new ImageView(imageCache.get(newTile.id())));
+
+                        //---Adding the Cancelled Animals Markers---//
+                        Set<Animal> animals = newTile
+                                .meadowZones()
+                                .stream()
+                                .flatMap(zone -> zone.animals().stream())
+                                .collect(Collectors.toSet());
+                        for (Animal animal : animals) {
+                            ImageView markerIV = new ImageView("marker.png");
+                            markerIV.getStyleClass().add("marker");
+                            markerIV.setId(STR."marker_\{animal.id()}");
+                            tileGroup.getChildren().add(markerIV);
+
+                            //---making the marker visible when the animal is cancelled---//
+                            ObservableValue<Boolean> markerVisibilityOV = gameStateOV.map(gameState -> gameState.board().cancelledAnimals().contains(animal));
+                            markerIV.visibleProperty().bind(markerVisibilityOV);
+                        }
+
+                        //---Adding the occupants---//
+                        for (Occupant occupant : newTile.potentialOccupants()) {
+                            Node occupantNode = Icon.newFor(newTile.placer(), occupant.kind());
+                            occupantNode.setId(STR."\{occupant.kind().toString().toLowerCase()}_\{occupant.zoneId()}");
+                            tileGroup.getChildren().add(occupantNode);
+
+                            //---making the occupant visible if it should be---//
+                            ObservableValue<Boolean> occupantVisibilityOV = visibleOccupantsOV.map(visibleOccupants -> visibleOccupants.contains(occupant));
+                            occupantNode.visibleProperty().bind(occupantVisibilityOV);
+
+                            //---making the occupant always vertical---//
+                            ObservableValue<Integer> occupantRotationOV = rotationOV.map(rotation -> rotation.negated().quarterTurnsCW());
+                            occupantNode.rotateProperty().bind(occupantRotationOV);
+
+                            //---making the occupant selectable---//
+                            occupantNode.setOnMouseClicked(mouseEvent -> occupantSelectHandler.accept(occupant));
+
+                        }
+
+
+
+
+
+                        tileGroup.getChildren().add();
+                    }
+                });
+
+
+
+
+
+
+
 
 
 
