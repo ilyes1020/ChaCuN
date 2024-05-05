@@ -57,6 +57,14 @@ public final class BoardUI {
                 Group tileGroup = new Group();
                 boardGP.add(tileGroup, x, y);
 
+                ObservableValue<Integer> groupRotationOV = rotationOV.map(Rotation::degreesCW);
+                tileGroup.rotateProperty().bind(groupRotationOV);
+
+                tileGroup.setOnMouseClicked(event->{
+                    if (event.isSecondaryButtonDown() && event.isAltDown()) rotationHandler.accept(Rotation.RIGHT);
+                    else rotationHandler.accept(Rotation.LEFT);
+                });
+
                 tileGroup.getChildren().add(new ImageView(emptyTileImage));
 
                 ObservableValue<PlacedTile> placedTileOV = gameStateOV.map(m -> m.board().tileAt(currentPos));
@@ -98,19 +106,12 @@ public final class BoardUI {
                             occupantNode.visibleProperty().bind(occupantVisibilityOV);
 
                             //---making the occupant always vertical---//
-                            ObservableValue<Integer> occupantRotationOV = rotationOV.map(rotation -> rotation.negated().quarterTurnsCW());
+                            ObservableValue<Integer> occupantRotationOV = rotationOV.map(rotation -> rotation.negated().degreesCW());
                             occupantNode.rotateProperty().bind(occupantRotationOV);
 
-                            //---making the occupant selectable---//
+                            //---making the occupant clickable---//
                             occupantNode.setOnMouseClicked(mouseEvent -> occupantSelectHandler.accept(occupant));
-
                         }
-
-
-
-
-
-                        tileGroup.getChildren().add();
                     }
                 });
 
