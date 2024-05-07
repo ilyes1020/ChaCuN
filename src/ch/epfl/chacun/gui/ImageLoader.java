@@ -2,6 +2,8 @@ package ch.epfl.chacun.gui;
 
 import javafx.scene.image.Image;
 
+import static java.util.FormatProcessor.FMT;
+
 /**
  * Utility class to load images from the resources folder.
  *
@@ -25,7 +27,8 @@ public final class ImageLoader {
      * @return a JavaFx 256px image for a tile.
      */
     public static Image normalImageForTile(int tileId){
-        return new Image(STR."/\{NORMAL_TILE_PIXEL_SIZE}/\{tileId}.jpg");
+        System.out.println(FMT."/\{NORMAL_TILE_PIXEL_SIZE}/%02d\{tileId}.jpg");
+        return new Image(FMT." /\{NORMAL_TILE_PIXEL_SIZE}/%02d\{tileId}.jpg");
     }
 
     /**
@@ -34,6 +37,7 @@ public final class ImageLoader {
      * @return a JavaFx 512px image for a tile.
      */
     public static Image largeImageForTile(int tileId){
-        return new Image(STR."/\{LARGE_TILE_PIXEL_SIZE}/\{tileId}.jpg");
+        System.out.println(FMT."/\{LARGE_TILE_PIXEL_SIZE}/%02d\{tileId}.jpg");
+        return new Image(FMT." /\{LARGE_TILE_PIXEL_SIZE}/%02d\{tileId}.jpg");
     }
 }

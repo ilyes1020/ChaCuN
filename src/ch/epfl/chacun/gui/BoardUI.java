@@ -78,7 +78,7 @@ public final class BoardUI {
                             ObservableValue<Image> backgroundImageOV = placedTileOV.map(placedTile -> {
 
                                 int tileToPlaceID = gameStateOV.getValue().tileToPlace().id();
-
+                                System.out.println("tileToPlaceID: " + tileToPlaceID);
                                 CellData.IMAGE_CACHE.putIfAbsent(tileToPlaceID, ImageLoader.normalImageForTile(tileToPlaceID));
                                 if (placedTile != null) {
                                     int placedTileID = placedTile.id();
@@ -123,12 +123,10 @@ public final class BoardUI {
 
                 tileGroup.rotateProperty().bind(cellDataOV.map(cellData -> cellData.rotation().degreesCW()));
 
-                ColorInput veilImage = new ColorInput(x, y, ImageLoader.LARGE_TILE_FIT_SIZE, ImageLoader.LARGE_TILE_FIT_SIZE, Color.WHITE);
+                ColorInput veilImage = new ColorInput(x, y, ImageLoader.LARGE_TILE_FIT_SIZE, ImageLoader.LARGE_TILE_FIT_SIZE, cellDataOV.getValue().veilColor());
                 Blend veilEffect = new Blend(BlendMode.SRC_OVER, null, veilImage);
 
                 veilEffect.setOpacity(0.5);
-
-//                tileGroup.effectProperty().bind();
 
                 tileGroup.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.SECONDARY){
