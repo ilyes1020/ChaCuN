@@ -78,7 +78,6 @@ public final class BoardUI {
                             ObservableValue<Image> backgroundImageOV = placedTileOV.map(placedTile -> {
 
                                 int tileToPlaceID = gameStateOV.getValue().tileToPlace().id();
-                                System.out.println("tileToPlaceID: " + tileToPlaceID);
                                 CellData.IMAGE_CACHE.putIfAbsent(tileToPlaceID, ImageLoader.normalImageForTile(tileToPlaceID));
                                 if (placedTile != null) {
                                     int placedTileID = placedTile.id();

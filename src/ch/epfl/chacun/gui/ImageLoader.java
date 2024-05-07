@@ -27,8 +27,7 @@ public final class ImageLoader {
      * @return a JavaFx 256px image for a tile.
      */
     public static Image normalImageForTile(int tileId){
-        System.out.println(FMT."/\{NORMAL_TILE_PIXEL_SIZE}/%02d\{tileId}.jpg");
-        return new Image(FMT." /\{NORMAL_TILE_PIXEL_SIZE}/%02d\{tileId}.jpg");
+        return new Image(FMT."/\{NORMAL_TILE_PIXEL_SIZE}/%02d\{tileId}.jpg");
     }
 
     /**
@@ -37,7 +36,6 @@ public final class ImageLoader {
      * @return a JavaFx 512px image for a tile.
      */
     public static Image largeImageForTile(int tileId){
-        System.out.println(FMT."/\{LARGE_TILE_PIXEL_SIZE}/%02d\{tileId}.jpg");
-        return new Image(FMT." /\{LARGE_TILE_PIXEL_SIZE}/%02d\{tileId}.jpg");
+        return new Image(FMT."/\{LARGE_TILE_PIXEL_SIZE}/%02d\{tileId}.jpg");
     }
 }
