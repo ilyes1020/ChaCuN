@@ -5,6 +5,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Cell;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
@@ -48,40 +49,100 @@ public final class BoardUI {
         boardGP.setId("board-grid");
         boardSP.setContent(boardGP);
 
-        //---Background image---//
+        //---empty Tile image---//
         WritableImage emptyTileImage = new WritableImage(1, 1);
         emptyTileImage
                 .getPixelWriter()
                 .setColor(0, 0, Color.gray(0.98));
 
-        // Iterate over the x and y indices of the board
+        // Iterate over all the positions of the board
         for (int y = 0 ; y <= 2 * reach ; y++) {
             for (int x = 0 ; x <= 2 * reach ; x++) {
                 final Pos currentPos = new Pos(x - reach,y - reach);
 
                 Group tileGroup = new Group();
+                Boolean mouseHovering = tileGroup.hoverProperty().getValue();
                 boardGP.add(tileGroup, x, y);
 
-                ObservableValue<Integer> groupRotationOV = rotationOV.map(Rotation::degreesCW);
-                tileGroup.rotateProperty().bind(groupRotationOV);
+                ObservableValue<PlacedTile> placedTileOV = gameStateOV.map(m -> m.board().tileAt(currentPos));
+
+                ObservableValue<Set<Pos>> fringeOV = gameStateOV.map(gameState -> {
+                    if (gameState.nextAction() == GameState.Action.PLACE_TILE) {
+                        return  gameState.board().insertionPositions();
+                    }
+                    return Set.of();
+                });
+
+                ObservableValue<CellData> cellDataOV = Bindings.createObjectBinding(
+                        () -> {
+                            ObservableValue<Image> backgroundImageOV = placedTileOV.map(placedTile -> {
+
+                                int tileToPlaceID = gameStateOV.getValue().tileToPlace().id();
+
+                                CellData.IMAGE_CACHE.putIfAbsent(tileToPlaceID, ImageLoader.normalImageForTile(tileToPlaceID));
+                                if (placedTile != null) {
+                                    int placedTileID = placedTile.id();
+                                    CellData.IMAGE_CACHE.putIfAbsent(placedTileID, ImageLoader.normalImageForTile(placedTileID));
+                                    return CellData.IMAGE_CACHE.get(placedTileID);
+
+                                } else if (mouseHovering && fringeOV.getValue().contains(currentPos)) {
+                                    return CellData.IMAGE_CACHE.get(tileToPlaceID);
+
+                                } else {
+                                    return emptyTileImage;
+                                }
+                            });
+
+                            ObservableValue<Color> veilColorOV = gameStateOV.map(gameState -> {
+                                PlayerColor currentPlayer = gameState.currentPlayer();
+                                if (currentPlayer != null
+                                        && !mouseHovering
+                                        && fringeOV.getValue().contains(currentPos)) {
+                                    return ColorMap.fillColor(currentPlayer);
+
+                                } else if (mouseHovering && !gameState.board().canAddTile(placedTileOV.getValue())) {
+                                    return Color.WHITE;
+                                }
+                                if (placedTileOV.getValue() != null && !highlightedTilesIdsOV.getValue().contains(placedTileOV.getValue().id())){
+                                    return Color.BLACK;
+                                }
+                                return Color.TRANSPARENT;
+                            });
+                           return new CellData(backgroundImageOV.getValue(), rotationOV.getValue(), veilColorOV.getValue());
+                        }
+                        , placedTileOV
+                        , rotationOV
+                        , gameStateOV
+                        , highlightedTilesIdsOV
+                        , fringeOV);
+
+
+                ImageView backgroundImageIV = new ImageView(emptyTileImage);
+                tileGroup.getChildren().add(backgroundImageIV);
+                backgroundImageIV.imageProperty().bind(cellDataOV.map(CellData::backgroundImage));
+
+                tileGroup.rotateProperty().bind(cellDataOV.map(cellData -> cellData.rotation().degreesCW()));
+
+                ColorInput veilImage = new ColorInput(x, y, ImageLoader.LARGE_TILE_FIT_SIZE, ImageLoader.LARGE_TILE_FIT_SIZE, Color.WHITE);
+                Blend veilEffect = new Blend(BlendMode.SRC_OVER, null, veilImage);
+
+                veilEffect.setOpacity(0.5);
+
+//                tileGroup.effectProperty().bind();
 
                 tileGroup.setOnMouseClicked(event -> {
                     if (event.getButton() == MouseButton.SECONDARY){
                         if (event.isAltDown()) rotationHandler.accept(Rotation.RIGHT);
                         else rotationHandler.accept(Rotation.LEFT);
                     }
+                    if (event.getButton() == MouseButton.PRIMARY
+                            && fringeOV.getValue().contains(currentPos)) {
+                        placeTileHandler.accept(currentPos);
+                    }
                 });
 
-                tileGroup.getChildren().add(new ImageView(emptyTileImage));
-
-                ObservableValue<PlacedTile> placedTileOV = gameStateOV.map(m -> m.board().tileAt(currentPos));
-                
                 placedTileOV.addListener((o, oldTile, newTile) -> {
                     if (newTile != null) {
-                        //---Adding the image of the Tile---//
-                        CellData.IMAGE_CACHE.putIfAbsent(newTile.id(), ImageLoader.normalImageForTile(newTile.id()));
-                        tileGroup.getChildren().add(new ImageView(CellData.IMAGE_CACHE.get(newTile.id())));
-
                         //---Adding the Cancelled Animals Markers---//
                         Set<Animal> animals = newTile
                                 .meadowZones()
@@ -110,8 +171,7 @@ public final class BoardUI {
                             occupantNode.visibleProperty().bind(occupantVisibilityOV);
 
                             //---making the occupant always vertical---//
-                            ObservableValue<Integer> occupantRotationOV = rotationOV.map(rotation -> rotation.negated().degreesCW());
-                            occupantNode.rotateProperty().bind(occupantRotationOV);
+                            occupantNode.rotateProperty().bind(cellDataOV.map(cellData -> cellData.rotation().negated().degreesCW()));
 
                             //---making the occupant clickable---//
                             occupantNode.setOnMouseClicked(event -> {
@@ -120,16 +180,9 @@ public final class BoardUI {
                         }
                     }
                 });
-
-                ColorInput veilImage = new ColorInput(x, y, ImageLoader.LARGE_TILE_FIT_SIZE, ImageLoader.LARGE_TILE_FIT_SIZE, Color.WHITE);
-                Blend veilEffect = new Blend(BlendMode.SRC_OVER, null, veilImage);
-
-                veilEffect.setOpacity(0.5);
-
-//                tileGroup.effectProperty().bind();
             }
         }
-        return null;
+        return boardSP;
     }
 
     private record CellData(Image backgroundImage, Rotation rotation, Color veilColor) {
