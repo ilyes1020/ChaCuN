@@ -80,13 +80,9 @@ public static Node create(int reach,
                         Color veilColor = Color.TRANSPARENT;
                         PlayerColor currentPlayer = gameStateOV.getValue().currentPlayer();
 
-
-
                         Tile tileToPlace = gameStateOV.getValue().tileToPlace();
 
-
                         if (placedTileOV.getValue() == null) {
-                            backgroundImage = backgroundImage;
                             if (fringeOV.getValue().contains(currentPos)){
                                 if(mouseHovering.getValue()){
                                     backgroundImage = CellData.IMAGE_CACHE.putIfAbsent(tileToPlace.id(), ImageLoader.normalImageForTile(tileToPlace.id()));
