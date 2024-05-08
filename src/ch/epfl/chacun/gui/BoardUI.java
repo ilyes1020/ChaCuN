@@ -23,6 +23,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static java.util.FormatProcessor.FMT;
+
 /**
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding (379902)
@@ -177,7 +179,7 @@ public static Node create(int reach,
                     //---Adding the occupants---//
                     for (Occupant occupant : newTile.potentialOccupants()) {
                         Node occupantNode = Icon.newFor(newTile.placer(), occupant.kind());
-                        occupantNode.setId(String.format("%s_%d", occupant.kind().toString().toLowerCase(), occupant.zoneId()));
+                        occupantNode.setId(FMT."/\{occupant.kind().toString().toLowerCase()}/%02d\{occupant.zoneId()}.jpg");
                         tileGroup.getChildren().add(occupantNode);
 
                         //---making the occupant visible if it should be---//
