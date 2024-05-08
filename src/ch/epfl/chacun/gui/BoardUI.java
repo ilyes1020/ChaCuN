@@ -77,41 +77,46 @@ public static Node create(int reach,
 
             ObservableValue<CellData> cellDataOV = Bindings.createObjectBinding(
                     () -> {
-                        Image backgroundImage;
-                        int tileToPlaceID = 0;
-                        if (gameStateOV.getValue().tileToPlace() != null) {
-                            tileToPlaceID = gameStateOV.getValue().tileToPlace().id();
-                        }
-
-                        CellData.IMAGE_CACHE.putIfAbsent(tileToPlaceID, ImageLoader.normalImageForTile(tileToPlaceID));
-                        if (placedTileOV.getValue() != null) {
-                            int placedTileID = placedTileOV.getValue().id();
-                            CellData.IMAGE_CACHE.putIfAbsent(placedTileID, ImageLoader.normalImageForTile(placedTileID));
-                            backgroundImage = CellData.IMAGE_CACHE.get(placedTileID);
-                        } else if (mouseHovering.getValue() && fringeOV.getValue().contains(currentPos)) {
-                            backgroundImage = CellData.IMAGE_CACHE.get(tileToPlaceID);
-                        } else {
-                            backgroundImage = emptyTileImage;
-                        }
-
-                        Color veilColor;
+                        Image backgroundImage = emptyTileImage;
+                        Rotation rotation = rotationOV.getValue();
+                        Color veilColor = Color.TRANSPARENT;
                         PlayerColor currentPlayer = gameStateOV.getValue().currentPlayer();
-                        if (currentPlayer != null
-                                && !mouseHovering.getValue()
-                                && fringeOV.getValue().contains(currentPos)) {
-                            veilColor = ColorMap.fillColor(currentPlayer);
 
+
+
+                        ObservableValue<Tile> tileToPlace = gameStateOV.map(gameState -> gameState.tileToPlace());
+
+
+                        if (placedTileOV.getValue() == null) {
+                            backgroundImage = backgroundImage;
+                            if (fringeOV.getValue().contains(currentPos)){
+                                if(mouseHovering.getValue()){
+                                    backgroundImage = CellData.IMAGE_CACHE.putIfAbsent(tileToPlace.getValue().id(), ImageLoader.normalImageForTile(tileToPlace.getValue().id()));
+                                    PlacedTile placedTileToPlace = new PlacedTile(tileToPlace.getValue(), currentPlayer, rotation, currentPos);
+                                    if (!gameStateOV.getValue().board().canAddTile(placedTileToPlace)){
+                                        veilColor = Color.WHITE;
+                                    }
+                                }
+                                else {
+                                    veilColor = ColorMap.fillColor(currentPlayer);
+                                }
+                            }
                         }
+
                         else {
-                            veilColor = Color.TRANSPARENT;
-                        }
-                        if (mouseHovering.getValue() && placedTileOV.getValue() != null && !gameStateOV.getValue().board().canAddTile(placedTileOV.getValue())) {
-                            veilColor = Color.WHITE;
-                        } if (placedTileOV.getValue() != null && !highlightedTilesIdsOV.getValue().contains(placedTileOV.getValue().id())){
-                            veilColor = Color.BLACK;
+                            backgroundImage = CellData.IMAGE_CACHE.putIfAbsent(placedTileOV.getValue().id(), ImageLoader.normalImageForTile(placedTileOV.getValue().id()));
+                            rotation = placedTileOV.getValue().rotation();
+                            if (!highlightedTilesIdsOV.getValue().isEmpty()){
+                                if(!highlightedTilesIdsOV.getValue().contains(placedTileOV.getValue().id())){
+                                    veilColor = Color.BLACK;
+                                }
+                            }
                         }
 
-                        return new CellData(backgroundImage, rotationOV.getValue(), veilColor);
+
+//                        System.out.println("CellData: " + backgroundImage + " rotation " + rotation + " veilcolor " + veilColor);
+
+                        return new CellData(backgroundImage, rotation, veilColor);
                     }
                     , placedTileOV
                     , rotationOV
@@ -128,11 +133,19 @@ public static Node create(int reach,
 
             tileGroup.rotateProperty().bind(cellDataOV.map(cellData -> cellData.rotation().degreesCW()));
 
-            ColorInput veilImage = new ColorInput(x, y, ImageLoader.LARGE_TILE_FIT_SIZE, ImageLoader.LARGE_TILE_FIT_SIZE, cellDataOV.getValue().veilColor());
-            Blend veilEffect = new Blend(BlendMode.SRC_OVER, null, veilImage);
+            // Créer une instance de ColorInput pour l'image du voile
+            ObservableValue<ColorInput> veilImageOV = cellDataOV.map(cellData -> new ColorInput(0, 0, ImageLoader.LARGE_TILE_FIT_SIZE, ImageLoader.LARGE_TILE_FIT_SIZE, cellData.veilColor()));
 
-            veilEffect.setOpacity(0.5);
-            tileGroup.effectProperty().bind(Bindings.createObjectBinding(() -> veilEffect, cellDataOV));
+// Créer une instance de Blend pour l'effet de voile
+            ObservableValue<Blend> veilEffectOV = veilImageOV.map(veilImage -> {
+                Blend blend = new Blend(BlendMode.SRC_OVER, null, veilImage);
+                blend.setOpacity(0.5);
+                return blend;
+            });
+
+// Appliquer l'effet de voile à l'instance de Group
+            tileGroup.effectProperty().bind(veilEffectOV);
+
 
             tileGroup.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.SECONDARY){
