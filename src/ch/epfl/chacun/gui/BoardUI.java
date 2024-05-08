@@ -2,12 +2,10 @@ package ch.epfl.chacun.gui;
 
 import ch.epfl.chacun.*;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Cell;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
@@ -89,6 +87,7 @@ public static Node create(int reach,
 
                         if (placedTileOV.getValue() == null) {
                             backgroundImage = backgroundImage;
+                            System.out.println("fringeSet for currentPos: " + currentPos + " is: " + fringeOV.getValue());
                             if (fringeOV.getValue().contains(currentPos)){
                                 if(mouseHovering.getValue()){
                                     backgroundImage = CellData.IMAGE_CACHE.putIfAbsent(tileToPlace.getValue().id(), ImageLoader.normalImageForTile(tileToPlace.getValue().id()));
@@ -113,9 +112,6 @@ public static Node create(int reach,
                             }
                         }
 
-
-//                        System.out.println("CellData: " + backgroundImage + " rotation " + rotation + " veilcolor " + veilColor);
-
                         return new CellData(backgroundImage, rotation, veilColor);
                     }
                     , placedTileOV
@@ -133,17 +129,23 @@ public static Node create(int reach,
 
             tileGroup.rotateProperty().bind(cellDataOV.map(cellData -> cellData.rotation().degreesCW()));
 
-            // Créer une instance de ColorInput pour l'image du voile
-            ObservableValue<ColorInput> veilImageOV = cellDataOV.map(cellData -> new ColorInput(0, 0, ImageLoader.LARGE_TILE_FIT_SIZE, ImageLoader.LARGE_TILE_FIT_SIZE, cellData.veilColor()));
+            // Create a ColorInput instance for the veil image.
+            ObservableValue<ColorInput> veilImageOV = cellDataOV.map(cellData -> {
+                ColorInput veilColor = new  ColorInput();
+                veilColor.setPaint(cellData.veilColor());
+                veilColor.setHeight(ImageLoader.NORMAL_TILE_FIT_SIZE);
+                veilColor.setWidth(ImageLoader.NORMAL_TILE_FIT_SIZE);
+                return veilColor;
+            });
 
-// Créer une instance de Blend pour l'effet de voile
+            // Create a Blend instance for the veil effect.
             ObservableValue<Blend> veilEffectOV = veilImageOV.map(veilImage -> {
                 Blend blend = new Blend(BlendMode.SRC_OVER, null, veilImage);
                 blend.setOpacity(0.5);
                 return blend;
             });
 
-// Appliquer l'effet de voile à l'instance de Group
+            // Apply the veil effect to the Group instance.
             tileGroup.effectProperty().bind(veilEffectOV);
 
 
