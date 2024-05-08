@@ -82,16 +82,15 @@ public static Node create(int reach,
 
 
 
-                        ObservableValue<Tile> tileToPlace = gameStateOV.map(gameState -> gameState.tileToPlace());
+                        Tile tileToPlace = gameStateOV.getValue().tileToPlace();
 
 
                         if (placedTileOV.getValue() == null) {
                             backgroundImage = backgroundImage;
-                            System.out.println("fringeSet for currentPos: " + currentPos + " is: " + fringeOV.getValue());
                             if (fringeOV.getValue().contains(currentPos)){
                                 if(mouseHovering.getValue()){
-                                    backgroundImage = CellData.IMAGE_CACHE.putIfAbsent(tileToPlace.getValue().id(), ImageLoader.normalImageForTile(tileToPlace.getValue().id()));
-                                    PlacedTile placedTileToPlace = new PlacedTile(tileToPlace.getValue(), currentPlayer, rotation, currentPos);
+                                    backgroundImage = CellData.IMAGE_CACHE.putIfAbsent(tileToPlace.id(), ImageLoader.normalImageForTile(tileToPlace.id()));
+                                    PlacedTile placedTileToPlace = new PlacedTile(tileToPlace, currentPlayer, rotation, currentPos);
                                     if (!gameStateOV.getValue().board().canAddTile(placedTileToPlace)){
                                         veilColor = Color.WHITE;
                                     }
