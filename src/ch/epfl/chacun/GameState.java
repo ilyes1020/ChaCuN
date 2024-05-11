@@ -105,21 +105,18 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
         PlacedTile lastPlacedTile = board.lastPlacedTile();
         Set<Occupant> lastTilePotentialOccupants = lastPlacedTile.potentialOccupants();
 
-        Arrays.stream(Occupant.Kind.values()).forEach(kind -> {
-            if (freeOccupantsCount(lastPlacedTile.placer(), kind) == 0)
-                lastTilePotentialOccupants.removeIf(occupant -> occupant.kind() == kind);
-        });
-
         lastTilePotentialOccupants.removeIf(occupant -> {
+            boolean placerHasNoPawnLeft = freeOccupantsCount(lastPlacedTile.placer(), Occupant.Kind.PAWN) == 0;
+            boolean placerHasNoHutLeft = freeOccupantsCount(lastPlacedTile.placer(), Occupant.Kind.HUT) == 0;
             Zone potentialOccupantZone = lastPlacedTile.zoneWithId(occupant.zoneId());
+
             return switch (potentialOccupantZone) {
-                case Zone.Forest forestZone -> board.forestArea(forestZone).isOccupied();
-                case Zone.Meadow meadowZone -> board.meadowArea(meadowZone).isOccupied();
-                case Zone.River riverZone -> switch (occupant.kind()) {
-                    case PAWN -> board.riverArea(riverZone).isOccupied();
-                    case HUT -> board.riverSystemArea(riverZone).isOccupied();
-                };
-                case Zone.Lake lakeZone -> board.riverSystemArea(lakeZone).isOccupied();
+                case Zone.Forest forestZone -> placerHasNoPawnLeft || board.forestArea(forestZone).isOccupied();
+                case Zone.Meadow meadowZone -> placerHasNoPawnLeft || board.meadowArea(meadowZone).isOccupied();
+                case Zone.River riverZone -> (occupant.kind() == Occupant.Kind.PAWN) ?
+                          placerHasNoPawnLeft || board.riverArea(riverZone).isOccupied()
+                        : placerHasNoHutLeft || board.riverSystemArea(riverZone).isOccupied();
+                case Zone.Lake lakeZone -> placerHasNoHutLeft || board.riverSystemArea(lakeZone).isOccupied();
             };
         });
         return lastTilePotentialOccupants;
@@ -135,7 +132,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
     public GameState withStartingTilePlaced(){
         Preconditions.checkArgument(nextAction == Action.START_GAME);
 
-        PlacedTile placedStartTile = new PlacedTile(tileDecks.topTile(Tile.Kind.START), null, Rotation.NONE, new Pos(0, 0));
+        PlacedTile placedStartTile = new PlacedTile(tileDecks.topTile(Tile.Kind.START), null, Rotation.NONE, Pos.ORIGIN);
         Board updatedBoard = board.withNewTile(placedStartTile);
 
         TileDecks updatedTileDecks = tileDecks.withTopTileDrawn(Tile.Kind.START);
@@ -338,9 +335,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
             updatedTileDecks = updatedTileDecks.withTopTileDrawnUntil(Tile.Kind.MENHIR, updatedBoard::couldPlaceTile);
             updatedTileToPlace = updatedTileDecks.topTile(Tile.Kind.MENHIR);
-            if (!updatedTileDecks.menhirTiles().isEmpty()) {
-                updatedTileDecks = updatedTileDecks.withTopTileDrawn(Tile.Kind.MENHIR);
-            }
+            updatedTileDecks = updatedTileDecks.withTopTileDrawn(Tile.Kind.MENHIR);
 
             return new GameState(
                       players
@@ -413,13 +408,13 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
         for (Area<Zone.Meadow> meadowArea : board.meadowAreas()) {
             // Check if there is a PitTrap in the zone
-            if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.PIT_TRAP)) {
+            if (meadowArea.zoneWithSpecialPower(Zone.SpecialPower.PIT_TRAP) != null) {
 
                 Zone pitTrapZone = meadowArea.zoneWithSpecialPower(Zone.SpecialPower.PIT_TRAP);
                 Area<Zone.Meadow> adjacentMeadow = updatedBoard.adjacentMeadow(board.tileWithId(pitTrapZone.tileId()).pos(), (Zone.Meadow) pitTrapZone);
 
                 // Check if the zone has the WILD_FIRE special power
-                if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.WILD_FIRE)) {
+                if (meadowArea.zoneWithSpecialPower(Zone.SpecialPower.WILD_FIRE) != null) {
 
                     // No cancelled deers, call withScoredPitTrap and withScoredMeadow
                     updatedMessageBoard = updatedMessageBoard.withScoredPitTrap(adjacentMeadow, cancelledAnimals);
@@ -463,7 +458,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
 
             } else {
                 // No PitTrap
-                if (meadowArea.zones().stream().anyMatch(zone -> zone.specialPower() == Zone.SpecialPower.WILD_FIRE)) {
+                if (meadowArea.zoneWithSpecialPower(Zone.SpecialPower.WILD_FIRE) != null) {
                     updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, cancelledAnimals);
 
                 } else {

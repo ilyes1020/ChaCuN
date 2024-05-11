@@ -210,7 +210,7 @@ public final class Board {
             return Set.of();
         }
         return lastPlacedTile().forestZones().stream()
-                .map(zone -> zonePartitions.forests().areaContaining(zone))
+                .map(this::forestArea)
                 .filter(Area::isClosed)
                 .collect(Collectors.toSet());
     }
@@ -225,7 +225,7 @@ public final class Board {
             return Set.of();
         }
         return lastPlacedTile().riverZones().stream()
-                .map(zone -> zonePartitions.rivers().areaContaining(zone))
+                .map(this::riverArea)
                 .filter(Area::isClosed)
                 .collect(Collectors.toSet());
     }
@@ -285,7 +285,7 @@ public final class Board {
         zonePartitionsBuilder.addTile(tile.tile());
 
         //connecting the new tiles side's with the placed neighbors
-        Arrays.stream(Direction.values())
+        Direction.ALL
                 .forEach(direction -> {
                     PlacedTile neighborTile = tileAt(tile.pos().neighbor(direction));
                     if (neighborTile != null) {
