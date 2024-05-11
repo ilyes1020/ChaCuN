@@ -78,7 +78,7 @@ public sealed interface Zone {
      * @return the id of the tile (int)
      */
     default int tileId(){
-        return id() / 10;
+        return tileId(id());
     }
     /**
      * Default method that gives the local id of the zone.
@@ -86,7 +86,7 @@ public sealed interface Zone {
      * @return the local id of the zone (int)
      */
     default int localId(){
-        return id() % 10;
+        return localId(id());
     }
     /**
      * Default method that gives the special power of the zone.

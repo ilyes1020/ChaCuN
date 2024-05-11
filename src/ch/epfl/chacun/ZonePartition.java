@@ -74,7 +74,7 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
          * @throws IllegalArgumentException if the zone does not belong to any area in the partition or if the area is already occupied
          */
         public void addInitialOccupant(Z zone, PlayerColor color){
-            Area<Z> areaWithZone = build().areaContaining(zone);
+            Area<Z> areaWithZone = areaContaining(zone);
             areas.remove(areaWithZone);
             areas.add(areaWithZone.withInitialOccupant(color));
         }
@@ -87,7 +87,7 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
          * @throws IllegalArgumentException if the zone does not belong to any area in the partition or if the area is not occupied by an occupant of the specified color
          */
         public void removeOccupant(Z zone, PlayerColor color){
-            Area<Z> areaWithZone = build().areaContaining(zone);
+            Area<Z> areaWithZone = areaContaining(zone);
             areas.remove(areaWithZone);
             areas.add(areaWithZone.withoutOccupant(color));
         }
@@ -113,12 +113,19 @@ public record ZonePartition<Z extends Zone> (Set<Area<Z>> areas) {
          * @throws IllegalArgumentException if either zone does not belong to an area in the partition
          */
         public void union(Z zone1, Z zone2){
-            Area<Z> areaWithZone1 = build().areaContaining(zone1);
-            Area<Z> areaWithZone2 = build().areaContaining(zone2);
+            Area<Z> areaWithZone1 = areaContaining(zone1);
+            Area<Z> areaWithZone2 = areaContaining(zone2);
             Area<Z> connectedArea = areaWithZone1.connectTo(areaWithZone2);
             areas.remove(areaWithZone1);
             areas.remove(areaWithZone2);
             areas.add(connectedArea);
+        }
+
+        private Area<Z> areaContaining(Z zone){
+            return areas.stream()
+                    .filter(area -> area.zones().contains(zone))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Zone does not belong to any area in the partition"));
         }
 
         /**

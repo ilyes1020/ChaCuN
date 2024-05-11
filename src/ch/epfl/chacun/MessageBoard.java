@@ -37,12 +37,13 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
     public MessageBoard withScoredForest(Area<Zone.Forest> forest){
         if (forest.isOccupied()){
 
-            int tileCount = forest.tileIds().size();
+            Set<Integer> forestTileIds = forest.tileIds();
+            Set<PlayerColor> forestMajorityOccupants = forest.majorityOccupants();
             int mushroomGroupCount = Area.mushroomGroupCount(forest);
-            int points = Points.forClosedForest(tileCount, mushroomGroupCount);
-            String text = textMaker.playersScoredForest(forest.majorityOccupants(), points, mushroomGroupCount, tileCount);
+            int points = Points.forClosedForest(forestTileIds.size(), mushroomGroupCount);
+            String text = textMaker.playersScoredForest(forestMajorityOccupants, points, mushroomGroupCount, forestTileIds.size());
 
-            return addMessageAndReturnNewBoard(text, points, forest.majorityOccupants(), forest.tileIds());
+            return addMessageAndReturnNewBoard(text, points, forestMajorityOccupants, forestTileIds);
         }
         return this;
     }
@@ -71,12 +72,13 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
     public MessageBoard withScoredRiver(Area<Zone.River> river){
         if (river.isOccupied()){
 
-            int tileCount = river.tileIds().size();
+            Set<Integer> riverTileIds = river.tileIds();
+            Set<PlayerColor> riverMajorityOccupants = river.majorityOccupants();
             int fishCount = Area.riverFishCount(river);
-            int points = Points.forClosedRiver(tileCount, fishCount);
-            String text = textMaker.playersScoredRiver(river.majorityOccupants(), points, fishCount, tileCount);
+            int points = Points.forClosedRiver(riverTileIds.size(), fishCount);
+            String text = textMaker.playersScoredRiver(riverMajorityOccupants, points, fishCount, riverTileIds.size());
 
-            return addMessageAndReturnNewBoard(text, points, river.majorityOccupants(), river.tileIds());
+            return addMessageAndReturnNewBoard(text, points, riverMajorityOccupants, riverTileIds);
         }
         return this;
     }
@@ -129,8 +131,9 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
         int points = calculatePoints(animalCountMap);
 
         if (meadow.isOccupied() && points > 0){
-            String text = textMaker.playersScoredMeadow(meadow.majorityOccupants(), points, animalCountMap);
-            return addMessageAndReturnNewBoard(text, points, meadow.majorityOccupants(), meadow.tileIds());
+            Set<PlayerColor> meadowMajorityOccupants = meadow.majorityOccupants();
+            String text = textMaker.playersScoredMeadow(meadowMajorityOccupants, points, animalCountMap);
+            return addMessageAndReturnNewBoard(text, points, meadowMajorityOccupants, meadow.tileIds());
         }
         return this;
     }
@@ -147,8 +150,9 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
         int points = Points.forRiverSystem(fishCount);
 
         if (riverSystem.isOccupied() && points > 0) {
-            String text = textMaker.playersScoredRiverSystem(riverSystem.majorityOccupants(), points, fishCount);
-            return addMessageAndReturnNewBoard(text, points, riverSystem.majorityOccupants(), riverSystem.tileIds());
+            Set<PlayerColor> riverSystemMajorityOccupants = riverSystem.majorityOccupants();
+            String text = textMaker.playersScoredRiverSystem(riverSystemMajorityOccupants, points, fishCount);
+            return addMessageAndReturnNewBoard(text, points, riverSystemMajorityOccupants, riverSystem.tileIds());
         }
         return this;
     }
@@ -167,8 +171,9 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
         int points = calculatePoints(animalCountMap);
 
         if (adjacentMeadow.isOccupied() && points > 0){
-            String text = textMaker.playersScoredPitTrap(adjacentMeadow.majorityOccupants(), points, animalCountMap);
-            return addMessageAndReturnNewBoard(text, points, adjacentMeadow.majorityOccupants(), adjacentMeadow.tileIds());
+            Set<PlayerColor> adjacentMeadowMajorityOccupants = adjacentMeadow.majorityOccupants();
+            String text = textMaker.playersScoredPitTrap(adjacentMeadowMajorityOccupants, points, animalCountMap);
+            return addMessageAndReturnNewBoard(text, points, adjacentMeadowMajorityOccupants, adjacentMeadow.tileIds());
         }
         return this;
     }
@@ -184,10 +189,10 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
         if (riverSystem.isOccupied()) {
             int lakeCount = Area.lakeCount(riverSystem);
             int points = Points.forRaft(lakeCount);
+            Set<PlayerColor> riverSystemMajorityOccupants = riverSystem.majorityOccupants();
 
-            String text = textMaker.playersScoredRaft(riverSystem.majorityOccupants(), points, lakeCount);
-
-            return addMessageAndReturnNewBoard(text, points, riverSystem.majorityOccupants(), riverSystem.tileIds());
+            String text = textMaker.playersScoredRaft(riverSystemMajorityOccupants , points, lakeCount);
+            return addMessageAndReturnNewBoard(text, points, riverSystemMajorityOccupants, riverSystem.tileIds());
         }
         return this;
     }

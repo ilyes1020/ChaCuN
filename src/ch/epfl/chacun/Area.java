@@ -2,6 +2,7 @@ package ch.epfl.chacun;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Record representing an area.
@@ -65,10 +66,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
                 .flatMap(aMeadow -> aMeadow.animals().stream())
                 .collect(Collectors.toSet());
 
-        if (cancelledAnimals != null){
-            animals.removeAll(cancelledAnimals);
-        }
-
+        animals.removeAll(cancelledAnimals);
         return animals;
     }
 
@@ -164,20 +162,12 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
      * @return the area resulting from the connection
      */
     public Area<Z> connectTo(Area<Z> that) {
-        Set<Z> combinedZones = new HashSet<>(this.zones);
-        combinedZones.addAll(that.zones);
-
-        List<PlayerColor> combinedOccupants = new ArrayList<>(this.occupants);
-
-        int combinedOpenConnections;
-        if (this == that) {
-            combinedOpenConnections = this.openConnections - 2; // -2 because we are connecting the same area
-        } else {
-            combinedOpenConnections = this.openConnections + that.openConnections -2;
-            combinedOccupants.addAll(that.occupants);
-        }
-
-        return new Area<>(combinedZones, combinedOccupants, combinedOpenConnections);
+        if (this == that) return new Area<>(zones, occupants, openConnections - 2 );
+        return new Area<>(
+                  Stream.concat(this.zones.stream(), that.zones().stream()).collect(Collectors.toSet())
+                , Stream.concat(this.occupants.stream(), that.occupants().stream()).collect(Collectors.toList())
+                , this.openConnections + that.openConnections() - 2
+        );
     }
 
 

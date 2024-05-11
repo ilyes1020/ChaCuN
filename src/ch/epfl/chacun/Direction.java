@@ -56,6 +56,6 @@ public enum Direction {
      * @return the opposite direction
      */
     public Direction opposite() {
-        return ALL.get(this.rotated(Rotation.HALF_TURN).ordinal());
+        return rotated(Rotation.HALF_TURN);
     }
 }

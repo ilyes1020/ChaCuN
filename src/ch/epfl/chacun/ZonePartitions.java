@@ -18,10 +18,10 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
      * This builder allows for the modification of a {@code ZonePartitions} by manipulating its internal four different type of {@code ZonePartition}.
      */
     public static final class Builder {
-        private ZonePartition.Builder<Zone.Forest> forestsBuilder;
-        private ZonePartition.Builder<Zone.Meadow> meadowsBuilder;
-        private ZonePartition.Builder<Zone.River> riversBuilder;
-        private ZonePartition.Builder<Zone.Water> riverSystemsBuilder;
+        private final ZonePartition.Builder<Zone.Forest> forestsBuilder;
+        private final ZonePartition.Builder<Zone.Meadow> meadowsBuilder;
+        private final ZonePartition.Builder<Zone.River> riversBuilder;
+        private final ZonePartition.Builder<Zone.Water> riverSystemsBuilder;
 
 
         /**
@@ -141,14 +141,13 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
         private void addZonesToPartitions(Tile tile) {
             //compute the open connections
             int[] zoneIdSortedOpenConnections = new int[10];
-            for (Zone zone : tile.sideZones()){
-                if (zone instanceof Zone.River river && river.hasLake()){
-                    zoneIdSortedOpenConnections[river.lake().localId()]++;
-                    zoneIdSortedOpenConnections[river.localId()]++;
-                }
-                for (TileSide tileSide : tile.sides()){
-                    if (tileSide.zones().contains(zone))
-                        zoneIdSortedOpenConnections[zone.localId()]++;
+            for (TileSide tileSide : tile.sides()) {
+                for (Zone zone : tileSide.zones()) {
+                    if (zone instanceof Zone.River river && river.hasLake()){
+                        zoneIdSortedOpenConnections[river.lake().localId()]++;
+                        zoneIdSortedOpenConnections[river.localId()]++;
+                    }
+                    zoneIdSortedOpenConnections[zone.localId()]++;
                 }
             }
             //add zones to the partitions

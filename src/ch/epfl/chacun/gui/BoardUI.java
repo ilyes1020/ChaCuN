@@ -64,7 +64,7 @@ public final class BoardUI {
     boardGP.setId("board-grid");
     boardSP.setContent(boardGP);
 
-    //---empty Tile image---//
+    //---Empty Tile image---//
     WritableImage emptyTileImage = new WritableImage(1, 1);
     emptyTileImage
             .getPixelWriter()
@@ -111,7 +111,7 @@ public final class BoardUI {
                         // load its image if not loaded yet and set the background image to the tile's image
                         if (placedTile != null) {
                             backgroundImage = CellData.IMAGE_CACHE.computeIfAbsent(placedTile.id(), ImageLoader::normalImageForTile);
-
+                            rotation = placedTile.rotation();
                             // If there is a PlacedTile on the cell and there is other PlacedTiles that should be highlighted,
                             // then the veil should be black
                             if (!highlightedTilesIdsOV.getValue().isEmpty() && !highlightedTilesIdsOV.getValue().contains(placedTile.id())){

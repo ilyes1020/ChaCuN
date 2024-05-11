@@ -17,7 +17,9 @@ public final class Board {
 
     public static final int REACH = 12;
     public static final int BOARD_SIZE = 25;
-    public static final Board EMPTY = new Board(new PlacedTile[625], new int[0], ZonePartitions.EMPTY, new HashSet<>());
+    public static final int BOARD_CELL_NUMBER = 625;
+
+    public static final Board EMPTY = new Board(new PlacedTile[BOARD_CELL_NUMBER], new int[0], ZonePartitions.EMPTY, new HashSet<>());
 
     public Board(PlacedTile[] placedTiles, int[] tilesIndex, ZonePartitions zonePartitions, Set<Animal> cancelledAnimals) {
         this.placedTiles = placedTiles;
@@ -181,7 +183,7 @@ public final class Board {
     public Set<Pos> insertionPositions() {
         return Arrays.stream(tilesIndex)
                 .mapToObj(this::indexToPos)
-                .flatMap(pos -> Arrays.stream(Direction.values())
+                .flatMap(pos -> Direction.ALL.stream()
                         .map(pos::neighbor)
                         .filter(this::isValidPos)
                         .filter(neighbor -> tileAt(neighbor) == null))
@@ -207,9 +209,8 @@ public final class Board {
         if (lastPlacedTile() == null){
             return Set.of();
         }
-        return Arrays.stream(Direction.values())
-                .filter(direction -> lastPlacedTile().side(direction) instanceof TileSide.Forest)
-                .map(direction -> forestArea(((TileSide.Forest) lastPlacedTile().side(direction)).forest()))
+        return lastPlacedTile().forestZones().stream()
+                .map(zone -> zonePartitions.forests().areaContaining(zone))
                 .filter(Area::isClosed)
                 .collect(Collectors.toSet());
     }
@@ -223,9 +224,8 @@ public final class Board {
         if (lastPlacedTile() == null){
             return Set.of();
         }
-        return Arrays.stream(Direction.values())
-                .filter(direction -> lastPlacedTile().side(direction) instanceof TileSide.River)
-                .map(direction -> riverArea(((TileSide.River) lastPlacedTile().side(direction)).river()))
+        return lastPlacedTile().riverZones().stream()
+                .map(zone -> zonePartitions.rivers().areaContaining(zone))
                 .filter(Area::isClosed)
                 .collect(Collectors.toSet());
     }
@@ -240,7 +240,7 @@ public final class Board {
         if (!insertionPositions().contains(tile.pos())){
             return false;
         }
-        return Arrays.stream(Direction.values())
+        return Direction.ALL.stream()
                 .allMatch(direction -> {
                     PlacedTile neighborTile = tileAt(tile.pos().neighbor(direction));
                     return neighborTile == null || tile.side(direction).isSameKindAs(neighborTile.side(direction.opposite()));
@@ -255,8 +255,8 @@ public final class Board {
      */
     public boolean couldPlaceTile(Tile tile) {
         return insertionPositions().stream()
-                .flatMap(pos -> Arrays.stream(Rotation.values())
-                .map(rot -> new PlacedTile(tile, null, rot, pos)))
+                .flatMap(pos -> Rotation.ALL.stream()
+                        .map(rot -> new PlacedTile(tile, null, rot, pos)))
                 .anyMatch(this::canAddTile);
     }
 
@@ -364,23 +364,23 @@ public final class Board {
         PlacedTile[] updatedPlacedTiles = placedTiles.clone();
         ZonePartitions.Builder zonePartitionsBuilder = new ZonePartitions.Builder(zonePartitions);
 
-        forests.forEach(forestArea -> {
+        for (Area<Zone.Forest> forestArea : forests) {
             zonePartitionsBuilder.clearGatherers(forestArea);
             forestArea.tileIds().stream()
                     .map(this::tileWithId)
                     .filter(tile -> tile.idOfZoneOccupiedBy(Occupant.Kind.PAWN) != -1)
                     .filter(tile -> forestArea.zones().contains(tile.zoneWithId(tile.idOfZoneOccupiedBy(Occupant.Kind.PAWN))))
                     .forEach(tile -> updatedPlacedTiles[indexOf(tile)] = tile.withNoOccupant());
-        });
+        }
 
-        rivers.forEach(riverArea -> {
+        for (Area<Zone.River> riverArea : rivers) {
             zonePartitionsBuilder.clearFishers(riverArea);
             riverArea.tileIds().stream()
                     .map(this::tileWithId)
                     .filter(tile -> tile.idOfZoneOccupiedBy(Occupant.Kind.PAWN) != -1)
                     .filter(tile -> riverArea.zones().contains(tile.zoneWithId(tile.idOfZoneOccupiedBy(Occupant.Kind.PAWN))))
                     .forEach(tile -> updatedPlacedTiles[indexOf(tile)] = tile.withNoOccupant());
-        });
+        }
 
         ZonePartitions updatedZonePartitions = zonePartitionsBuilder.build();
 
@@ -396,7 +396,7 @@ public final class Board {
     public Board withMoreCancelledAnimals(Set<Animal> newlyCancelledAnimals) {
         Set<Animal> updatedCancelledAnimals = new HashSet<>(cancelledAnimals);
         updatedCancelledAnimals.addAll(newlyCancelledAnimals);
-        return new Board(placedTiles, tilesIndex, zonePartitions, updatedCancelledAnimals);
+        return new Board(placedTiles, tilesIndex, zonePartitions, Set.copyOf(updatedCancelledAnimals));
     }
 
     /**

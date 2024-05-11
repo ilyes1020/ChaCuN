@@ -71,8 +71,7 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      * @return the tile side in the given direction
      */
     public TileSide side(Direction direction){
-        int newDirectionIndex = (direction.ordinal() - rotation.ordinal() + tile.sides().size()) % tile.sides().size();
-        return tile.sides().get(newDirectionIndex);
+        return tile.sides().get(direction.rotated(rotation.negated()).ordinal());
     }
 
     /**
