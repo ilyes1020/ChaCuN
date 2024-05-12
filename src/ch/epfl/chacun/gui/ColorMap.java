@@ -10,7 +10,6 @@ import javafx.scene.paint.Color;
  * @author Weifeng Ding (379902)
  */
 public final class ColorMap {
-
     private ColorMap() {}
 
     /**

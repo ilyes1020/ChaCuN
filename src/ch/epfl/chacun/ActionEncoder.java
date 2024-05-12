@@ -12,10 +12,6 @@ import java.util.List;
  * @author Weifeng Ding(379902)
  */
 public final class ActionEncoder {
-
-    /**
-     * Private constructor to prevent instantiation of the class.
-     */
     private ActionEncoder() {}
 
     /**

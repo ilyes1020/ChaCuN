@@ -20,7 +20,6 @@ import java.util.Map;
  * @author Weifeng Ding (379902)
  */
 public final class PlayersUI {
-
     private PlayersUI() {}
 
     /**

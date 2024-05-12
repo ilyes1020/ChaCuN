@@ -22,7 +22,6 @@ import static javafx.application.Platform.runLater;
  * @author Weifeng Ding (379902)
  */
 public final class MessageBoardUI {
-
     private MessageBoardUI() {}
 
     /**
