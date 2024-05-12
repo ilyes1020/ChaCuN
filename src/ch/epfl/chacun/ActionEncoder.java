@@ -36,8 +36,8 @@ public final class ActionEncoder {
                 .sorted(Comparator.comparing(Pos::x).thenComparing(Pos::y))
                 .toList();
 
-        byte position = (byte) sortedFringe.indexOf(placedTile.pos());
-        byte rotation = (byte) placedTile.rotation().ordinal();
+        int position = sortedFringe.indexOf(placedTile.pos());
+        int rotation = placedTile.rotation().ordinal();
 
         int packedByte = 0b1111111111 & ((position << 2) | rotation);
 
@@ -57,9 +57,10 @@ public final class ActionEncoder {
             return new StateAction(gameState.withNewOccupant(null), Base32.encodeBits5(0b11111));
         }
 
-        byte occupantKind = (byte) occupant.kind().ordinal();
-        byte occupiedZone = (byte) (Zone.localId(occupant.zoneId()));
-        int packedByte = 0b11111 & (occupantKind << 4) | occupiedZone;
+        int occupantKind = occupant.kind().ordinal();
+        int occupiedZone = Zone.localId(occupant.zoneId());
+
+        int packedByte = 0b11111 & ((occupantKind << 4) | occupiedZone);
 
         return new StateAction(gameState.withNewOccupant(occupant), Base32.encodeBits5(packedByte));
     }
