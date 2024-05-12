@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding(379902)
  */
-public class Base32 {
+public final class Base32 {
 
     /**
      * Private constructor to prevent instantiation of this utility class
