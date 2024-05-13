@@ -1,8 +1,5 @@
 package ch.epfl.chacun;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * Utility class that contains method to encode binary values in base32 and decode base32 values in binary.
  *
@@ -28,27 +25,35 @@ public final class Base32 {
     }
 
     /**
-     * Encodes the given 5-bit value into Base32.
+     * Encodes the given 5 least significant bits of the given value into Base32.
      *
      * @param value The value to be encoded.
      * @return      the Base32 encoded string.
-     * @throws IllegalArgumentException if the value is not within the range [0, 31].
      */
     public static String encodeBits5(int value) {
-        Preconditions.checkArgument(value >= 0 && value <= 31);
-        return String.valueOf(ALPHABET.charAt(value));
+        Preconditions.checkArgument(value >=0 && value < 32);
+        int mask = 0b11111;
+        int fiveLSBs = value & mask;
+
+        return String.valueOf(ALPHABET.charAt(fiveLSBs));
     }
 
     /**
-     * Encodes the given 10-bit value into Base32.
+     * Encodes the given 10 least significant bits of the given value into Base32.
      *
      * @param value The value to be encoded.
      * @return      the Base32 encoded string.
-     * @throws IllegalArgumentException if the value is not within the range [0, 1023].
      */
     public static String encodeBits10(int value) {
-        Preconditions.checkArgument(value >= 0 && value <= Math.pow(32, 2) - 1);
-        return STR."\{ALPHABET.charAt(value / 32)}\{ALPHABET.charAt(value % 32)}";
+        Preconditions.checkArgument(value >=0 && value < 1024);
+        int mask = 0b1111111111;
+        int tenLSBs = value & mask;
+
+        int firstHalf = tenLSBs >>> 5;
+        int secondHalf = tenLSBs & 0b11111;
+
+
+        return STR."\{ALPHABET.charAt(firstHalf)}\{ALPHABET.charAt(secondHalf)}";
     }
 
     /**

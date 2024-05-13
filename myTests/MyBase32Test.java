@@ -32,6 +32,7 @@ public class MyBase32Test {
 
     @Test
     void encodeBits10Works(){
+        assertEquals("CH", Base32.encodeBits10(71));
         assertEquals("EW", Base32.encodeBits10(150));
         assertEquals("A7", Base32.encodeBits10(31));
         assertEquals("AA", Base32.encodeBits10(0));
@@ -50,6 +51,7 @@ public class MyBase32Test {
         assertEquals(980, Base32.decode("6U"));
         assertEquals(0, Base32.decode("AA"));
         assertEquals(31, Base32.decode("A7"));
+        assertEquals(71, Base32.decode("CH"));
     }
 
     @Test

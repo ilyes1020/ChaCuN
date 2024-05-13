@@ -35,10 +35,10 @@ public final class ActionEncoder {
         int position = sortedFringe.indexOf(placedTile.pos());
         int rotation = placedTile.rotation().ordinal();
 
-        int packedByte = 0b1111111111 & ((position << 2) | rotation);
+        int packedInfo = 0b1111111111 & ((position << 2) | rotation);
 
         return new StateAction(gameState.withPlacedTile(placedTile)
-                , Base32.encodeBits10(packedByte));
+                , Base32.encodeBits10(packedInfo));
     }
 
     /**
@@ -56,9 +56,9 @@ public final class ActionEncoder {
         int occupantKind = occupant.kind().ordinal();
         int occupiedZone = Zone.localId(occupant.zoneId());
 
-        int packedByte = 0b11111 & ((occupantKind << 4) | occupiedZone);
+        int packedInfo = 0b11111 & ((occupantKind << 4) | occupiedZone);
 
-        return new StateAction(gameState.withNewOccupant(occupant), Base32.encodeBits5(packedByte));
+        return new StateAction(gameState.withNewOccupant(occupant), Base32.encodeBits5(packedInfo));
     }
 
     /**
@@ -120,8 +120,9 @@ public final class ActionEncoder {
                 throw new IllegalArgumentException();
             }
 
+            //to unpack the position and rotation from the action code
             Pos placedTilePos = sortedFringe.get(Base32.decode(actionCode) >>> 2);
-            Rotation rotation = Rotation.ALL.get(Base32.decode(actionCode) & 0b0000000011);
+            Rotation rotation = Rotation.ALL.get(Base32.decode(actionCode) & 0b11);
 
             PlacedTile placedTileToPlace = new PlacedTile(gameState.tileToPlace(), gameState.currentPlayer(), rotation, placedTilePos);
 
@@ -148,7 +149,7 @@ public final class ActionEncoder {
                 }
 
                 Occupant.Kind occupantKind = Occupant.Kind.values()[Base32.decode(actionCode) >>> 4];
-                int occupantZoneId = Integer.parseInt(STR."\{gameState.board().lastPlacedTile().id()}\{Base32.decode(actionCode) & 0b01111}");
+                int occupantZoneId = Integer.parseInt(STR."\{gameState.board().lastPlacedTile().id()}\{Base32.decode(actionCode) & 0b1111}");
 
                 Occupant occupant = new Occupant(occupantKind, occupantZoneId);
 

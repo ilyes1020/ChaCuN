@@ -11,6 +11,7 @@ import javafx.scene.text.Text;
 
 
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -36,20 +37,17 @@ public final class ActionsUI {
 
         HBox actionsHB = new HBox();
         actionsHB.getStylesheets().add("actions.css");
-
+        actionsHB.setId("actions");
 
         //---Action history text initialization---//
         Text lastFourActionsB32 = new Text();
         actionsHB.getChildren().add(lastFourActionsB32);
         ObservableValue<String> lastFourActionsToStringOV = actionListOV.map(list -> {
-            StringBuilder sb = new StringBuilder();
-            for (int i = list.size() - 4 ; i < list.size(); i++) {
-                sb.append(STR."\{i + 1}:\{list.get(i)}");
-                if (i != list.size() - 1) {
-                    sb.append(", ");
-                }
+            StringJoiner sj = new StringJoiner(", ");
+            for (int i = Math.max(0, list.size() - 4); i < list.size(); i++) {
+                sj.add(STR."\{i + 1}:\{list.get(i)}");
             }
-            return sb.toString();
+            return sj.toString();
         });
         lastFourActionsB32.textProperty().bind(lastFourActionsToStringOV);
 
