@@ -58,6 +58,8 @@ public final class BoardUI {
     ScrollPane boardSP = new ScrollPane();
     boardSP.getStylesheets().add("board.css");
     boardSP.setId("board-scroll-pane");
+    boardSP.setHvalue(0.5);
+    boardSP.setVvalue(0.5);
 
     //---GridPane instantiation---//
     GridPane boardGP = new GridPane();
@@ -180,19 +182,21 @@ public final class BoardUI {
 
             //---Instantiation of the mouse events---//
             tileGroup.setOnMouseClicked(event -> {
-                if (event.getButton() == MouseButton.SECONDARY){
-                    if (event.isAltDown()) rotationHandler.accept(Rotation.RIGHT);
-                    else rotationHandler.accept(Rotation.LEFT);
-                }
-                if (event.getButton() == MouseButton.PRIMARY
-                        && fringeOV.getValue().contains(currentPos)) {
-                    placeTileHandler.accept(currentPos);
+                if (event.isStillSincePress()) {
+                    if (event.getButton() == MouseButton.SECONDARY){
+                        if (event.isAltDown()) rotationHandler.accept(Rotation.RIGHT);
+                        else rotationHandler.accept(Rotation.LEFT);
+                    }
+                    if (event.getButton() == MouseButton.PRIMARY
+                            && fringeOV.getValue().contains(currentPos)) {
+                        placeTileHandler.accept(currentPos);
+                    }
                 }
             });
 
             //---Adding all the occupants and cancelled animals markers when a new cell is added---//
             placedTileOV.addListener((o, oldTile, newTile) -> {
-                if (newTile != null) {
+                if (newTile != null && oldTile == null) {
                     //---Adding the Cancelled Animals Markers---//
                     Set<Animal> animals = newTile
                             .meadowZones()
@@ -225,7 +229,9 @@ public final class BoardUI {
 
                         //---making the occupant clickable---//
                         occupantNode.setOnMouseClicked(event -> {
-                            if (event.getButton() == MouseButton.PRIMARY) occupantSelectHandler.accept(occupant);
+                            if (event.isStillSincePress()) {
+                                if (event.getButton() == MouseButton.PRIMARY) occupantSelectHandler.accept(occupant);
+                            }
                         });
                     }
                 }
