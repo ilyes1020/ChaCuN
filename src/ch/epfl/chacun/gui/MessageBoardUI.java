@@ -65,7 +65,8 @@ public final class MessageBoardUI {
             }
 
             //---scrolling the scrollPane to the bottom---//
-            runLater(() -> messagesSP.setVvalue(1));
+            messagesSP.layout();
+            messagesSP.setVvalue(1);
         });
         return messagesSP;
     }
