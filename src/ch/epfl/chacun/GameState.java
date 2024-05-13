@@ -2,6 +2,7 @@ package ch.epfl.chacun;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Record representing the game state
@@ -189,18 +190,18 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                 case LOGBOAT -> updatedMessageBoard = updatedMessageBoard.withScoredLogboat(tile.placer(), updatedBoard.riverSystemArea((Zone.Water) zoneWithSpecialPower));
                 case HUNTING_TRAP -> {
                     Area<Zone.Meadow> adjacentMeadow = updatedBoard.adjacentMeadow(tile.pos(), (Zone.Meadow) zoneWithSpecialPower);
-                    Set<Animal> notCancelledYetAnimals = Area.animals(adjacentMeadow, updatedBoard.cancelledAnimals());
-                    Set<Animal> newlyCancelledAnimals = new HashSet<>(updatedBoard.cancelledAnimals());
+                    Set<Animal> animalsInAdjacentMeadow = Area.animals(adjacentMeadow, updatedBoard.cancelledAnimals());
 
-                    Map<Animal.Kind, Integer> animalCountMap = countAnimals(notCancelledYetAnimals);
+                    Map<Animal.Kind, Integer> animalCountMap = countAnimals(animalsInAdjacentMeadow);
 
                     int smilodonCount = animalCountMap.getOrDefault(Animal.Kind.TIGER, 0);
                     int deerCount = animalCountMap.getOrDefault(Animal.Kind.DEER, 0);
 
-                    newlyCancelledAnimals.addAll(cancelDeers(smilodonCount, deerCount, notCancelledYetAnimals.iterator()));
+                    Set<Animal> cancelledDeer = cancelDeers(smilodonCount, deerCount, animalsInAdjacentMeadow.iterator());
+                    Set<Animal> newlyCancelledAnimals = Stream.concat(cancelledDeer.stream(), updatedBoard.cancelledAnimals().stream()).collect(Collectors.toSet());
 
-                    updatedMessageBoard = updatedMessageBoard.withScoredHuntingTrap(tile.placer(), adjacentMeadow);
-                    newlyCancelledAnimals.addAll(notCancelledYetAnimals);
+                    updatedMessageBoard = updatedMessageBoard.withScoredHuntingTrap(tile.placer(), adjacentMeadow, newlyCancelledAnimals);
+                    newlyCancelledAnimals.addAll(animalsInAdjacentMeadow);
                     updatedBoard = updatedBoard.withMoreCancelledAnimals(newlyCancelledAnimals);
                 }
                 case null, default -> {}
@@ -404,7 +405,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
         Board updatedBoard = board;
 
         // Compute the points for the meadows
-        Set<Animal> cancelledAnimals = board.cancelledAnimals();
+        Set<Animal> cancelledAnimals = updatedBoard.cancelledAnimals();
 
         for (Area<Zone.Meadow> meadowArea : board.meadowAreas()) {
             // Check if there is a PitTrap in the zone
@@ -421,10 +422,9 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                     updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, cancelledAnimals);
 
                 } else {
-                    Set<Animal> notCancelledYetAnimals = Area.animals(meadowArea, updatedBoard.cancelledAnimals());
-                    Set<Animal> newlyCancelledAnimals = new HashSet<>(updatedBoard.cancelledAnimals());
+                    Set<Animal> animalsInAdjacentMeadow = Area.animals(meadowArea, cancelledAnimals);
 
-                    Map<Animal.Kind, Integer> animalCountMap = countAnimals(notCancelledYetAnimals);
+                    Map<Animal.Kind, Integer> animalCountMap = countAnimals(animalsInAdjacentMeadow);
 
                     int smilodonCount = animalCountMap.getOrDefault(Animal.Kind.TIGER, 0);
 
@@ -442,6 +442,7 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                     int adjacentDeerCount = adjacentDeers.size();
                     int notAdjacentDeerCount = notAdjacentDeers.size();
 
+                    Set<Animal> newlyCancelledAnimals = new HashSet<>(cancelledAnimals);
                     if (smilodonCount >= notAdjacentDeerCount) {
                         newlyCancelledAnimals.addAll(notAdjacentDeers);
 
@@ -451,7 +452,6 @@ public record GameState(List<PlayerColor> players, TileDecks tileDecks, Tile til
                     } else {
                         newlyCancelledAnimals.addAll(cancelDeers(smilodonCount, notAdjacentDeerCount, notAdjacentDeers.iterator()));
                     }
-                    updatedBoard = updatedBoard.withMoreCancelledAnimals(newlyCancelledAnimals);
                     updatedMessageBoard = updatedMessageBoard.withScoredPitTrap(adjacentMeadow, newlyCancelledAnimals);
                     updatedMessageBoard = updatedMessageBoard.withScoredMeadow(meadowArea, newlyCancelledAnimals);
                 }

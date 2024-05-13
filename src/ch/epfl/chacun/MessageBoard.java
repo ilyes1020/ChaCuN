@@ -91,8 +91,8 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @param adjacentMeadow The meadow area adjacent to the hunting trap.
      * @return A new message board reflecting the changes, if any.
      */
-    public MessageBoard withScoredHuntingTrap(PlayerColor scorer, Area<Zone.Meadow> adjacentMeadow, Set<Animal> cancelledDeers){
-        Map<Animal.Kind, Integer> animalCountMap = countAnimals(adjacentMeadow, cancelledDeers);
+    public MessageBoard withScoredHuntingTrap(PlayerColor scorer, Area<Zone.Meadow> adjacentMeadow, Set<Animal> cancelledAnimals){
+        Map<Animal.Kind, Integer> animalCountMap = countAnimals(adjacentMeadow, cancelledAnimals);
         int points = calculatePoints(animalCountMap);
 
         if (points > 0){
