@@ -12,6 +12,7 @@ import javafx.scene.text.TextFlow;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * User interface representing the list of all player, their respective occupants, and their scored points.
@@ -36,8 +37,7 @@ public final class PlayersUI {
         playersVB.setId("players");
         playersVB.getStylesheets().add("players.css");
 
-        List<PlayerColor> players = new ArrayList<>(PlayerColor.ALL);
-        players.removeIf(p -> textMaker.playerName(p) == null);
+        List<PlayerColor> players = gameStateOV.getValue().players();
 
         ObservableValue<PlayerColor> currentPlayerOV = gameStateOV.map(GameState::currentPlayer);
 
