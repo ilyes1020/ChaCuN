@@ -33,7 +33,8 @@ public final class ActionsUI {
      * @param eventHandler   A handler of actions performance.
      * @return a JavaFx node of the user interface with the history of the 4 last actions and a text field to enter the action to perform.
      */
-    public static Node create(ObservableValue<List<String>> actionListOV, Consumer<String> eventHandler){
+    public static Node create(ObservableValue<List<String>> actionListOV,
+                              Consumer<String> eventHandler){
 
         HBox actionsHB = new HBox();
         actionsHB.getStylesheets().add("actions.css");

@@ -71,7 +71,7 @@ public final class TextMakerFr implements TextMaker{
     public String playersScoredRiver(Set<PlayerColor> scorers, int points, int fishCount, int tileCount) {
         return fishCount == 0 ?
             STR."\{scorersSyntax(scorers)} \{aIfSingularOntIfPlural(scorers.size())} remporté \{points} \{withSIfPlural("point", points, false)} en tant qu'\{withSIfPlural("occupant·e", scorers.size(), true)} \{withSIfPlural("majoritaire", scorers.size(), false)} d'une rivière composée de \{tileCount} tuiles." :
-            STR."\{scorersSyntax(scorers)} \{aIfSingularOntIfPlural(scorers.size())} remporté \{points} \{withSIfPlural("point", points, false)} en tant qu'\{withSIfPlural("occupant·e", scorers.size(), true)} \{withSIfPlural("majoritaire", scorers.size(), false)} d'une rivière composée de \{tileCount} tuiles et contenant \{fishCount} \{withSIfPlural("groupe", fishCount, false)}.";
+            STR."\{scorersSyntax(scorers)} \{aIfSingularOntIfPlural(scorers.size())} remporté \{points} \{withSIfPlural("point", points, false)} en tant qu'\{withSIfPlural("occupant·e", scorers.size(), true)} \{withSIfPlural("majoritaire", scorers.size(), false)} d'une rivière composée de \{tileCount} tuiles et contenant \{fishCount} \{withSIfPlural("poisson", fishCount, false)}.";
     }
 
     /**

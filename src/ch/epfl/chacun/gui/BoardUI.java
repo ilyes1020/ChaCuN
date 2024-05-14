@@ -39,20 +39,20 @@ public final class BoardUI {
      * @param gameStateOV               An Observable value of the gameState.
      * @param rotationOV                An Observable value of the rotation of the tile.
      * @param visibleOccupantsOV        An Observable value of the set of the visible occupants.
-     * @param highlightedTilesIdsOV     An Observable value of the set of the highlighted tiles.
+     * @param highlightedTilesIdOV     An Observable value of the set of the highlighted tiles.
      * @param rotationHandler           A handler of tile rotations
      * @param placeTileHandler          A handler of tile placements
      * @param occupantSelectHandler     A handler of occupants selection (placing or removing)
      * @return                          a JavaFx node of the user interface of the board with cell nodes for tiles.
      */
     public static Node create(int reach,
-                          ObservableValue<GameState> gameStateOV,
-                          ObservableValue<Rotation> rotationOV,
-                          ObservableValue<Set<Occupant>> visibleOccupantsOV,
-                          ObservableValue<Set<Integer>> highlightedTilesIdsOV,
-                          Consumer<Rotation> rotationHandler,
-                          Consumer<Pos> placeTileHandler,
-                          Consumer<Occupant> occupantSelectHandler){
+                              ObservableValue<GameState> gameStateOV,
+                              ObservableValue<Rotation> rotationOV,
+                              ObservableValue<Set<Occupant>> visibleOccupantsOV,
+                              ObservableValue<Set<Integer>> highlightedTilesIdOV,
+                              Consumer<Rotation> rotationHandler,
+                              Consumer<Pos> placeTileHandler,
+                              Consumer<Occupant> occupantSelectHandler){
 
     //---ScrollPane instantiation---//
     ScrollPane boardSP = new ScrollPane();
@@ -116,7 +116,7 @@ public final class BoardUI {
                             rotation = placedTile.rotation();
                             // If there is a PlacedTile on the cell and there is other PlacedTiles that should be highlighted,
                             // then the veil should be black
-                            if (!highlightedTilesIdsOV.getValue().isEmpty() && !highlightedTilesIdsOV.getValue().contains(placedTile.id())){
+                            if (!highlightedTilesIdOV.getValue().isEmpty() && !highlightedTilesIdOV.getValue().contains(placedTile.id())){
                                 veilColor = Color.BLACK;
                             }
                         }
@@ -148,7 +148,7 @@ public final class BoardUI {
                     , placedTileOV
                     , rotationOV
                     , gameStateOV
-                    , highlightedTilesIdsOV
+                    , highlightedTilesIdOV
                     , fringeOV
                     , mouseHovering);
 

@@ -30,7 +30,8 @@ public final class PlayersUI {
      * @param textMaker     A text maker.
      * @return a JavaFx node of the user interface with all player, occupants and scored points.
      */
-    public static Node create(ObservableValue<GameState> gameStateOV, TextMaker textMaker){
+    public static Node create(ObservableValue<GameState> gameStateOV,
+                              TextMaker textMaker){
 
         //---PlayersVB initializing---//
         VBox playersVB = new VBox();

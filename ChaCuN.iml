@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/myTests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/FXtest" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src_generated" isTestSource="false" generated="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -28,11 +28,12 @@ public final class MessageBoardUI {
      * Creates a JavaFx Node representing the Message Board User Interface.
      *
      * @param messagesOV    An Observable value of the messages
-     * @param tileIdsOP     An Object property of the tileIds
+     * @param highlightedTilesIdOP     An Object property of the tileIds
      * @return a JavaFx Node representing all the messages sent in the game.
      */
 
-    public static Node create(ObservableValue<List<MessageBoard.Message>> messagesOV, ObjectProperty<Set<Integer>> tileIdsOP){
+    public static Node create(ObservableValue<List<MessageBoard.Message>> messagesOV,
+                              ObjectProperty<Set<Integer>> highlightedTilesIdOP){
         //---VBox initialization---//
         VBox messagesVB = new VBox();
 
@@ -57,8 +58,8 @@ public final class MessageBoardUI {
                 newMessageText.setWrappingWidth(ImageLoader.LARGE_TILE_FIT_SIZE);
 
                 //---updating the tileIds list when the mouse enter the text node---//
-                newMessageText.setOnMouseEntered((mouseEvent) -> tileIdsOP.setValue(newMessage.tileIds()));
-                newMessageText.setOnMouseExited((mouseEvent) -> tileIdsOP.setValue(Set.of()));
+                newMessageText.setOnMouseEntered((mouseEvent) -> highlightedTilesIdOP.setValue(newMessage.tileIds()));
+                newMessageText.setOnMouseExited((mouseEvent) -> highlightedTilesIdOP.setValue(Set.of()));
 
                 //---adding the Text node to the VBox---//
                 messagesVB.getChildren().add(newMessageText);
