@@ -39,7 +39,7 @@ public final class BoardUI {
      * @param gameStateOV               An Observable value of the gameState.
      * @param rotationOV                An Observable value of the rotation of the tile.
      * @param visibleOccupantsOV        An Observable value of the set of the visible occupants.
-     * @param highlightedTilesIdOV     An Observable value of the set of the highlighted tiles.
+     * @param highlightedTilesIdOV      An Observable value of the set of the highlighted tiles.
      * @param rotationHandler           A handler of tile rotations
      * @param placeTileHandler          A handler of tile placements
      * @param occupantSelectHandler     A handler of occupants selection (placing or removing)
@@ -205,6 +205,8 @@ public final class BoardUI {
                             .collect(Collectors.toSet());
                     for (Animal animal : animals) {
                         ImageView markerIV = new ImageView("marker.png");
+                        markerIV.setFitWidth(ImageLoader.MARKER_FIT_SIZE);
+                        markerIV.setFitHeight(ImageLoader.MARKER_FIT_SIZE);
                         markerIV.getStyleClass().add("marker");
                         markerIV.setId(STR."marker_\{animal.id()}");
                         tileGroup.getChildren().add(markerIV);

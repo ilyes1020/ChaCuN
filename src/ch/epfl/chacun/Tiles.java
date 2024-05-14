@@ -8,6 +8,17 @@ public final class Tiles {
     private Tiles() {}
 
     public static final List<Tile> TILES = createTiles();
+    public static final List<Tile> TILES_SHAMAN = createTiles()
+            .stream()
+            .filter(t -> t.kind() == Tile.Kind.START || t.kind() == Tile.Kind.NORMAL || t.id() == 88)
+            .toList();
+
+    //no more than 10 normal Tile
+    public static final List<Tile> TILES_HUNTING_TRAP = createTiles()
+            .stream()
+            .filter(t -> t.kind() == Tile.Kind.START || t.kind() == Tile.Kind.NORMAL || t.id() == 94)
+            .filter(t -> t.id() == 43 || t.id() == 44 || t.id() == 32 || t.id() == 56 || t.id() == 94)
+            .toList();
 
     private static List<Tile> createTiles() {
         ArrayList<Tile> tiles = new ArrayList<>();

@@ -51,7 +51,7 @@ public final class Main extends Application {
 
         //-----INITIALIZING THE GAMESTATE-----//
         long seed;
-        List<Tile> tiles = new ArrayList<>(Tiles.TILES);
+        List<Tile> tiles = new ArrayList<>(Tiles.TILES_HUNTING_TRAP);
         //Checking for the validity of the arguments and shuffle with the seed if there is one provided
         if (playerNames.size() < 2 || playerNames.size() > 5) {
             throw new IllegalArgumentException("Invalid player number.");
@@ -113,11 +113,10 @@ public final class Main extends Application {
         Consumer<Pos> placeTileHandler = pos -> {
             GameState currentGameState = gameStateOV.getValue();
             PlacedTile placedTileToPlace = new PlacedTile(currentGameState.tileToPlace(), currentGameState.currentPlayer(), rotationOV.getValue(), pos);
-            if (gameStateOV.getValue().board().canAddTile(placedTileToPlace)) {
+            if (currentGameState.board().canAddTile(placedTileToPlace)) {
                 ActionEncoder.StateAction stateAction = ActionEncoder.withPlacedTile(currentGameState, placedTileToPlace);
 
-                actionListOV.setValue(Stream.concat(actionListOV.getValue().stream(), Stream.of(stateAction.actionB32())).toList());
-                gameStateOV.setValue(stateAction.gameState());
+                updateState(actionListOV, stateAction, gameStateOV);
                 rotationOV.setValue(Rotation.NONE);
             }
         };
@@ -126,14 +125,12 @@ public final class Main extends Application {
             GameState currentGameState = gameStateOV.getValue();
             if (currentGameState.nextAction() == GameState.Action.OCCUPY_TILE) {
                 ActionEncoder.StateAction stateActionAddedOccupant = ActionEncoder.withNewOccupant(currentGameState, occupant);
-                actionListOV.setValue(Stream.concat(actionListOV.getValue().stream(), Stream.of(stateActionAddedOccupant.actionB32())).toList());
-                gameStateOV.setValue(stateActionAddedOccupant.gameState());
+                updateState(actionListOV, stateActionAddedOccupant, gameStateOV);
             } else if (currentGameState.nextAction() == GameState.Action.RETAKE_PAWN
                        &&
                        currentGameState.currentPlayer() == currentGameState.board().tileWithId(Zone.tileId(occupant.zoneId())).placer()){
                 ActionEncoder.StateAction stateActionRemovedPawn = ActionEncoder.withOccupantRemoved(currentGameState, occupant);
-                actionListOV.setValue(Stream.concat(actionListOV.getValue().stream(), Stream.of(stateActionRemovedPawn.actionB32())).toList());
-                gameStateOV.setValue(stateActionRemovedPawn.gameState());
+                updateState(actionListOV, stateActionRemovedPawn, gameStateOV);
             }
         };
 
@@ -145,9 +142,9 @@ public final class Main extends Application {
 
         ObservableValue<String> textToDisplayOV = gameStateOV.map(g -> {
             if (g.nextAction() == GameState.Action.OCCUPY_TILE)
-                return "Cliquez sur le pion ou la hutte que vous désirez placer, ou ici pour ne pas en placer.";
+                return textMakerFr.clickToOccupy();
             else if (g.nextAction() == GameState.Action.RETAKE_PAWN)
-                return "Cliquez sur le pion que vous désirez retirer, ou ici pour ne pas en retirer.";
+                return textMakerFr.clickToUnoccupy();
             else
                 return "";
         });
@@ -159,18 +156,17 @@ public final class Main extends Application {
                 actionListOV.setValue(Stream.concat(actionListOV.getValue().stream(), Stream.of(stateActionAddedNoOccupant.actionB32())).toList());
 
                 gameStateOV.setValue(gameStateOV.getValue().withNewOccupant(occupant));
-            } else if (gameStateOV.getValue().nextAction() == GameState.Action.OCCUPY_TILE){
+            } else if (gameStateOV.getValue().nextAction() == GameState.Action.RETAKE_PAWN){
                 ActionEncoder.StateAction stateActionRemovedNoPawn = ActionEncoder.withOccupantRemoved(currentGameState, null);
                 actionListOV.setValue(Stream.concat(actionListOV.getValue().stream(), Stream.of(stateActionRemovedNoPawn.actionB32())).toList());
                 gameStateOV.setValue(gameStateOV.getValue().withOccupantRemoved(occupant));
             }
         };
 
-        Consumer<String> eventHandler = (s) -> {
+        Consumer<String> eventHandler = s -> {
             ActionEncoder.StateAction decodedStateAction = ActionEncoder.decodeAndApply(gameStateOV.getValue(), s);
             if (decodedStateAction != null){
-                actionListOV.setValue(Stream.concat(actionListOV.getValue().stream(), Stream.of(decodedStateAction.actionB32())).toList());
-                gameStateOV.setValue(decodedStateAction.gameState());
+                updateState(actionListOV, decodedStateAction, gameStateOV);
             }
         };
         //---End of UI arguments instantiations---//
@@ -213,4 +209,10 @@ public final class Main extends Application {
         primaryStage.setHeight(1080);
         primaryStage.show();
     }
+
+    private static void updateState(ObjectProperty<List<String>> actionListOV, ActionEncoder.StateAction stateAction, ObjectProperty<GameState> gameStateOV) {
+        actionListOV.setValue(Stream.concat(actionListOV.getValue().stream(), Stream.of(stateAction.actionB32())).toList());
+        gameStateOV.setValue(stateAction.gameState());
+    }
+
 }
