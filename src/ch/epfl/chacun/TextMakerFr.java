@@ -207,7 +207,7 @@ public final class TextMakerFr implements TextMaker{
                 stringBuilder.append(animals.get(animalKind));
                 stringBuilder.append(" ");
                 stringBuilder.append(STR."\{withSIfPlural(animalFrName(animalKind), animals.get(animalKind), false)}");
-            } else if (counter != animals.size() - 1) {
+            } else if (sortedAnimalIterator.hasNext()) { // Change this condition
                 stringBuilder.append(", ");
                 stringBuilder.append(animals.get(animalKind));
                 stringBuilder.append(" ");

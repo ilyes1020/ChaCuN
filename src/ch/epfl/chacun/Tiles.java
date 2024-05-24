@@ -2,23 +2,37 @@ package ch.epfl.chacun;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class Tiles {
     private Tiles() {}
 
     public static final List<Tile> TILES = createTiles();
-    public static final List<Tile> TILES_SHAMAN = createTiles()
-            .stream()
-            .filter(t -> t.kind() == Tile.Kind.START || t.kind() == Tile.Kind.NORMAL || t.id() == 88)
+
+    //to have tiles 56, 57, 67, 69, 88
+    public static final List<Tile> TILES_SHAMAN = TILES.stream()
+            .filter(tile -> List.of(56, 57, 67, 69, 88).contains(tile.id()))
+            .sorted(Comparator.comparingInt(tile -> List.of(56, 57, 67, 69, 88).indexOf(tile.id())))
             .toList();
 
-    //no more than 10 normal Tile
-    public static final List<Tile> TILES_HUNTING_TRAP = createTiles()
-            .stream()
-            .filter(t -> t.kind() == Tile.Kind.START || t.kind() == Tile.Kind.NORMAL || t.id() == 94)
-            .filter(t -> t.id() == 43 || t.id() == 44 || t.id() == 32 || t.id() == 56 || t.id() == 94)
+    //to have tiles 56, 7, 67, 17, 19, 11, 94
+    public static final List<Tile> TILES_HUNTING_TRAP = TILES.stream()
+            .filter(tile -> List.of(56, 7, 67, 17, 19, 11, 94).contains(tile.id()))
+            .sorted(Comparator.comparingInt(tile -> List.of(56, 7, 67, 17, 19, 11, 94).indexOf(tile.id())))
             .toList();
+
+    //to have tiles 56, 49, 17, 15, 16, 18, 35, 38, 20, 85, 41
+    public static final List<Tile> TILES_FIRE = TILES.stream()
+            .filter(tile -> List.of(56, 49, 17, 15, 16, 18, 35, 38, 20, 85, 41).contains(tile.id()))
+            .sorted(Comparator.comparingInt(tile -> List.of(56, 49, 17, 15, 16, 18, 35, 38, 20, 85, 41).indexOf(tile.id())))
+            .toList();
+
+    //to have tiles 56, 48, 9, 2, 37, 36, 93, 20, 22, 91
+    public static final List<Tile> TILES_LOGBOAT_RAFT = TILES.stream()
+            .filter(tile -> List.of(56, 48, 9, 2, 37, 36, 93, 20, 22, 91).contains(tile.id()))
+            .collect(Collectors.toList());
 
     private static List<Tile> createTiles() {
         ArrayList<Tile> tiles = new ArrayList<>();

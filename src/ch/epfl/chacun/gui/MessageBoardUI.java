@@ -49,7 +49,7 @@ public final class MessageBoardUI {
             for (MessageBoard.Message newMessage : newMessagesOV
                     .stream()
                     .filter(m -> !oldMessagesOV.contains(m))
-                    .collect(Collectors.toSet())) {
+                    .toList()) {
 
                 //---new message Text initialization---//
                 Text newMessageText = new Text(newMessage.text());

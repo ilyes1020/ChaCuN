@@ -51,7 +51,7 @@ public final class Main extends Application {
 
         //-----INITIALIZING THE GAMESTATE-----//
         long seed;
-        List<Tile> tiles = new ArrayList<>(Tiles.TILES_HUNTING_TRAP);
+        List<Tile> tiles = new ArrayList<>(Tiles.TILES_FIRE);
         //Checking for the validity of the arguments and shuffle with the seed if there is one provided
         if (playerNames.size() < 2 || playerNames.size() > 5) {
             throw new IllegalArgumentException("Invalid player number.");
@@ -64,7 +64,7 @@ public final class Main extends Application {
                 throw new IllegalArgumentException("Invalid seed format.");
             }
         } else {
-            Collections.shuffle(tiles, RandomGeneratorFactory.getDefault().create());
+//            Collections.shuffle(tiles, RandomGeneratorFactory.getDefault().create());
         }
 
         //instantiating a mapping from playerColors to playerNames
@@ -82,7 +82,7 @@ public final class Main extends Application {
 
         //instantiating tileDecks
         Map<Tile.Kind, List<Tile>> tileDeckMap = tiles.stream().collect(Collectors.groupingBy(Tile::kind));
-        TileDecks tileDecks = new TileDecks(tileDeckMap.get(Tile.Kind.START), tileDeckMap.get(Tile.Kind.NORMAL), tileDeckMap.get(Tile.Kind.MENHIR));
+        TileDecks tileDecks = new TileDecks(tileDeckMap.get(Tile.Kind.START), tileDeckMap.get(Tile.Kind.NORMAL), tileDeckMap.getOrDefault(Tile.Kind.MENHIR, List.of()));
 
         //instantiating a French textMaker
         TextMakerFr textMakerFr = new TextMakerFr(colorAndNameMap);
