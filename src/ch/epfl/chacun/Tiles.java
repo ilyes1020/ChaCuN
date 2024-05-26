@@ -32,6 +32,7 @@ public final class Tiles {
     //to have tiles 56, 48, 9, 2, 37, 36, 93, 20, 22, 91
     public static final List<Tile> TILES_LOGBOAT_RAFT = TILES.stream()
             .filter(tile -> List.of(56, 48, 9, 2, 37, 36, 93, 20, 22, 91).contains(tile.id()))
+            .sorted(Comparator.comparingInt(tile -> List.of(56, 48, 9, 2, 37, 36, 93, 20, 22, 91).indexOf(tile.id())))
             .collect(Collectors.toList());
 
     private static List<Tile> createTiles() {
