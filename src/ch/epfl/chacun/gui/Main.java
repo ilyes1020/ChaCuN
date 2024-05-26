@@ -215,11 +215,12 @@ public final class Main extends Application {
                     .sorted(Comparator.comparing((Pos p) -> p.x() * p.x() + p.y() * p.y()))
                     .toList()) {
                     for (Rotation _ : Rotation.ALL) {
-                        if (state.board().canAddTile(new PlacedTile(state.tileToPlace(),
+                        if (state.tileToPlace() != null && state.board().canAddTile(new PlacedTile(state.tileToPlace(),
                             state.currentPlayer(), rotationOV.get(),
                             pos))) {
                             placeTileHandler.accept(pos);
-                        return;                    }
+                        return;
+                        }
                         rotationHandler.accept(Rotation.RIGHT);
                     }
                 }
