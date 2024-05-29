@@ -49,7 +49,8 @@ public final class PlayersUI {
 
             //---auto updating text for points initialization---//
             ObservableValue<String> pointsTextOV =
-                    pointsMapOV.map(pointsMap -> STR." \{textMaker.playerName(p)} : \{pointsMap.getOrDefault(p, 0)} \{pointsMap.getOrDefault(p,0) > 1 ? "points" : "point"}\n");
+                    pointsMapOV.map(pointsMap ->
+                            STR." \{textMaker.playerName(p)} : \{pointsMap.getOrDefault(p, 0)} \{pointsMap.getOrDefault(p,0) > 1 ? "points" : "point"}\n");
 
             Text playerPointsText = new Text();
             playerPointsText.textProperty().bind(pointsTextOV);
@@ -61,44 +62,21 @@ public final class PlayersUI {
             Circle playerColorIndicator = new Circle(5, ColorMap.fillColor(p));
 
             //---Hut and Pawn SVGPaths initialization---//
-            SVGPath hut1 = (SVGPath) Icon.newFor(p, Occupant.Kind.HUT);
-            SVGPath hut2 = (SVGPath) Icon.newFor(p, Occupant.Kind.HUT);
-            SVGPath hut3 = (SVGPath) Icon.newFor(p, Occupant.Kind.HUT);
-
-            SVGPath pawn1 = (SVGPath) Icon.newFor(p, Occupant.Kind.PAWN);
-            SVGPath pawn2 = (SVGPath) Icon.newFor(p, Occupant.Kind.PAWN);
-            SVGPath pawn3 = (SVGPath) Icon.newFor(p, Occupant.Kind.PAWN);
-            SVGPath pawn4 = (SVGPath) Icon.newFor(p, Occupant.Kind.PAWN);
-            SVGPath pawn5 = (SVGPath) Icon.newFor(p, Occupant.Kind.PAWN);
-
-            //---Hut and Pawn icon opacity update setup---//
-            ObservableValue<Double> hut1OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.HUT) >= 1 ? 1.0d : 0.1d);
-            ObservableValue<Double> hut2OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.HUT) >= 2 ? 1.0d : 0.1d);
-            ObservableValue<Double> hut3OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.HUT) >= 3 ? 1.0d : 0.1d);
-
-            ObservableValue<Double> pawn1OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 1 ? 1.0d : 0.1d);
-            ObservableValue<Double> pawn2OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 2 ? 1.0d : 0.1d);
-            ObservableValue<Double> pawn3OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 3 ? 1.0d : 0.1d);
-            ObservableValue<Double> pawn4OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 4 ? 1.0d : 0.1d);
-            ObservableValue<Double> pawn5OpacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, Occupant.Kind.PAWN) >= 5 ? 1.0d : 0.1d);
-
-            hut1.opacityProperty().bind(hut1OpacityOV);
-            hut2.opacityProperty().bind(hut2OpacityOV);
-            hut3.opacityProperty().bind(hut3OpacityOV);
-
-            pawn1.opacityProperty().bind(pawn1OpacityOV);
-            pawn2.opacityProperty().bind(pawn2OpacityOV);
-            pawn3.opacityProperty().bind(pawn3OpacityOV);
-            pawn4.opacityProperty().bind(pawn4OpacityOV);
-            pawn5.opacityProperty().bind(pawn5OpacityOV);
+            Node[] huts = new Node[3];
+            Node[] pawns = new Node[5];
+            for (int i = 0; i < 3; i++) {
+                huts[i] = createIcon(gameStateOV, p, Occupant.Kind.HUT, i + 1);
+            }
+            for (int i = 0; i < 5; i++) {
+                pawns[i] = createIcon(gameStateOV, p, Occupant.Kind.PAWN, i + 1);
+            }
 
             //---PlayerNode initialization---//
-            TextFlow playerNode = new TextFlow(
-                    playerColorIndicator,
-                    playerPointsText,
-                    hut1, hut2, hut3,
-                    occupantsSpacing,
-                    pawn1, pawn2, pawn3, pawn4, pawn5);
+            TextFlow playerNode = new TextFlow();
+            playerNode.getChildren().addAll(playerColorIndicator, playerPointsText);
+            playerNode.getChildren().addAll(huts);
+            playerNode.getChildren().add(occupantsSpacing);
+            playerNode.getChildren().addAll(pawns);
             playerNode.getStyleClass().add("player");
 
             //---currentPlayer indicator update setup---//
@@ -116,4 +94,12 @@ public final class PlayersUI {
         }
         return playersVB;
     }
+
+    private static Node createIcon(ObservableValue<GameState> gameStateOV, PlayerColor p, Occupant.Kind kind, int count) {
+        Node icon = Icon.newFor(p, kind);
+        ObservableValue<Double> opacityOV = gameStateOV.map(o -> o.freeOccupantsCount(p, kind) >= count ? 1.0d : 0.1d);
+        icon.opacityProperty().bind(opacityOV);
+        return icon;
+    }
+
 }
