@@ -487,12 +487,12 @@ class BoardTest {
     void boardForestsClosedByLastTileWorksWithOneComplexClosedForest() {
         var allTiles = allTiles();
 
-        var t56 = new PlacedTile(allTiles.get(56), PlayerColor.RED, Rotation.NONE, new Pos(0,0));
-        var t1 = new PlacedTile(allTiles.get(1), null, Rotation.NONE, new Pos(-1,0));
-        var t42 = new PlacedTile(allTiles.get(42), PlayerColor.RED, Rotation.NONE, new Pos(-1,1));
-        var t47 = new PlacedTile(allTiles.get(47), PlayerColor.RED, Rotation.RIGHT, new Pos(1,0));
-        var t28 = new PlacedTile(allTiles.get(28), PlayerColor.RED, Rotation.RIGHT, new Pos(1,1));
-        var t58 = new PlacedTile(allTiles.get(58), PlayerColor.RED, Rotation.NONE, new Pos(0,1));
+        var t56 = new PlacedTile(allTiles.get(56), PlayerColor.RED, Rotation.NONE, new Pos(0, 0));
+        var t1 = new PlacedTile(allTiles.get(1), null, Rotation.NONE, new Pos(-1, 0));
+        var t42 = new PlacedTile(allTiles.get(42), PlayerColor.RED, Rotation.NONE, new Pos(-1, 1));
+        var t47 = new PlacedTile(allTiles.get(47), PlayerColor.RED, Rotation.RIGHT, new Pos(1, 0));
+        var t28 = new PlacedTile(allTiles.get(28), PlayerColor.RED, Rotation.RIGHT, new Pos(1, 1));
+        var t58 = new PlacedTile(allTiles.get(58), PlayerColor.RED, Rotation.NONE, new Pos(0, 1));
 
         var board = Board.EMPTY
                 .withNewTile(t56)
@@ -519,12 +519,12 @@ class BoardTest {
     void boardForestsClosedByLastTileWorksWithThreeForests() {
         var allTiles = allTiles();
 
-        var t56 = new PlacedTile(allTiles.get(56), PlayerColor.RED, Rotation.NONE, new Pos(0,0));
-        var t67 = new PlacedTile(allTiles.get(67), PlayerColor.RED, Rotation.NONE, new Pos(0,1));
-        var t54 = new PlacedTile(allTiles.get(54), PlayerColor.RED, Rotation.NONE, new Pos(1,1));
-        var t53 = new PlacedTile(allTiles.get(53), PlayerColor.RED, Rotation.NONE, new Pos(2,1));
-        var t34 = new PlacedTile(allTiles.get(34), PlayerColor.RED, Rotation.NONE, new Pos(2,0));
-        var t14 = new PlacedTile(allTiles.get(14), PlayerColor.RED, Rotation.NONE, new Pos(1,0));
+        var t56 = new PlacedTile(allTiles.get(56), PlayerColor.RED, Rotation.NONE, new Pos(0, 0));
+        var t67 = new PlacedTile(allTiles.get(67), PlayerColor.RED, Rotation.NONE, new Pos(0, 1));
+        var t54 = new PlacedTile(allTiles.get(54), PlayerColor.RED, Rotation.NONE, new Pos(1, 1));
+        var t53 = new PlacedTile(allTiles.get(53), PlayerColor.RED, Rotation.NONE, new Pos(2, 1));
+        var t34 = new PlacedTile(allTiles.get(34), PlayerColor.RED, Rotation.NONE, new Pos(2, 0));
+        var t14 = new PlacedTile(allTiles.get(14), PlayerColor.RED, Rotation.NONE, new Pos(1, 0));
 
         var board = Board.EMPTY
                 .withNewTile(t56)
@@ -594,12 +594,12 @@ class BoardTest {
     void boardRiversClosedByLastTileWorksWithOneRiverLoop() {
         var allTiles = allTiles();
 
-        var t56 = new PlacedTile(allTiles.get(56), PlayerColor.RED, Rotation.NONE, new Pos(0,0));
-        var t61 = new PlacedTile(allTiles.get(61), PlayerColor.RED, Rotation.NONE, new Pos(0,-1));
-        var t3 = new PlacedTile(allTiles.get(3), PlayerColor.RED, Rotation.NONE, new Pos(-1,0));
-        var t17 = new PlacedTile(allTiles.get(17), PlayerColor.RED, Rotation.NONE, new Pos(-2,0));
-        var t15 = new PlacedTile(allTiles.get(15), PlayerColor.RED, Rotation.NONE, new Pos(-2,-1));
-        var t16 = new PlacedTile(allTiles.get(16), PlayerColor.RED, Rotation.RIGHT, new Pos(-1,-1));
+        var t56 = new PlacedTile(allTiles.get(56), PlayerColor.RED, Rotation.NONE, new Pos(0, 0));
+        var t61 = new PlacedTile(allTiles.get(61), PlayerColor.RED, Rotation.NONE, new Pos(0, -1));
+        var t3 = new PlacedTile(allTiles.get(3), PlayerColor.RED, Rotation.NONE, new Pos(-1, 0));
+        var t17 = new PlacedTile(allTiles.get(17), PlayerColor.RED, Rotation.NONE, new Pos(-2, 0));
+        var t15 = new PlacedTile(allTiles.get(15), PlayerColor.RED, Rotation.NONE, new Pos(-2, -1));
+        var t16 = new PlacedTile(allTiles.get(16), PlayerColor.RED, Rotation.RIGHT, new Pos(-1, -1));
 
         var board = Board.EMPTY
                 .withNewTile(t56)
@@ -624,14 +624,14 @@ class BoardTest {
     void boardRiversClosedByLastTileWorksWithFourRivers() {
         var allTiles = allTiles();
 
-        var t56 = new PlacedTile(allTiles.get(56), PlayerColor.RED, Rotation.NONE, new Pos(0,0));
-        var t44 = new PlacedTile(allTiles.get(44), PlayerColor.RED, Rotation.NONE, new Pos(0,-1));
-        var t58 = new PlacedTile(allTiles.get(58), PlayerColor.RED, Rotation.NONE, new Pos(-1,-1));
-        var t60 = new PlacedTile(allTiles.get(60), PlayerColor.RED, Rotation.NONE, new Pos(-2,-1));
-        var t2 = new PlacedTile(allTiles.get(2), PlayerColor.RED, Rotation.NONE, new Pos(-2,0));
-        var t42 = new PlacedTile(allTiles.get(42), PlayerColor.RED, Rotation.NONE, new Pos(-2,1));
-        var t0 = new PlacedTile(allTiles.get(0), PlayerColor.RED, Rotation.NONE, new Pos(-1,1));
-        var t13 = new PlacedTile(allTiles.get(13), PlayerColor.RED, Rotation.NONE, new Pos(-1,0));
+        var t56 = new PlacedTile(allTiles.get(56), PlayerColor.RED, Rotation.NONE, new Pos(0, 0));
+        var t44 = new PlacedTile(allTiles.get(44), PlayerColor.RED, Rotation.NONE, new Pos(0, -1));
+        var t58 = new PlacedTile(allTiles.get(58), PlayerColor.RED, Rotation.NONE, new Pos(-1, -1));
+        var t60 = new PlacedTile(allTiles.get(60), PlayerColor.RED, Rotation.NONE, new Pos(-2, -1));
+        var t2 = new PlacedTile(allTiles.get(2), PlayerColor.RED, Rotation.NONE, new Pos(-2, 0));
+        var t42 = new PlacedTile(allTiles.get(42), PlayerColor.RED, Rotation.NONE, new Pos(-2, 1));
+        var t0 = new PlacedTile(allTiles.get(0), PlayerColor.RED, Rotation.NONE, new Pos(-1, 1));
+        var t13 = new PlacedTile(allTiles.get(13), PlayerColor.RED, Rotation.NONE, new Pos(-1, 0));
 
         var board = Board.EMPTY
                 .withNewTile(t56)
@@ -743,7 +743,8 @@ class BoardTest {
         var board = Board.EMPTY
                 .withNewTile(t56);
 
-        record PosRot(Pos pos, Rotation rotation) {}
+        record PosRot(Pos pos, Rotation rotation) {
+        }
         var validPositionsAndRotations = Set.of(
                 new PosRot(new Pos(1, 0), Rotation.NONE),
                 new PosRot(new Pos(1, 0), Rotation.RIGHT),
@@ -820,12 +821,12 @@ class BoardTest {
     void boardWithoutGatherersOrFishersInWorksWithForest() {
         var allTiles = allTiles();
 
-        var t56 = new PlacedTile(allTiles.get(56), null, Rotation.NONE, new Pos(0,0));
-        var t1 = new PlacedTile(allTiles.get(1), PlayerColor.RED, Rotation.NONE, new Pos(-1,0));
-        var t42 = new PlacedTile(allTiles.get(42), PlayerColor.GREEN, Rotation.NONE, new Pos(-1,1));
-        var t47 = new PlacedTile(allTiles.get(47), PlayerColor.BLUE, Rotation.RIGHT, new Pos(1,0));
-        var t28 = new PlacedTile(allTiles.get(28), PlayerColor.YELLOW, Rotation.RIGHT, new Pos(1,1));
-        var t58 = new PlacedTile(allTiles.get(58), PlayerColor.PURPLE, Rotation.NONE, new Pos(0,1));
+        var t56 = new PlacedTile(allTiles.get(56), null, Rotation.NONE, new Pos(0, 0));
+        var t1 = new PlacedTile(allTiles.get(1), PlayerColor.RED, Rotation.NONE, new Pos(-1, 0));
+        var t42 = new PlacedTile(allTiles.get(42), PlayerColor.GREEN, Rotation.NONE, new Pos(-1, 1));
+        var t47 = new PlacedTile(allTiles.get(47), PlayerColor.BLUE, Rotation.RIGHT, new Pos(1, 0));
+        var t28 = new PlacedTile(allTiles.get(28), PlayerColor.YELLOW, Rotation.RIGHT, new Pos(1, 1));
+        var t58 = new PlacedTile(allTiles.get(58), PlayerColor.PURPLE, Rotation.NONE, new Pos(0, 1));
 
         var board = Board.EMPTY
                 .withNewTile(t56)

@@ -242,8 +242,11 @@ public class TextMakerApo implements TextMaker {
      */
     @Override
     public boolean equals(Object object) {
-        if (object == null || !(object instanceof TextMakerApo)) { return false; }
-        else {return true;}
+        if (object == null || !(object instanceof TextMakerApo)) {
+            return false;
+        } else {
+            return true;
+        }
 
     }
 }

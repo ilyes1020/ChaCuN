@@ -48,7 +48,7 @@ public class MyTextMaker implements TextMaker {
     @Override
     public String playersScoredMeadow(Set<PlayerColor> scorers, int points, Map<Animal.Kind, Integer> animals) {
 
-        return "playersScoredMeadow " + animals ;
+        return "playersScoredMeadow " + animals;
     }
 
     @Override

@@ -19,8 +19,8 @@ public class MyTileTest {
     Zone.Meadow meadowZone1 = new Zone.Meadow(560, new ArrayList<>(), null);
     Zone.Forest forestZone = new Zone.Forest(561, Zone.Forest.Kind.WITH_MENHIR);
     Zone.Meadow meadowZone2 = new Zone.Meadow(562, new ArrayList<>(), null);
-    Zone.Lake lakeZone = new Zone.Lake(568,1,null);
-    Zone.River riverZone = new Zone.River(563,0, lakeZone);
+    Zone.Lake lakeZone = new Zone.Lake(568, 1, null);
+    Zone.River riverZone = new Zone.River(563, 0, lakeZone);
 
     TileSide.Forest forestSide = new TileSide.Forest(forestZone);
     TileSide.Meadow meadowSide = new TileSide.Meadow(meadowZone1);

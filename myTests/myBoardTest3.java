@@ -13,7 +13,7 @@ class myBoardTest3 {
         int reach = Board.REACH;
 
         for (int x = -reach; x <= reach; x++) {
-            for (int y = -reach; y <= reach ; y++) {
+            for (int y = -reach; y <= reach; y++) {
                 Pos pos = new Pos(x, y);
 
                 assertNull(empty.tileAt(pos));

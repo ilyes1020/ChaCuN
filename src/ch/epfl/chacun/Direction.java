@@ -46,7 +46,7 @@ public enum Direction {
      * @param rotation the rotation to apply
      * @return the rotated direction
      */
-    public Direction rotated(Rotation rotation){
+    public Direction rotated(Rotation rotation) {
         return ALL.get((this.ordinal() + rotation.quarterTurnsCW()) % COUNT);
     }
 

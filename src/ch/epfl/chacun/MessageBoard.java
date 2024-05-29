@@ -19,7 +19,7 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      *
      * @return A map associating each player with the total number of points they have earned.
      */
-    public Map<PlayerColor, Integer> points(){
+    public Map<PlayerColor, Integer> points() {
         Map<PlayerColor, Integer> playerPoints = new HashMap<>();
         messages.forEach(message ->
                 message.scorers().forEach(scorer ->
@@ -34,8 +34,8 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @param forest The forest area to check for occupancy.
      * @return A new message board reflecting the changes, if any.
      */
-    public MessageBoard withScoredForest(Area<Zone.Forest> forest){
-        if (forest.isOccupied()){
+    public MessageBoard withScoredForest(Area<Zone.Forest> forest) {
+        if (forest.isOccupied()) {
 
             Set<Integer> forestTileIds = forest.tileIds();
             Set<PlayerColor> forestMajorityOccupants = forest.majorityOccupants();
@@ -57,7 +57,7 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @param forest The forest area closed by the player.
      * @return A new message board reflecting the changes.
      */
-    public MessageBoard withClosedForestWithMenhir(PlayerColor player, Area<Zone.Forest> forest){
+    public MessageBoard withClosedForestWithMenhir(PlayerColor player, Area<Zone.Forest> forest) {
         String text = textMaker.playerClosedForestWithMenhir(player);
         return addMessageAndReturnNewBoard(text, 0, Set.of(), forest.tileIds());
     }
@@ -69,8 +69,8 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @param river The river area to check for occupancy.
      * @return A new message board reflecting the changes, if any.
      */
-    public MessageBoard withScoredRiver(Area<Zone.River> river){
-        if (river.isOccupied()){
+    public MessageBoard withScoredRiver(Area<Zone.River> river) {
+        if (river.isOccupied()) {
 
             Set<Integer> riverTileIds = river.tileIds();
             Set<PlayerColor> riverMajorityOccupants = river.majorityOccupants();
@@ -87,15 +87,15 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * Returns a new message board identical to the current one, except if the placement of the hunting trap
      * by the given player resulted in scoring points.
      *
-     * @param scorer        The player who placed the hunting trap.
+     * @param scorer         The player who placed the hunting trap.
      * @param adjacentMeadow The meadow area adjacent to the hunting trap.
      * @return A new message board reflecting the changes, if any.
      */
-    public MessageBoard withScoredHuntingTrap(PlayerColor scorer, Area<Zone.Meadow> adjacentMeadow, Set<Animal> cancelledAnimals){
+    public MessageBoard withScoredHuntingTrap(PlayerColor scorer, Area<Zone.Meadow> adjacentMeadow, Set<Animal> cancelledAnimals) {
         Map<Animal.Kind, Integer> animalCountMap = countAnimals(adjacentMeadow, cancelledAnimals);
         int points = calculatePoints(animalCountMap);
 
-        if (points > 0){
+        if (points > 0) {
             String text = textMaker.playerScoredHuntingTrap(scorer, points, animalCountMap);
             return addMessageAndReturnNewBoard(text, points, Set.of(scorer), adjacentMeadow.tileIds());
         }
@@ -110,7 +110,7 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @param riverSystem The water area representing the river system.
      * @return A new message board reflecting the changes.
      */
-    public MessageBoard withScoredLogboat(PlayerColor scorer, Area<Zone.Water> riverSystem){
+    public MessageBoard withScoredLogboat(PlayerColor scorer, Area<Zone.Water> riverSystem) {
         int lakeCount = Area.lakeCount(riverSystem);
         int points = Points.forLogboat(lakeCount);
         String text = textMaker.playerScoredLogboat(scorer, points, lakeCount);
@@ -122,15 +122,15 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * Returns a new message board identical to the current one, except if the given meadow area is occupied.
      * If occupied, a new message is added indicating the majority occupants have scored points for its closure.
      *
-     * @param meadow          The meadow area to check for occupancy.
+     * @param meadow           The meadow area to check for occupancy.
      * @param cancelledAnimals The set of animals whose points are canceled.
      * @return A new message board reflecting the changes, if any.
      */
-    public MessageBoard withScoredMeadow(Area<Zone.Meadow> meadow, Set<Animal> cancelledAnimals){
+    public MessageBoard withScoredMeadow(Area<Zone.Meadow> meadow, Set<Animal> cancelledAnimals) {
         Map<Animal.Kind, Integer> animalCountMap = countAnimals(meadow, cancelledAnimals);
         int points = calculatePoints(animalCountMap);
 
-        if (meadow.isOccupied() && points > 0){
+        if (meadow.isOccupied() && points > 0) {
             Set<PlayerColor> meadowMajorityOccupants = meadow.majorityOccupants();
             String text = textMaker.playersScoredMeadow(meadowMajorityOccupants, points, animalCountMap);
             return addMessageAndReturnNewBoard(text, points, meadowMajorityOccupants, meadow.tileIds());
@@ -145,7 +145,7 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @param riverSystem The water area representing the river system.
      * @return A new message board reflecting the changes, if any.
      */
-    public MessageBoard withScoredRiverSystem(Area<Zone.Water> riverSystem){
+    public MessageBoard withScoredRiverSystem(Area<Zone.Water> riverSystem) {
         int fishCount = Area.riverSystemFishCount(riverSystem);
         int points = Points.forRiverSystem(fishCount);
 
@@ -166,11 +166,11 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @param cancelledAnimals The set of animals whose points are canceled.
      * @return A new message board reflecting the changes, if any.
      */
-    public MessageBoard withScoredPitTrap(Area<Zone.Meadow> adjacentMeadow, Set<Animal> cancelledAnimals){
+    public MessageBoard withScoredPitTrap(Area<Zone.Meadow> adjacentMeadow, Set<Animal> cancelledAnimals) {
         Map<Animal.Kind, Integer> animalCountMap = countAnimals(adjacentMeadow, cancelledAnimals);
         int points = calculatePoints(animalCountMap);
 
-        if (adjacentMeadow.isOccupied() && points > 0){
+        if (adjacentMeadow.isOccupied() && points > 0) {
             Set<PlayerColor> adjacentMeadowMajorityOccupants = adjacentMeadow.majorityOccupants();
             String text = textMaker.playersScoredPitTrap(adjacentMeadowMajorityOccupants, points, animalCountMap);
             return addMessageAndReturnNewBoard(text, points, adjacentMeadowMajorityOccupants, adjacentMeadow.tileIds());
@@ -185,13 +185,13 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @param riverSystem The water area representing the river system with the raft.
      * @return A new message board reflecting the changes.
      */
-    public MessageBoard withScoredRaft(Area<Zone.Water> riverSystem){
+    public MessageBoard withScoredRaft(Area<Zone.Water> riverSystem) {
         if (riverSystem.isOccupied()) {
             int lakeCount = Area.lakeCount(riverSystem);
             int points = Points.forRaft(lakeCount);
             Set<PlayerColor> riverSystemMajorityOccupants = riverSystem.majorityOccupants();
 
-            String text = textMaker.playersScoredRaft(riverSystemMajorityOccupants , points, lakeCount);
+            String text = textMaker.playersScoredRaft(riverSystemMajorityOccupants, points, lakeCount);
             return addMessageAndReturnNewBoard(text, points, riverSystemMajorityOccupants, riverSystem.tileIds());
         }
         return this;
@@ -205,7 +205,7 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
      * @param points  The points scored by the winners.
      * @return A new message board reflecting the changes.
      */
-    public MessageBoard withWinners(Set<PlayerColor> winners, int points){
+    public MessageBoard withWinners(Set<PlayerColor> winners, int points) {
         String text = textMaker.playersWon(winners, points);
         return addMessageAndReturnNewBoard(text, 0, Set.of(), Set.of());
     }
@@ -213,8 +213,8 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
     /**
      * Adds a new message to the message board and returns a new message board with the updated messages.
      *
-     * @param text   The text content of the message.t
-     * @param points The points associated with the message.
+     * @param text    The text content of the message.t
+     * @param points  The points associated with the message.
      * @param scorers The set of players who scored points with this message.
      * @param tileIds The set of tile IDs related to this message.
      * @return A new message board with the updated messages.
@@ -228,7 +228,7 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
     /**
      * Counts the number of animals in the given meadow area, excluding the animals in the cancelled set.
      *
-     * @param area The meadow area to count the animals from.
+     * @param area             The meadow area to count the animals from.
      * @param cancelledAnimals The set of animals to exclude from the count.
      * @return A map associating each animal kind with the number of occurrences in the meadow area.
      */
@@ -242,7 +242,7 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
     /**
      * Calculates the points scored in a meadow area based on the number of animals present.
      *
-     * @param animalCountMap  A map associating each animal kind with the number of occurrences in the meadow area.
+     * @param animalCountMap A map associating each animal kind with the number of occurrences in the meadow area.
      * @return The total number of points scored with the numbers of animal in the meadow area.
      */
 
@@ -255,14 +255,13 @@ public record MessageBoard(TextMaker textMaker, List<Message> messages) {
     }
 
 
-
     /**
      * Represents a message within the message board.
      *
-     * @param text     The text content of the message.
-     * @param points   The points associated with the message.
-     * @param scorers  The set of players who scored points with this message.
-     * @param tileIds  The set of tile IDs related to this message.
+     * @param text    The text content of the message.
+     * @param points  The points associated with the message.
+     * @param scorers The set of players who scored points with this message.
+     * @param tileIds The set of tile IDs related to this message.
      */
     public record Message(String text, int points, Set<PlayerColor> scorers, Set<Integer> tileIds) {
 

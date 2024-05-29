@@ -54,9 +54,15 @@ class TileDecksTest {
         var dM = List.of(getTile(Tile.Kind.MENHIR));
 
         var decks = new TileDecks(dS, dN, dM);
-        try {decks.startTiles().clear();} catch (UnsupportedOperationException e) {/**/}
-        try {decks.normalTiles().clear();} catch (UnsupportedOperationException e) {/**/}
-        try {decks.menhirTiles().clear();} catch (UnsupportedOperationException e) {/**/}
+        try {
+            decks.startTiles().clear();
+        } catch (UnsupportedOperationException e) {/**/}
+        try {
+            decks.normalTiles().clear();
+        } catch (UnsupportedOperationException e) {/**/}
+        try {
+            decks.menhirTiles().clear();
+        } catch (UnsupportedOperationException e) {/**/}
 
         assertEquals(dS, decks.startTiles());
         assertEquals(dN, decks.normalTiles());

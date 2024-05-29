@@ -7,7 +7,8 @@ package ch.epfl.chacun;
  * @author Weifeng Ding(379902)
  */
 public final class Base32 {
-    private Base32(){}
+    private Base32() {
+    }
 
     /**
      * The Base32 alphabet used for encoding and decoding.
@@ -18,7 +19,7 @@ public final class Base32 {
      * Checks if the given string is a valid Base32 string.
      *
      * @param value The string to be checked.
-     * @return      true if the string is a valid Base32 string, false otherwise.
+     * @return true if the string is a valid Base32 string, false otherwise.
      */
     public static boolean isValid(String value) {
         return value.chars().allMatch(c -> ALPHABET.indexOf((char) c) != -1);
@@ -28,10 +29,10 @@ public final class Base32 {
      * Encodes the given 5 least significant bits of the given value into Base32.
      *
      * @param value The value to be encoded.
-     * @return      the Base32 encoded string.
+     * @return the Base32 encoded string.
      */
     public static String encodeBits5(int value) {
-        Preconditions.checkArgument(value >=0 && value < 32);
+        Preconditions.checkArgument(value >= 0 && value < 32);
         int mask = 0b11111;
         int fiveLSBs = value & mask;
 
@@ -42,10 +43,10 @@ public final class Base32 {
      * Encodes the given 10 least significant bits of the given value into Base32.
      *
      * @param value The value to be encoded.
-     * @return      the Base32 encoded string.
+     * @return the Base32 encoded string.
      */
     public static String encodeBits10(int value) {
-        Preconditions.checkArgument(value >=0 && value < 1024);
+        Preconditions.checkArgument(value >= 0 && value < 1024);
         int mask = 0b1111111111;
         int tenLSBs = value & mask;
 
@@ -60,7 +61,7 @@ public final class Base32 {
      * Decodes the given Base32 string into an integer value.
      *
      * @param value The Base32 string to be decoded.
-     * @return      the decoded integer value.
+     * @return the decoded integer value.
      * @throws IllegalArgumentException if the string length is greater than 2 or if the string is not a valid Base32 string.
      */
     public static int decode(String value) {

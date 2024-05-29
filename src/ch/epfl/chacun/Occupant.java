@@ -5,9 +5,8 @@ import java.util.Objects;
 /**
  * Record that represents the occupant of a zone.
  *
- * @param kind the kind of the occupant (defined by the inner enum Kind)
+ * @param kind   the kind of the occupant (defined by the inner enum Kind)
  * @param zoneId the id of the zone the occupant occupies
- *
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding(379902)
  */
@@ -33,7 +32,7 @@ public record Occupant(Kind kind, int zoneId) {
     /**
      * Compact constructor.
      *
-     * @param kind the kind of the occupant
+     * @param kind   the kind of the occupant
      * @param zoneId the id of the zone the occupant occupies
      * @throws IllegalArgumentException if the zoneId is null or < 0
      */
@@ -48,7 +47,7 @@ public record Occupant(Kind kind, int zoneId) {
      * @param kind the kind of the occupant
      * @return the total number of occupant (int)
      */
-    public static int occupantsCount(Kind kind){
+    public static int occupantsCount(Kind kind) {
         return switch (kind) {
             case HUT -> 3;
             case PAWN -> 5;

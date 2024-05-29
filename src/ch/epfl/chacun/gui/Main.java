@@ -48,16 +48,16 @@ public final class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         List<String> playerNames = getParameters().getUnnamed();
-        Map<String,String> seedMap = getParameters().getNamed();
+        Map<String, String> seedMap = getParameters().getNamed();
 
         //-----INITIALIZING THE GAMESTATE-----//
         long seed;
-        List<Tile> tiles = new ArrayList<>(Tiles.TILES_HUNTING_TRAP);
+        List<Tile> tiles = new ArrayList<>(Tiles.TILES);
         //Checking for the validity of the arguments and shuffle with the seed if there is one provided
         if (playerNames.size() < 2 || playerNames.size() > 5) {
             throw new IllegalArgumentException("Invalid player number.");
         }
-        if (!seedMap.isEmpty()){
+        if (!seedMap.isEmpty()) {
             try {
                 seed = Long.parseUnsignedLong(seedMap.get("seed"));
                 Collections.shuffle(tiles, RandomGeneratorFactory.getDefault().create(seed));
@@ -102,8 +102,8 @@ public final class Main extends Application {
 
         ObservableValue<Set<Occupant>> visibleOccupantsOV = gameStateOV.map(g ->
                 g.nextAction() == GameState.Action.OCCUPY_TILE ?
-                Stream.concat(g.lastTilePotentialOccupants().stream(), g.board().occupants().stream()).collect(Collectors.toSet()) :
-                g.board().occupants());
+                        Stream.concat(g.lastTilePotentialOccupants().stream(), g.board().occupants().stream()).collect(Collectors.toSet()) :
+                        g.board().occupants());
 
         ObjectProperty<Set<Integer>> highlightedTilesIdOP = new SimpleObjectProperty<>(Set.of());
 
@@ -128,8 +128,8 @@ public final class Main extends Application {
                 ActionEncoder.StateAction stateActionAddedOccupant = ActionEncoder.withNewOccupant(currentGameState, occupant);
                 updateState(actionListOV, stateActionAddedOccupant, gameStateOV);
             } else if (currentGameState.nextAction() == GameState.Action.RETAKE_PAWN
-                       &&
-                       currentGameState.currentPlayer() == currentGameState.board().tileWithId(Zone.tileId(occupant.zoneId())).placer()){
+                    &&
+                    currentGameState.currentPlayer() == currentGameState.board().tileWithId(Zone.tileId(occupant.zoneId())).placer()) {
                 ActionEncoder.StateAction stateActionRemovedPawn = ActionEncoder.withOccupantRemoved(currentGameState, occupant);
                 updateState(actionListOV, stateActionRemovedPawn, gameStateOV);
             }
@@ -157,7 +157,7 @@ public final class Main extends Application {
                 actionListOV.setValue(Stream.concat(actionListOV.getValue().stream(), Stream.of(stateActionAddedNoOccupant.actionB32())).toList());
 
                 gameStateOV.setValue(gameStateOV.getValue().withNewOccupant(occupant));
-            } else if (gameStateOV.getValue().nextAction() == GameState.Action.RETAKE_PAWN){
+            } else if (gameStateOV.getValue().nextAction() == GameState.Action.RETAKE_PAWN) {
                 ActionEncoder.StateAction stateActionRemovedNoPawn = ActionEncoder.withOccupantRemoved(currentGameState, null);
                 actionListOV.setValue(Stream.concat(actionListOV.getValue().stream(), Stream.of(stateActionRemovedNoPawn.actionB32())).toList());
                 gameStateOV.setValue(gameStateOV.getValue().withOccupantRemoved(occupant));
@@ -166,7 +166,7 @@ public final class Main extends Application {
 
         Consumer<String> eventHandler = s -> {
             ActionEncoder.StateAction decodedStateAction = ActionEncoder.decodeAndApply(gameStateOV.getValue(), s);
-            if (decodedStateAction != null){
+            if (decodedStateAction != null) {
                 updateState(actionListOV, decodedStateAction, gameStateOV);
             }
         };
@@ -177,13 +177,13 @@ public final class Main extends Application {
         BorderPane infosBP = new BorderPane();
 
         rootBP.centerProperty().set(BoardUI.create(Board.REACH,
-                                                   gameStateOV,
-                                                   rotationOV,
-                                                   visibleOccupantsOV,
-                                                   highlightedTilesIdOP,
-                                                   rotationHandler,
-                                                   placeTileHandler,
-                                                   occupantSelectionHandler));
+                gameStateOV,
+                rotationOV,
+                visibleOccupantsOV,
+                highlightedTilesIdOP,
+                rotationHandler,
+                placeTileHandler,
+                occupantSelectionHandler));
         rootBP.rightProperty().set(infosBP);
 
         VBox actionsAndDecksVB = new VBox();
@@ -194,10 +194,10 @@ public final class Main extends Application {
 
         actionsAndDecksVB.getChildren().add(ActionUI.create(actionListOV, eventHandler));
         actionsAndDecksVB.getChildren().add(DecksUI.create(tileToPlaceOV,
-                                                           nbOfRemainingNormalTilesOV,
-                                                           nbOfRemainingMenhirTilesOV,
-                                                           textToDisplayOV,
-                                                           clickableText));
+                nbOfRemainingNormalTilesOV,
+                nbOfRemainingMenhirTilesOV,
+                textToDisplayOV,
+                clickableText));
 
         Scene scene = new Scene(rootBP);
 
@@ -226,7 +226,7 @@ public final class Main extends Application {
                     }
                 }
                 case OCCUPY_TILE -> updateState(actionListOV, ActionEncoder.withNewOccupant(state
-                                ,state.lastTilePotentialOccupants()
+                                , state.lastTilePotentialOccupants()
                                         .stream()
                                         .findAny()
                                         .orElse(null))
@@ -237,11 +237,12 @@ public final class Main extends Application {
                                         .occupants()
                                         .stream()
                                         .filter(o -> o.kind().equals(Occupant.Kind.PAWN))
-                                        .filter(o -> state.board().tileWithId(Zone.tileId(o.zoneId()))                                                                   .placer().equals(state.currentPlayer()))
+                                        .filter(o -> state.board().tileWithId(Zone.tileId(o.zoneId())).placer().equals(state.currentPlayer()))
                                         .findAny()
                                         .orElse(null))
                         , gameStateOV);
-            }});
+            }
+        });
 
         //placing the starting tile
         gameStateOV.setValue(gameStateOV.getValue().withStartingTilePlaced());

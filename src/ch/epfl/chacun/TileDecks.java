@@ -20,7 +20,7 @@ public record TileDecks(List<Tile> startTiles, List<Tile> normalTiles, List<Tile
      * @param normalTiles The list of normal tiles.
      * @param menhirTiles The list of menhir tiles.
      */
-    public TileDecks{
+    public TileDecks {
         startTiles = List.copyOf(startTiles);
         normalTiles = List.copyOf(normalTiles);
         menhirTiles = List.copyOf(menhirTiles);
@@ -32,7 +32,7 @@ public record TileDecks(List<Tile> startTiles, List<Tile> normalTiles, List<Tile
      * @param kind The type of tile deck (START, NORMAL, or MENHIR).
      * @return The size of the specified tile deck.
      */
-    public int deckSize(Tile.Kind kind){
+    public int deckSize(Tile.Kind kind) {
         return switch (kind) {
             case START -> startTiles.size();
             case NORMAL -> normalTiles.size();

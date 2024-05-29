@@ -127,7 +127,7 @@ class MessageBoardTest {
         assertEquals(expectedMessage.scorers(), mb.messages().getFirst().scorers());
         // We accept both, as the stage description was not clear about that.
         assertTrue(mb.messages().getFirst().tileIds().isEmpty()
-                   || mb.messages().getFirst().tileIds().equals(expectedMessage.tileIds()));
+                || mb.messages().getFirst().tileIds().equals(expectedMessage.tileIds()));
     }
 
     @Test

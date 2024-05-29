@@ -15,8 +15,8 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
     /**
      * Compact constructor for the immutable Area record, sorts the occupants by player colors.
      *
-     * @param zones the set of zones in the area
-     * @param occupants the list of player occupying the area
+     * @param zones           the set of zones in the area
+     * @param occupants       the list of player occupying the area
      * @param openConnections the number of open connections of the area
      */
     public Area {
@@ -57,11 +57,11 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
     /**
      * Gets the set of animals in a meadow area excluding a set of cancelled animals.
      *
-     * @param meadow the meadow area to get animals from
+     * @param meadow           the meadow area to get animals from
      * @param cancelledAnimals the set of cancelled animals
      * @return the set of animals in the meadow excluding the cancelled ones
      */
-    public static Set<Animal> animals(Area<Zone.Meadow> meadow, Set<Animal> cancelledAnimals){
+    public static Set<Animal> animals(Area<Zone.Meadow> meadow, Set<Animal> cancelledAnimals) {
         Set<Animal> animals = meadow.zones().stream()
                 .flatMap(aMeadow -> aMeadow.animals().stream())
                 .collect(Collectors.toSet());
@@ -95,7 +95,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
      * @param riverSystem the water area representing the river system
      * @return the total number of fish in the river system
      */
-    public static int riverSystemFishCount(Area<Zone.Water> riverSystem){
+    public static int riverSystemFishCount(Area<Zone.Water> riverSystem) {
         return riverSystem.zones().stream()
                 .mapToInt(Zone.Water::fishCount)
                 .sum();
@@ -107,7 +107,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
      * @param riverSystem the water area representing the river system
      * @return the number of lakes in the river system
      */
-    public static int lakeCount(Area<Zone.Water> riverSystem){
+    public static int lakeCount(Area<Zone.Water> riverSystem) {
         return (int) riverSystem.zones().stream()
                 .filter(aWater -> aWater instanceof Zone.Lake)
                 .count();
@@ -118,7 +118,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
      *
      * @return true if the area is closed, false otherwise
      */
-    public boolean isClosed(){
+    public boolean isClosed() {
         return openConnections == 0;
     }
 
@@ -127,7 +127,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
      *
      * @return true if the area is occupied, false otherwise
      */
-    public boolean isOccupied(){
+    public boolean isOccupied() {
         return !occupants.isEmpty();
     }
 
@@ -162,9 +162,9 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
      * @return the area resulting from the connection
      */
     public Area<Z> connectTo(Area<Z> that) {
-        if (this == that) return new Area<>(zones, occupants, openConnections - 2 );
+        if (this == that) return new Area<>(zones, occupants, openConnections - 2);
         return new Area<>(
-                  Stream.concat(this.zones.stream(), that.zones().stream()).collect(Collectors.toSet())
+                Stream.concat(this.zones.stream(), that.zones().stream()).collect(Collectors.toSet())
                 , Stream.concat(this.occupants.stream(), that.occupants().stream()).collect(Collectors.toList())
                 , this.openConnections + that.openConnections() - 2
         );
@@ -177,7 +177,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
      * @param occupant the color of the initial occupant
      * @return a new area with the initial occupant
      */
-    public Area<Z> withInitialOccupant(PlayerColor occupant){
+    public Area<Z> withInitialOccupant(PlayerColor occupant) {
         Preconditions.checkArgument(!isOccupied());
         return new Area<>(zones, List.of(occupant), openConnections);
     }
@@ -188,7 +188,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
      * @param occupant the color of the occupant to be removed
      * @return a new area without the specified occupant
      */
-    public Area<Z> withoutOccupant(PlayerColor occupant){
+    public Area<Z> withoutOccupant(PlayerColor occupant) {
         //throw IllegalArgumentException if this has no occupant of the given color
         Preconditions.checkArgument(occupants.contains(occupant));
 
@@ -203,7 +203,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
      *
      * @return a new area without any occupants
      */
-    public Area<Z> withoutOccupants(){
+    public Area<Z> withoutOccupants() {
         return new Area<>(zones, new ArrayList<>(), openConnections);
     }
 
@@ -212,7 +212,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
      *
      * @return the set of tile IDs
      */
-    public Set<Integer> tileIds(){
+    public Set<Integer> tileIds() {
         return zones.stream()
                 .map(Zone::tileId)
                 .collect(Collectors.toSet());
@@ -224,7 +224,7 @@ public record Area<Z extends Zone>(Set<Z> zones, List<PlayerColor> occupants, in
      * @param specialPower the special power to search for
      * @return the zone with the specified special power, or null if not found
      */
-    public Zone zoneWithSpecialPower(Zone.SpecialPower specialPower){
+    public Zone zoneWithSpecialPower(Zone.SpecialPower specialPower) {
         return zones.stream()
                 .filter(zone -> zone.specialPower() == specialPower)
                 .findFirst()

@@ -228,27 +228,27 @@ class GameStateTest {
     void gameStateWithPlacedTileCorrectlyHandlesOccupantsOfForestWithManyOfThem() {
         var state = initialGameState(List.of(1, 42, 47, 28, 58, 0), List.of());
 
-        var t1 = new PlacedTile(state.tileToPlace(), PlayerColor.RED, Rotation.NONE, new Pos(-1,0));
+        var t1 = new PlacedTile(state.tileToPlace(), PlayerColor.RED, Rotation.NONE, new Pos(-1, 0));
         state = state
                 .withPlacedTile(t1)
                 .withNewOccupant(new Occupant(Occupant.Kind.PAWN, 1_3));
 
-        var t42 = new PlacedTile(state.tileToPlace(), PlayerColor.BLUE, Rotation.NONE, new Pos(-1,1));
+        var t42 = new PlacedTile(state.tileToPlace(), PlayerColor.BLUE, Rotation.NONE, new Pos(-1, 1));
         state = state
                 .withPlacedTile(t42)
                 .withNewOccupant(new Occupant(Occupant.Kind.PAWN, 42_1));
 
-        var t47 = new PlacedTile(state.tileToPlace(), PlayerColor.GREEN, Rotation.RIGHT, new Pos(1,0));
+        var t47 = new PlacedTile(state.tileToPlace(), PlayerColor.GREEN, Rotation.RIGHT, new Pos(1, 0));
         state = state
                 .withPlacedTile(t47)
                 .withNewOccupant(new Occupant(Occupant.Kind.PAWN, 47_3));
 
-        var t28 = new PlacedTile(state.tileToPlace(), PlayerColor.YELLOW, Rotation.RIGHT, new Pos(1,1));
+        var t28 = new PlacedTile(state.tileToPlace(), PlayerColor.YELLOW, Rotation.RIGHT, new Pos(1, 1));
         state = state
                 .withPlacedTile(t28)
                 .withNewOccupant(new Occupant(Occupant.Kind.PAWN, 28_3));
 
-        var t58 = new PlacedTile(state.tileToPlace(), PlayerColor.PURPLE, Rotation.NONE, new Pos(0,1));
+        var t58 = new PlacedTile(state.tileToPlace(), PlayerColor.PURPLE, Rotation.NONE, new Pos(0, 1));
         state = state
                 .withPlacedTile(t58)
                 .withNewOccupant(null);
@@ -537,7 +537,7 @@ class GameStateTest {
         var occupants = Map.of(
                 55, new Occupant(Occupant.Kind.HUT, 55_3), // fisher's hut (BLUE)
                 18, new Occupant(Occupant.Kind.HUT, 18_1), // fisher's hut (BLUE)
-                 1, new Occupant(Occupant.Kind.HUT, 1_8) // fisher's hut (BLUE)
+                1, new Occupant(Occupant.Kind.HUT, 1_8) // fisher's hut (BLUE)
         );
 
         var normalTilesIds = List.of(61, 55, 51, 18, 62, 1, 34, 67, 31, 3, 49, 0);
@@ -592,9 +592,9 @@ class GameStateTest {
                 55, new Occupant(Occupant.Kind.PAWN, 55_3), // fisher (BLUE)
                 51, new Occupant(Occupant.Kind.PAWN, 51_1), // fisher (GREEN)
                 18, new Occupant(Occupant.Kind.PAWN, 18_2), // hunter (YELLOW)
-                 1, new Occupant(Occupant.Kind.HUT, 1_8), // fisher's hut (RED)
+                1, new Occupant(Occupant.Kind.HUT, 1_8), // fisher's hut (RED)
                 34, new Occupant(Occupant.Kind.PAWN, 34_1), // hunter (BLUE)
-                 3, new Occupant(Occupant.Kind.PAWN, 3_5), // fisher (PURPLE)
+                3, new Occupant(Occupant.Kind.PAWN, 3_5), // fisher (PURPLE)
                 49, new Occupant(Occupant.Kind.PAWN, 49_2) // hunter (RED)
         );
 

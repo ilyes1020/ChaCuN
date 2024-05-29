@@ -9,7 +9,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
-
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
@@ -23,18 +22,18 @@ import java.util.stream.Collectors;
  * @author Weifeng Ding(379902)
  */
 public final class ActionUI {
-    private ActionUI(){}
+    private ActionUI() {}
 
 
     /**
      * Creates a JavaFx Node representing the Actions User Interface.
      *
-     * @param actionListOV   An Observable value of the history of all actions.
-     * @param eventHandler   A handler of actions performance.
+     * @param actionListOV An Observable value of the history of all actions.
+     * @param eventHandler A handler of actions performance.
      * @return a JavaFx node of the user interface with the history of the 4 last actions and a text field to enter the action to perform.
      */
     public static Node create(ObservableValue<List<String>> actionListOV,
-                              Consumer<String> eventHandler){
+                              Consumer<String> eventHandler) {
 
         HBox actionsHB = new HBox();
         actionsHB.getStylesheets().add("actions.css");
@@ -59,14 +58,14 @@ public final class ActionUI {
 
         //---TextField textFormatter---//
         actionTextField.setTextFormatter(new TextFormatter<>(change -> {
-            change.setText(change.getText().chars()
-                    .mapToObj(c -> (char) c)
-                    .map(Character::toUpperCase)
-                    .filter(c -> Base32.ALPHABET.contains(String.valueOf(c)))
-                    .map(String::valueOf)
-                    .collect(Collectors.joining()));
-            return change;
-            })
+                    change.setText(change.getText().chars()
+                            .mapToObj(c -> (char) c)
+                            .map(Character::toUpperCase)
+                            .filter(c -> Base32.ALPHABET.contains(String.valueOf(c)))
+                            .map(String::valueOf)
+                            .collect(Collectors.joining()));
+                    return change;
+                })
         );
 
         //---The event to enter actions in the TextField---//

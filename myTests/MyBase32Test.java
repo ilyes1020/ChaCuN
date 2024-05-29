@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MyBase32Test {
 
     @Test
-    void isValidWorks(){
+    void isValidWorks() {
         assertFalse(Base32.isValid("1"));
         assertFalse(Base32.isValid("@"));
         assertTrue(Base32.isValid("2"));
@@ -18,7 +18,7 @@ public class MyBase32Test {
     }
 
     @Test
-    void encodeBits5Works(){
+    void encodeBits5Works() {
         assertEquals("J", Base32.encodeBits5(9));
         assertEquals("7", Base32.encodeBits5(31));
         assertEquals("A", Base32.encodeBits5(0));
@@ -31,7 +31,7 @@ public class MyBase32Test {
     }
 
     @Test
-    void encodeBits10Works(){
+    void encodeBits10Works() {
         assertEquals("CH", Base32.encodeBits10(71));
         assertEquals("EW", Base32.encodeBits10(150));
         assertEquals("A7", Base32.encodeBits10(31));
@@ -46,7 +46,7 @@ public class MyBase32Test {
     }
 
     @Test
-    void decodeWorks(){
+    void decodeWorks() {
         assertEquals(150, Base32.decode("EW"));
         assertEquals(980, Base32.decode("6U"));
         assertEquals(0, Base32.decode("AA"));
@@ -55,7 +55,7 @@ public class MyBase32Test {
     }
 
     @Test
-    void decodeThrows(){
+    void decodeThrows() {
         assertThrows(IllegalArgumentException.class, () -> Base32.decode("ew"));
         assertThrows(IllegalArgumentException.class, () -> Base32.decode("ABC"));
     }

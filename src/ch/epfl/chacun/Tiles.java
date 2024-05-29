@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public final class Tiles {
-    private Tiles() {}
+    private Tiles() {
+    }
 
     public static final List<Tile> TILES = createTiles();
 

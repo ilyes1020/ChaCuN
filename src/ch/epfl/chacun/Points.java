@@ -11,12 +11,13 @@ public final class Points {
     /**
      * Private constructor to prevent instantiation
      */
-    private Points() {}
+    private Points() {
+    }
 
     /**
      * Point for closing a forest.
      *
-     * @param tileCount nb of tile constituting the forest
+     * @param tileCount          nb of tile constituting the forest
      * @param mushroomGroupCount nb of mushroom group in the forest
      * @return the point gained by the player for closing a forest (int)
      */
@@ -33,7 +34,7 @@ public final class Points {
      * @return the point gained by the player for closing a river (int)
      * @throws IllegalArgumentException if the tileCount is < 2 or fishCount < 0
      */
-    public static int forClosedRiver(int tileCount, int fishCount){
+    public static int forClosedRiver(int tileCount, int fishCount) {
         Preconditions.checkArgument(tileCount > 1 && fishCount >= 0);
         return tileCount + fishCount;
     }
@@ -43,14 +44,15 @@ public final class Points {
      *
      * @param mammothCount nb of mommoth in the meadow
      * @param aurochsCount nb of aurochs in the meadow
-     * @param deerCount nb of deer in the meadow
+     * @param deerCount    nb of deer in the meadow
      * @return the nb of point gained by the player for occupying a meadow
      * @throws IllegalArgumentException if the mammothCount or aurochsCount or deerCount is < 0
      */
-    public static int forMeadow(int mammothCount, int aurochsCount, int deerCount){
+    public static int forMeadow(int mammothCount, int aurochsCount, int deerCount) {
         Preconditions.checkArgument(mammothCount >= 0 && aurochsCount >= 0 && deerCount >= 0);
         return (3 * mammothCount) + (2 * aurochsCount) + deerCount;
     }
+
     /**
      * Point for occupying a river system.
      *
@@ -58,7 +60,7 @@ public final class Points {
      * @return the nb of point gained by the player for occupying a river system
      * @throws IllegalArgumentException if the fishCount is < 0
      */
-    public static int forRiverSystem(int fishCount){
+    public static int forRiverSystem(int fishCount) {
         Preconditions.checkArgument(fishCount >= 0);
         return fishCount;
     }
@@ -70,7 +72,7 @@ public final class Points {
      * @return the bonus point gained by the player for closing a river system with logboat
      * @throws IllegalArgumentException if the lakeCount is < 1
      */
-    public static int forLogboat(int lakeCount){
+    public static int forLogboat(int lakeCount) {
         Preconditions.checkArgument(lakeCount > 0);
         return 2 * lakeCount;
     }
@@ -82,7 +84,7 @@ public final class Points {
      * @return the point gained by the player for occupying a river system with raft
      * @throws IllegalArgumentException if the lakeCount is < 1
      */
-    public static int forRaft(int lakeCount){
+    public static int forRaft(int lakeCount) {
         Preconditions.checkArgument(lakeCount > 0);
         return lakeCount;
     }

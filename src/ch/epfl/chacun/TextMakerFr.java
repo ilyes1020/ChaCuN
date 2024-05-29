@@ -10,7 +10,7 @@ import java.util.Set;
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding (379902)
  */
-public final class TextMakerFr implements TextMaker{
+public final class TextMakerFr implements TextMaker {
 
     private final Map<PlayerColor, String> playerNames;
 
@@ -51,7 +51,7 @@ public final class TextMakerFr implements TextMaker{
      * @param points             the scored points
      * @param mushroomGroupCount the number of mushroom groups in the forest
      * @param tileCount          the number of tiles constituting the forest
-     * @return                   a string message indicating the number of points that one or more players scored by closing a forest
+     * @return a string message indicating the number of points that one or more players scored by closing a forest
      */
     @Override
     public String playersScoredForest(Set<PlayerColor> scorers, int points, int mushroomGroupCount, int tileCount) {
@@ -73,7 +73,7 @@ public final class TextMakerFr implements TextMaker{
      * @param points    the scored points
      * @param fishCount the number of fishes swimming in the river or in the adjacent lake
      * @param tileCount the number of tiles constituting the river
-     * @return          a string message indicating the number of points that one or more player scored by closing a river
+     * @return a string message indicating the number of points that one or more player scored by closing a river
      */
     @Override
     public String playersScoredRiver(Set<PlayerColor> scorers, int points, int fishCount, int tileCount) {
@@ -94,7 +94,7 @@ public final class TextMakerFr implements TextMaker{
      * @param scorer  the player who placed the hunting trap
      * @param points  the scored points
      * @param animals the animals present in the same meadow as the hunting trap and 8 tiles around it
-     * @return        a string message indicating the number of points that a player scored by placing a hunting trap
+     * @return a string message indicating the number of points that a player scored by placing a hunting trap
      */
     @Override
     public String playerScoredHuntingTrap(PlayerColor scorer, int points, Map<Animal.Kind, Integer> animals) {
@@ -122,7 +122,7 @@ public final class TextMakerFr implements TextMaker{
      * @param scorers the majority occupants of the meadow
      * @param points  the scored points
      * @param animals the animals present in the meadow (without those who were previously cancelled)
-     * @return        a string message indicating the number of points that one or more players scored by closing a meadow
+     * @return a string message indicating the number of points that one or more players scored by closing a meadow
      */
     @Override
     public String playersScoredMeadow(Set<PlayerColor> scorers, int points, Map<Animal.Kind, Integer> animals) {
@@ -138,7 +138,7 @@ public final class TextMakerFr implements TextMaker{
      * @param scorers   the majority occupants of the river system
      * @param points    the scored points
      * @param fishCount the number of fish swimming in the river system
-     * @return          a string message indicating the number of points that one or more players scored by closing a river system
+     * @return a string message indicating the number of points that one or more players scored by closing a river system
      */
     @Override
     public String playersScoredRiverSystem(Set<PlayerColor> scorers, int points, int fishCount) {
@@ -154,7 +154,7 @@ public final class TextMakerFr implements TextMaker{
      * @param scorers the majority occupants of the meadow with the pit trap
      * @param points  the scored points
      * @param animals the animals present in the adjacent meadow (without those who were previously cancelled)
-     * @return        a string message indicating the number of points that one or more players scored with a pit trap
+     * @return a string message indicating the number of points that one or more players scored with a pit trap
      */
     @Override
     public String playersScoredPitTrap(Set<PlayerColor> scorers, int points, Map<Animal.Kind, Integer> animals) {
@@ -170,7 +170,7 @@ public final class TextMakerFr implements TextMaker{
      * @param scorers   the majority occupants of the river system with the raft
      * @param points    the scored points
      * @param lakeCount the number of lake in the river system
-     * @return          a string message indicating the number of points that one or more players scored with a raft
+     * @return a string message indicating the number of points that one or more players scored with a raft
      */
     @Override
     public String playersScoredRaft(Set<PlayerColor> scorers, int points, int lakeCount) {
@@ -185,7 +185,7 @@ public final class TextMakerFr implements TextMaker{
     /**
      * @param winners the set of the winners
      * @param points  the winners' points
-     * @return        a string message indicating the winners of the game
+     * @return a string message indicating the winners of the game
      */
     @Override
     public String playersWon(Set<PlayerColor> winners, int points) {

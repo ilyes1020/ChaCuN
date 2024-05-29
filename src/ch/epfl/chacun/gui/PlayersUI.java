@@ -1,18 +1,18 @@
 package ch.epfl.chacun.gui;
 
-import ch.epfl.chacun.*;
+import ch.epfl.chacun.GameState;
+import ch.epfl.chacun.Occupant;
+import ch.epfl.chacun.PlayerColor;
+import ch.epfl.chacun.TextMaker;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * User interface representing the list of all player, their respective occupants, and their scored points.
@@ -26,12 +26,12 @@ public final class PlayersUI {
     /**
      * Creates a JavaFx Node representing the Player User Interface.
      *
-     * @param gameStateOV   An Observable value of the gameState.
-     * @param textMaker     A text maker.
+     * @param gameStateOV An Observable value of the gameState.
+     * @param textMaker   A text maker.
      * @return a JavaFx node of the user interface with all player, occupants and scored points.
      */
     public static Node create(ObservableValue<GameState> gameStateOV,
-                              TextMaker textMaker){
+                              TextMaker textMaker) {
 
         //---PlayersVB initializing---//
         VBox playersVB = new VBox();
@@ -45,12 +45,12 @@ public final class PlayersUI {
         ObservableValue<Map<PlayerColor, Integer>> pointsMapOV = gameStateOV.map(o -> o.messageBoard().points());
 
         //---playerNode creation---//
-        for (PlayerColor p: players){
+        for (PlayerColor p : players) {
 
             //---auto updating text for points initialization---//
             ObservableValue<String> pointsTextOV =
                     pointsMapOV.map(pointsMap ->
-                            STR." \{textMaker.playerName(p)} : \{pointsMap.getOrDefault(p, 0)} \{pointsMap.getOrDefault(p,0) > 1 ? "points" : "point"}\n");
+                            STR." \{textMaker.playerName(p)} : \{pointsMap.getOrDefault(p, 0)} \{pointsMap.getOrDefault(p, 0) > 1 ? "points" : "point"}\n");
 
             Text playerPointsText = new Text();
             playerPointsText.textProperty().bind(pointsTextOV);
@@ -80,7 +80,7 @@ public final class PlayersUI {
             playerNode.getStyleClass().add("player");
 
             //---currentPlayer indicator update setup---//
-            currentPlayerOV.addListener((o, oldPlayer, newPlayer) -> {
+            currentPlayerOV.addListener((_, oldPlayer, newPlayer) -> {
                 if (oldPlayer == p) {
                     playerNode.getStyleClass().remove("current");
                 }

@@ -1,4 +1,3 @@
-
 import ch.epfl.chacun.*;
 import org.junit.jupiter.api.Test;
 
@@ -13,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MyGameStateTest01 {
 
 
-    TileDecks getFullTileDecks(){
+    TileDecks getFullTileDecks() {
         List<Tile> tiles = Tiles.TILES;
         List<Tile> normal = new ArrayList<>();
         List<Tile> menhir = new ArrayList<>();
         List<Tile> start = new ArrayList<>();
 
-        for(Tile t : tiles){
-            switch (t.kind()){
+        for (Tile t : tiles) {
+            switch (t.kind()) {
                 case NORMAL -> normal.add(t);
                 case MENHIR -> menhir.add(t);
                 case START -> start.add(t);
@@ -29,11 +28,11 @@ public class MyGameStateTest01 {
         }
         //System.out.println(start.size());
 
-        return new TileDecks(start,normal,menhir);
+        return new TileDecks(start, normal, menhir);
     }
 
 
-    static GameState getInitialGameState(TileDecks t){
+    static GameState getInitialGameState(TileDecks t) {
 
         TextMaker text = new MyTextMaker();
         List<PlayerColor> players = new ArrayList<>();
@@ -46,7 +45,7 @@ public class MyGameStateTest01 {
     }
 
     @Test
-    void simpleScenarioGame(){
+    void simpleScenarioGame() {
         List<Tile> str = new ArrayList<>();
         List<Tile> nrml = new ArrayList<>();
         List<Tile> menhir = new ArrayList<>();
@@ -59,13 +58,13 @@ public class MyGameStateTest01 {
 
         menhir.add(Tiles.TILES.get(82));
 
-        TileDecks deck = new TileDecks(str,nrml,menhir);
+        TileDecks deck = new TileDecks(str, nrml, menhir);
         GameState s = getInitialGameState(deck);
 
         assertEquals(Tiles.TILES.get(64), s.tileToPlace());
 
         //part 1 : place tile 64 at pos 1,0
-        PlacedTile p = new PlacedTile(s.tileToPlace(), s.currentPlayer(), Rotation.NONE, new Pos(1,0));
+        PlacedTile p = new PlacedTile(s.tileToPlace(), s.currentPlayer(), Rotation.NONE, new Pos(1, 0));
         s = s.withPlacedTile(p);
         System.out.println("firstTile : " + p.id());
 
@@ -76,13 +75,13 @@ public class MyGameStateTest01 {
         s = s.withNewOccupant(o);
 
         //Part 2;
-        assertEquals(PlayerColor.BLUE,s.currentPlayer());
+        assertEquals(PlayerColor.BLUE, s.currentPlayer());
         assertEquals(Tiles.TILES.get(78), s.tileToPlace());
 
         assertEquals(4, s.freeOccupantsCount(PlayerColor.RED, Occupant.Kind.PAWN));
 
         //second tile placed
-        p = new PlacedTile(s.tileToPlace(), s.currentPlayer(), Rotation.NONE, new Pos(0,1));
+        p = new PlacedTile(s.tileToPlace(), s.currentPlayer(), Rotation.NONE, new Pos(0, 1));
         s = s.withPlacedTile(p);
         System.out.println("secondTile : " + p.id());
 
@@ -90,7 +89,7 @@ public class MyGameStateTest01 {
         assertEquals(potOccupantTest, s.lastTilePotentialOccupants());
 
         GameState finalS = s;
-        assertThrows(IllegalArgumentException.class, ()-> finalS.withNewOccupant(new Occupant(Occupant.Kind.PAWN, 780)));
+        assertThrows(IllegalArgumentException.class, () -> finalS.withNewOccupant(new Occupant(Occupant.Kind.PAWN, 780)));
         //occupy second tuile by blue
         o = new Occupant(Occupant.Kind.PAWN, 781);
         s = s.withNewOccupant(o);
@@ -99,7 +98,7 @@ public class MyGameStateTest01 {
         assertEquals(GameState.Action.PLACE_TILE, s.nextAction());
         assertEquals(Tiles.TILES.get(67), s.tileToPlace());
 
-        p = new PlacedTile(s.tileToPlace(), PlayerColor.GREEN, Rotation.HALF_TURN, new Pos(1,1));
+        p = new PlacedTile(s.tileToPlace(), PlayerColor.GREEN, Rotation.HALF_TURN, new Pos(1, 1));
         s = s.withPlacedTile(p);
         assertEquals(GameState.Action.OCCUPY_TILE, s.nextAction());
 
@@ -118,7 +117,7 @@ public class MyGameStateTest01 {
         assertEquals(Tiles.TILES.get(82), s.tileToPlace());
         assertEquals(GameState.Action.PLACE_TILE, s.nextAction());
 
-        p = new PlacedTile(s.tileToPlace(), s.currentPlayer(), Rotation.RIGHT, new Pos(-1,0));
+        p = new PlacedTile(s.tileToPlace(), s.currentPlayer(), Rotation.RIGHT, new Pos(-1, 0));
         s = s.withPlacedTile(p);
 
         assertEquals(PlayerColor.GREEN, s.currentPlayer());
@@ -126,31 +125,29 @@ public class MyGameStateTest01 {
         s = s.withNewOccupant(null);
 
         assertEquals(PlayerColor.RED, s.currentPlayer());
-        assertEquals(4,s.freeOccupantsCount(PlayerColor.GREEN, Occupant.Kind.PAWN) );
+        assertEquals(4, s.freeOccupantsCount(PlayerColor.GREEN, Occupant.Kind.PAWN));
 
         assertEquals(Tiles.TILES.get(26), s.tileToPlace());
         assertEquals(GameState.Action.PLACE_TILE, s.nextAction());
 
         System.out.println(s.messageBoard());
         //il a sauter la bonne tuile
-        assertEquals( 8,s.messageBoard().points().get(PlayerColor.RED));
-
+        assertEquals(8, s.messageBoard().points().get(PlayerColor.RED));
 
 
     }
 
 
-
     @Test
-    void testBasic(){
+    void testBasic() {
         GameState s = getInitialGameState(getFullTileDecks());
 
-        assertEquals(PlayerColor.RED,s.currentPlayer() );
+        assertEquals(PlayerColor.RED, s.currentPlayer());
 
 
-        System.out.println("Placing tile " +  s.tileToPlace().id());
-        PlacedTile tile = new PlacedTile(s.tileToPlace(), s.currentPlayer(), Rotation.NONE, new Pos(1,0));
-       s = s.withPlacedTile(tile);
+        System.out.println("Placing tile " + s.tileToPlace().id());
+        PlacedTile tile = new PlacedTile(s.tileToPlace(), s.currentPlayer(), Rotation.NONE, new Pos(1, 0));
+        s = s.withPlacedTile(tile);
         System.out.println("Successfully PlacedTile, placing occupant");
         Occupant newOcc = new Occupant(Occupant.Kind.PAWN, 4);
         s = s.withNewOccupant(newOcc);
@@ -160,9 +157,6 @@ public class MyGameStateTest01 {
 
 
     }
-
-
-
 
 
 }

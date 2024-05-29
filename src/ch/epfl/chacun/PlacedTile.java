@@ -8,12 +8,11 @@ import java.util.stream.Collectors;
 /**
  * Represents a placed tile.
  *
- * @param tile the placed tile
- * @param placer the placer of the tile
+ * @param tile     the placed tile
+ * @param placer   the placer of the tile
  * @param rotation the rotation of the tile
- * @param pos the position on which the tile is placed
+ * @param pos      the position on which the tile is placed
  * @param occupant the occupant of the tile
- *
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding(379902)
  */
@@ -22,13 +21,13 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
     /**
      * Compact constructor that throws a NullPointerException if tile or rotation or position is null.
      *
-     * @param tile the placed tile
-     * @param placer the placer of the tile
+     * @param tile     the placed tile
+     * @param placer   the placer of the tile
      * @param rotation the rotation of the tile
-     * @param pos the position on which the tile is placed
+     * @param pos      the position on which the tile is placed
      * @param occupant the occupant of the tile
      */
-    public PlacedTile{
+    public PlacedTile {
         Objects.requireNonNull(tile);
         Objects.requireNonNull(rotation);
         Objects.requireNonNull(pos);
@@ -37,12 +36,12 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
     /**
      * Constructor to create a placed tile without occupant.
      *
-     * @param tile the placed tile
-     * @param placer the placer of the tile
+     * @param tile     the placed tile
+     * @param placer   the placer of the tile
      * @param rotation the rotation of the tile
-     * @param pos the position on which the tile is placed
+     * @param pos      the position on which the tile is placed
      */
-    public PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos pos){
+    public PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos pos) {
         this(tile, placer, rotation, pos, null);
     }
 
@@ -51,7 +50,7 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      *
      * @return the id of the placed tile
      */
-    public int id(){
+    public int id() {
         return tile.id();
     }
 
@@ -60,7 +59,7 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      *
      * @return the kind of the placed tile
      */
-    public Tile.Kind kind(){
+    public Tile.Kind kind() {
         return tile.kind();
     }
 
@@ -70,7 +69,7 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      * @param direction the direction of the side
      * @return the tile side in the given direction
      */
-    public TileSide side(Direction direction){
+    public TileSide side(Direction direction) {
         return tile.sides().get(direction.rotated(rotation.negated()).ordinal());
     }
 
@@ -80,7 +79,7 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      * @param id the id of the zone
      * @return the zone with the given ID
      */
-    public Zone zoneWithId(int id){
+    public Zone zoneWithId(int id) {
         return tile.zones().stream()
                 .filter(zone -> zone.id() == id)
                 .findFirst()
@@ -92,7 +91,7 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      *
      * @return the zone that has the given special power
      */
-    public Zone specialPowerZone(){
+    public Zone specialPowerZone() {
         return tile.zones().stream()
                 .filter(zone -> zone.specialPower() != null)
                 .findFirst()
@@ -104,7 +103,7 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      *
      * @return a set of all forest zones in the tile
      */
-    public Set<Zone.Forest> forestZones(){
+    public Set<Zone.Forest> forestZones() {
         return zonesOfType(Zone.Forest.class);
     }
 
@@ -113,7 +112,7 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      *
      * @return a set of all meadow zones in the tile
      */
-    public Set<Zone.Meadow> meadowZones(){
+    public Set<Zone.Meadow> meadowZones() {
         return zonesOfType(Zone.Meadow.class);
     }
 
@@ -122,7 +121,7 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      *
      * @return a set of all river zones in the tile
      */
-    public Set<Zone.River> riverZones(){
+    public Set<Zone.River> riverZones() {
         return zonesOfType(Zone.River.class);
     }
 
@@ -131,9 +130,9 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      *
      * @return the set of all potential occupants in the tile
      */
-    public Set<Occupant> potentialOccupants(){
+    public Set<Occupant> potentialOccupants() {
         Set<Occupant> potentialOccupants = new HashSet<>();
-        if (placer != null){
+        if (placer != null) {
             potentialOccupants.addAll(potentialOccupantsOfType(Occupant.Kind.PAWN, tile().sideZones()));
             potentialOccupants.addAll(potentialOccupantsOfType(Occupant.Kind.HUT, riverZones().stream().filter(river -> !river.hasLake()).collect(Collectors.toList())));
             potentialOccupants.addAll(potentialOccupantsOfType(Occupant.Kind.HUT, zonesOfType(Zone.Lake.class)));
@@ -147,8 +146,8 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      * @param occupant the occupant of the tile
      * @return the same placed tile, but with an occupant
      */
-    public PlacedTile withOccupant(Occupant occupant){
-        if (this.occupant == null){
+    public PlacedTile withOccupant(Occupant occupant) {
+        if (this.occupant == null) {
             return new PlacedTile(tile, placer, rotation, pos, occupant);
         }
         throw new IllegalArgumentException("The tile is already occupied");
@@ -159,7 +158,7 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      *
      * @return the same placed tile, but without occupant
      */
-    public PlacedTile withNoOccupant(){
+    public PlacedTile withNoOccupant() {
         return new PlacedTile(tile, placer, rotation, pos);
     }
 
@@ -169,10 +168,9 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      *
      * @param occupantKind the kind of the occupant of the tile
      * @return the ID of the occupied zone, or -1
-     *
      */
-    public int idOfZoneOccupiedBy(Occupant.Kind occupantKind){
-        if (occupant == null || !occupantKind.equals(occupant.kind())){
+    public int idOfZoneOccupiedBy(Occupant.Kind occupantKind) {
+        if (occupant == null || !occupantKind.equals(occupant.kind())) {
             return -1;
         } else {
             return occupant.zoneId();
@@ -185,7 +183,7 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      * @param zoneType The class of the zone type to filter by.
      * @return A set of all zones in the tile of the specified type.
      */
-    private <T extends Zone> Set<T> zonesOfType(Class<T> zoneType){
+    private <T extends Zone> Set<T> zonesOfType(Class<T> zoneType) {
         return tile.zones().stream()
                 .filter(zoneType::isInstance)
                 .map(zoneType::cast)
@@ -196,12 +194,12 @@ public record PlacedTile(Tile tile, PlayerColor placer, Rotation rotation, Pos p
      * This method returns a set of potential occupants of a specific kind for a given iterable of zones.
      *
      * @param occupantKind The kind of the occupant to create.
-     * @param zones The iterable of zones to create occupants for.
+     * @param zones        The iterable of zones to create occupants for.
      * @return A set of potential occupants of the specified kind for the given zones.
      */
-    private Set<Occupant> potentialOccupantsOfType(Occupant.Kind occupantKind, Iterable<? extends Zone> zones){
+    private Set<Occupant> potentialOccupantsOfType(Occupant.Kind occupantKind, Iterable<? extends Zone> zones) {
         Set<Occupant> occupants = new HashSet<>();
-        for (Zone zone : zones){
+        for (Zone zone : zones) {
             occupants.add(new Occupant(occupantKind, zone.id()));
         }
         return occupants;

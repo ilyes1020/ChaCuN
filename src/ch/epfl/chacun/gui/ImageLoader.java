@@ -23,19 +23,21 @@ public final class ImageLoader {
 
     /**
      * Creates a JavaFx image for a normal-sized tile.
-     * @param tileId    the tile's ID.
+     *
+     * @param tileId the tile's ID.
      * @return a JavaFx 256px image for a tile.
      */
-    public static Image normalImageForTile(int tileId){
+    public static Image normalImageForTile(int tileId) {
         return new Image(FMT."/\{NORMAL_TILE_PIXEL_SIZE}/%02d\{tileId}.jpg");
     }
 
     /**
      * Creates a JavaFx image for a large-sized tile.
-     * @param tileId    the tile's ID.
+     *
+     * @param tileId the tile's ID.
      * @return a JavaFx 512px image for a tile.
      */
-    public static Image largeImageForTile(int tileId){
+    public static Image largeImageForTile(int tileId) {
         return new Image(FMT."/\{LARGE_TILE_PIXEL_SIZE}/%02d\{tileId}.jpg");
     }
 }

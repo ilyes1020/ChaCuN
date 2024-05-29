@@ -127,10 +127,10 @@ class PlacedTileTest {
         var zoneForest3 = new Zone.Forest(13, Zone.Forest.Kind.PLAIN);
 
         var sides = new ArrayList<>(List.of(
-            new TileSide.Meadow(zoneSpecialPower),
-            new TileSide.Forest(zoneForest1),
-            new TileSide.Forest(zoneForest2),
-            new TileSide.Forest(zoneForest3)
+                new TileSide.Meadow(zoneSpecialPower),
+                new TileSide.Forest(zoneForest1),
+                new TileSide.Forest(zoneForest2),
+                new TileSide.Forest(zoneForest3)
         ));
         for (int i = 0; i < 4; i += 1) {
             var tile = new Tile(1, Tile.Kind.NORMAL, sides.get(0), sides.get(1), sides.get(2), sides.get(3));
@@ -166,10 +166,10 @@ class PlacedTileTest {
         var zoneForest3 = new Zone.Forest(13, Zone.Forest.Kind.PLAIN);
 
         var sides = new ArrayList<>(List.of(
-            new TileSide.Meadow(zoneMeadow),
-            new TileSide.Forest(zoneForest1),
-            new TileSide.Forest(zoneForest2),
-            new TileSide.Forest(zoneForest3)
+                new TileSide.Meadow(zoneMeadow),
+                new TileSide.Forest(zoneForest1),
+                new TileSide.Forest(zoneForest2),
+                new TileSide.Forest(zoneForest3)
         ));
         for (int i = 0; i < 4; i += 1) {
             var tile = new Tile(1, Tile.Kind.NORMAL, sides.get(0), sides.get(1), sides.get(2), sides.get(3));
@@ -251,10 +251,10 @@ class PlacedTileTest {
         var tile = new Tile(1, Tile.Kind.NORMAL, sideN, sideE, sideS, sideW);
         var placedTile = new PlacedTile(tile, PlayerColor.RED, Rotation.NONE, new Pos(0, 0));
         var expectedOccupants = Set.of(
-            new Occupant(Occupant.Kind.PAWN, 10),
-            new Occupant(Occupant.Kind.PAWN, 11),
-            new Occupant(Occupant.Kind.PAWN, 12),
-            new Occupant(Occupant.Kind.PAWN, 13)
+                new Occupant(Occupant.Kind.PAWN, 10),
+                new Occupant(Occupant.Kind.PAWN, 11),
+                new Occupant(Occupant.Kind.PAWN, 12),
+                new Occupant(Occupant.Kind.PAWN, 13)
         );
         assertEquals(expectedOccupants, placedTile.potentialOccupants());
     }

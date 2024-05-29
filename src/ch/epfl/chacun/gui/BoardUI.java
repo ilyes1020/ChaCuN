@@ -30,20 +30,20 @@ import java.util.stream.Collectors;
  * @author Weifeng Ding (379902)
  */
 public final class BoardUI {
-    private BoardUI(){}
+    private BoardUI() {}
 
     /**
      * Creates a JavaFx Node representing the Board Interface.
      *
-     * @param reach                     The reach of the board
-     * @param gameStateOV               An Observable value of the gameState.
-     * @param rotationOV                An Observable value of the rotation of the tile.
-     * @param visibleOccupantsOV        An Observable value of the set of the visible occupants.
-     * @param highlightedTilesIdOV      An Observable value of the set of the highlighted tiles.
-     * @param rotationHandler           A handler of tile rotations
-     * @param placeTileHandler          A handler of tile placements
-     * @param occupantSelectHandler     A handler of occupants selection (placing or removing)
-     * @return                          a JavaFx node of the user interface of the board with cell nodes for tiles.
+     * @param reach                 The reach of the board
+     * @param gameStateOV           An Observable value of the gameState.
+     * @param rotationOV            An Observable value of the rotation of the tile.
+     * @param visibleOccupantsOV    An Observable value of the set of the visible occupants.
+     * @param highlightedTilesIdOV  An Observable value of the set of the highlighted tiles.
+     * @param rotationHandler       A handler of tile rotations
+     * @param placeTileHandler      A handler of tile placements
+     * @param occupantSelectHandler A handler of occupants selection (placing or removing)
+     * @return a JavaFx node of the user interface of the board with cell nodes for tiles.
      */
     public static Node create(int reach,
                               ObservableValue<GameState> gameStateOV,
@@ -52,202 +52,204 @@ public final class BoardUI {
                               ObservableValue<Set<Integer>> highlightedTilesIdOV,
                               Consumer<Rotation> rotationHandler,
                               Consumer<Pos> placeTileHandler,
-                              Consumer<Occupant> occupantSelectHandler){
+                              Consumer<Occupant> occupantSelectHandler) {
 
-    //---ScrollPane instantiation---//
-    ScrollPane boardSP = new ScrollPane();
-    boardSP.getStylesheets().add("board.css");
-    boardSP.setId("board-scroll-pane");
-    boardSP.setHvalue(0.5);
-    boardSP.setVvalue(0.5);
+        //---ScrollPane instantiation---//
+        ScrollPane boardSP = new ScrollPane();
+        boardSP.getStylesheets().add("board.css");
+        boardSP.setId("board-scroll-pane");
+        boardSP.setHvalue(0.5);
+        boardSP.setVvalue(0.5);
 
-    //---GridPane instantiation---//
-    GridPane boardGP = new GridPane();
-    boardGP.setId("board-grid");
-    boardSP.setContent(boardGP);
+        //---GridPane instantiation---//
+        GridPane boardGP = new GridPane();
+        boardGP.setId("board-grid");
+        boardSP.setContent(boardGP);
 
-    //---Empty Tile image---//
-    WritableImage emptyTileImage = new WritableImage(1, 1);
-    emptyTileImage
-            .getPixelWriter()
-            .setColor(0, 0, Color.gray(0.98));
+        //---Empty Tile image---//
+        WritableImage emptyTileImage = new WritableImage(1, 1);
+        emptyTileImage
+                .getPixelWriter()
+                .setColor(0, 0, Color.gray(0.98));
 
-    //---Iterate over all the positions of the board to create all cells---//
-    for (int y = 0 ; y <= 2 * reach ; y++) {
-        for (int x = 0 ; x <= 2 * reach ; x++) {
-            final Pos currentPos = new Pos(x - reach,y - reach);
+        //---Iterate over all the positions of the board to create all cells---//
+        for (int y = 0; y <= 2 * reach; y++) {
+            for (int x = 0; x <= 2 * reach; x++) {
+                final Pos currentPos = new Pos(x - reach, y - reach);
 
-            //---the group containing the tile instantiation---//
-            Group tileGroup = new Group();
-            boardGP.add(tileGroup, x, y);
+                //---the group containing the tile instantiation---//
+                Group tileGroup = new Group();
+                boardGP.add(tileGroup, x, y);
 
-            //---Mouse hovering property of the cell---//
-            ReadOnlyBooleanProperty mouseHovering = tileGroup.hoverProperty();
+                //---Mouse hovering property of the cell---//
+                ReadOnlyBooleanProperty mouseHovering = tileGroup.hoverProperty();
 
-            //---Observable value of the PlacedTile on the cell (can be null)---//
-            ObservableValue<PlacedTile> placedTileOV = gameStateOV.map(m -> m.board().tileAt(currentPos));
+                //---Observable value of the PlacedTile on the cell (can be null)---//
+                ObservableValue<PlacedTile> placedTileOV = gameStateOV.map(m -> m.board().tileAt(currentPos));
 
-            //---Observable value of the fringe depending on the game state---//
-            ObservableValue<Set<Pos>> fringeOV = gameStateOV.map(gameState -> {
-                if (gameState.nextAction() == GameState.Action.PLACE_TILE) {
-                    return  gameState.board().insertionPositions();
-                }
-                return Set.of();
-            });
+                //---Observable value of the fringe depending on the game state---//
+                ObservableValue<Set<Pos>> fringeOV = gameStateOV.map(gameState -> {
+                    if (gameState.nextAction() == GameState.Action.PLACE_TILE) {
+                        return gameState.board().insertionPositions();
+                    }
+                    return Set.of();
+                });
 
-            //---The Cell's data instantiation---//
-            ObservableValue<CellData> cellDataOV = Bindings.createObjectBinding(
-                    () -> {
+                //---The Cell's data instantiation---//
+                ObservableValue<CellData> cellDataOV = Bindings.createObjectBinding(
+                        () -> {
 
-                        // Useful variables
-                        PlayerColor currentPlayer = gameStateOV.getValue().currentPlayer();
-                        PlacedTile placedTile = placedTileOV.getValue();
-                        Tile tileToPlace = gameStateOV.getValue().tileToPlace();
+                            // Useful variables
+                            PlayerColor currentPlayer = gameStateOV.getValue().currentPlayer();
+                            PlacedTile placedTile = placedTileOV.getValue();
+                            Tile tileToPlace = gameStateOV.getValue().tileToPlace();
 
-                        // Default variables initialization
-                        Image backgroundImage = emptyTileImage;
-                        Rotation rotation = rotationOV.getValue();
-                        Color veilColor = Color.TRANSPARENT;
+                            // Default variables initialization
+                            Image backgroundImage = emptyTileImage;
+                            Rotation rotation = rotationOV.getValue();
+                            Color veilColor = Color.TRANSPARENT;
 
-                        // If there is a PlacedTile on the cell,
-                        // load its image if not loaded yet and set the background image to the tile's image
-                        if (placedTile != null) {
-                            backgroundImage = CellData.IMAGE_CACHE.computeIfAbsent(placedTile.id(), ImageLoader::normalImageForTile);
-                            rotation = placedTile.rotation();
-                            // If there is a PlacedTile on the cell and there is other PlacedTiles that should be highlighted,
-                            // then the veil should be black
-                            if (!highlightedTilesIdOV.getValue().isEmpty() && !highlightedTilesIdOV.getValue().contains(placedTile.id())){
-                                veilColor = Color.BLACK;
-                            }
-                        }
-
-                        // If there is no PlacedTile on the cell, and it is in the fringe,
-                        // we check if the mouse is hovering it.
-                        else if (fringeOV.getValue().contains(currentPos)){
-
-                            // If the mouse is hovering the cell,
-                            // we set the background image to the tileToPlace's image
-                            if(mouseHovering.getValue()){
-                                backgroundImage = CellData.IMAGE_CACHE.computeIfAbsent(tileToPlace.id(), ImageLoader::normalImageForTile);
-                                PlacedTile placedTileToPlace = new PlacedTile(tileToPlace, currentPlayer, rotation, currentPos);
-
-                                // If the mouse is hovering the cell and the player cannot place the tileToPlace on the cell,
-                                // the color of the veil should be white
-                                if (!gameStateOV.getValue().board().canAddTile(placedTileToPlace)){
-                                    veilColor = Color.WHITE;
+                            // If there is a PlacedTile on the cell,
+                            // load its image if not loaded yet and set the background image to the tile's image
+                            if (placedTile != null) {
+                                backgroundImage = CellData.IMAGE_CACHE.computeIfAbsent(placedTile.id(), ImageLoader::normalImageForTile);
+                                rotation = placedTile.rotation();
+                                // If there is a PlacedTile on the cell and there is other PlacedTiles that should be highlighted,
+                                // then the veil should be black
+                                if (!highlightedTilesIdOV.getValue().isEmpty() && !highlightedTilesIdOV.getValue().contains(placedTile.id())) {
+                                    veilColor = Color.BLACK;
                                 }
-
-                            // If the mouse is not hovering the tile in the fringe,
-                            // the color of the veil is the same as the current player's.
-                            } else {
-                                veilColor = ColorMap.fillColor(currentPlayer);
                             }
+
+                            // If there is no PlacedTile on the cell, and it is in the fringe,
+                            // we check if the mouse is hovering it.
+                            else if (fringeOV.getValue().contains(currentPos)) {
+
+                                // If the mouse is hovering the cell,
+                                // we set the background image to the tileToPlace's image
+                                if (mouseHovering.getValue()) {
+                                    backgroundImage = CellData.IMAGE_CACHE.computeIfAbsent(tileToPlace.id(), ImageLoader::normalImageForTile);
+                                    PlacedTile placedTileToPlace = new PlacedTile(tileToPlace, currentPlayer, rotation, currentPos);
+
+                                    // If the mouse is hovering the cell and the player cannot place the tileToPlace on the cell,
+                                    // the color of the veil should be white
+                                    if (!gameStateOV.getValue().board().canAddTile(placedTileToPlace)) {
+                                        veilColor = Color.WHITE;
+                                    }
+
+                                    // If the mouse is not hovering the tile in the fringe,
+                                    // the color of the veil is the same as the current player's.
+                                } else {
+                                    veilColor = ColorMap.fillColor(currentPlayer);
+                                }
+                            }
+                            return new CellData(backgroundImage, rotation, veilColor);
                         }
-                        return new CellData(backgroundImage, rotation, veilColor);
+                        , placedTileOV
+                        , rotationOV
+                        , gameStateOV
+                        , highlightedTilesIdOV
+                        , fringeOV
+                        , mouseHovering);
+
+                //---The ImageView of the cell instantiation---//
+                ImageView backgroundImageIV = new ImageView();
+                backgroundImageIV.setFitWidth(ImageLoader.NORMAL_TILE_FIT_SIZE);
+                backgroundImageIV.setFitHeight(ImageLoader.NORMAL_TILE_FIT_SIZE);
+                tileGroup.getChildren().add(backgroundImageIV);
+
+                //---Binding the image of the cell to cellData's background image data---//
+                backgroundImageIV.imageProperty().bind(cellDataOV.map(CellData::backgroundImage));
+
+                //---Binding the rotation of the cell to cellData's rotation data---//
+                tileGroup.rotateProperty().bind(cellDataOV.map(cellData -> cellData.rotation().degreesCW()));
+
+                // Create a ColorInput instance for the veil image.
+                //ObservableValue<ColorInput> veilImageOV = cellDataOV.map(cellData -> new  ColorInput(0, 0, ImageLoader.NORMAL_TILE_FIT_SIZE, ImageLoader.NORMAL_TILE_FIT_SIZE, cellData.veilColor()));
+
+                //---Create a Blend instance for the veil effect depending on the cellData---//
+                ObservableValue<Blend> veilEffectOV = cellDataOV.map(cellData -> {
+                    Blend blend = new Blend(
+                            BlendMode.SRC_OVER
+                            , null
+                            , new ColorInput(0, 0, ImageLoader.NORMAL_TILE_FIT_SIZE, ImageLoader.NORMAL_TILE_FIT_SIZE, cellData.veilColor()));
+                    blend.setOpacity(0.5);
+                    return blend;
+                });
+
+                //---Binding the effect property of the cell to the veil---//
+                tileGroup.effectProperty().bind(veilEffectOV);
+
+                //---Instantiation of the mouse events---//
+                tileGroup.setOnMouseClicked(event -> {
+                    if (event.isStillSincePress()) {
+                        if (event.getButton() == MouseButton.SECONDARY) {
+                            if (event.isAltDown()) rotationHandler.accept(Rotation.RIGHT);
+                            else rotationHandler.accept(Rotation.LEFT);
+                        }
+                        if (event.getButton() == MouseButton.PRIMARY
+                                && fringeOV.getValue().contains(currentPos)) {
+                            placeTileHandler.accept(currentPos);
+                        }
                     }
-                    , placedTileOV
-                    , rotationOV
-                    , gameStateOV
-                    , highlightedTilesIdOV
-                    , fringeOV
-                    , mouseHovering);
+                });
 
-            //---The ImageView of the cell instantiation---//
-            ImageView backgroundImageIV = new ImageView();
-            backgroundImageIV.setFitWidth(ImageLoader.NORMAL_TILE_FIT_SIZE);
-            backgroundImageIV.setFitHeight(ImageLoader.NORMAL_TILE_FIT_SIZE);
-            tileGroup.getChildren().add(backgroundImageIV);
+                //---Adding all the occupants and cancelled animals markers when a new cell is added---//
+                placedTileOV.addListener((_, oldTile, newTile) -> {
+                    if (newTile != null && oldTile == null) {
+                        //---Adding the Cancelled Animals Markers---//
+                        Set<Animal> animals = newTile
+                                .meadowZones()
+                                .stream()
+                                .flatMap(zone -> zone.animals().stream())
+                                .collect(Collectors.toSet());
+                        for (Animal animal : animals) {
+                            ImageView markerIV = new ImageView("marker.png");
+                            markerIV.setFitWidth(ImageLoader.MARKER_FIT_SIZE);
+                            markerIV.setFitHeight(ImageLoader.MARKER_FIT_SIZE);
+                            markerIV.getStyleClass().add("marker");
+                            markerIV.setId(STR."marker_\{animal.id()}");
+                            tileGroup.getChildren().add(markerIV);
 
-            //---Binding the image of the cell to cellData's background image data---//
-            backgroundImageIV.imageProperty().bind(cellDataOV.map(CellData::backgroundImage));
+                            //---making the marker visible when the animal is cancelled---//
+                            ObservableValue<Boolean> markerVisibilityOV = gameStateOV.map(gameState -> gameState.board().cancelledAnimals().contains(animal));
+                            markerIV.visibleProperty().bind(markerVisibilityOV);
+                        }
 
-            //---Binding the rotation of the cell to cellData's rotation data---//
-            tileGroup.rotateProperty().bind(cellDataOV.map(cellData -> cellData.rotation().degreesCW()));
+                        //---Adding the occupants---//
+                        for (Occupant occupant : newTile.potentialOccupants()) {
+                            Node occupantNode = Icon.newFor(newTile.placer(), occupant.kind());
+                            occupantNode.setId(STR."\{occupant.kind().toString().toLowerCase()}_\{occupant.zoneId()}");
+                            tileGroup.getChildren().add(occupantNode);
 
-            // Create a ColorInput instance for the veil image.
-            //ObservableValue<ColorInput> veilImageOV = cellDataOV.map(cellData -> new  ColorInput(0, 0, ImageLoader.NORMAL_TILE_FIT_SIZE, ImageLoader.NORMAL_TILE_FIT_SIZE, cellData.veilColor()));
+                            //---making the occupant visible if it should be---//
+                            ObservableValue<Boolean> occupantVisibilityOV = visibleOccupantsOV.map(visibleOccupants -> visibleOccupants.contains(occupant));
+                            occupantNode.visibleProperty().bind(occupantVisibilityOV);
 
-            //---Create a Blend instance for the veil effect depending on the cellData---//
-            ObservableValue<Blend> veilEffectOV = cellDataOV.map(cellData -> {
-                Blend blend = new Blend(
-                        BlendMode.SRC_OVER
-                        , null
-                        , new  ColorInput(0, 0, ImageLoader.NORMAL_TILE_FIT_SIZE, ImageLoader.NORMAL_TILE_FIT_SIZE, cellData.veilColor()));
-                blend.setOpacity(0.5);
-                return blend;
-            });
+                            //---making the occupant always vertical---//
+                            occupantNode.rotateProperty().bind(cellDataOV.map(cellData -> cellData.rotation().negated().degreesCW()));
 
-            //---Binding the effect property of the cell to the veil---//
-            tileGroup.effectProperty().bind(veilEffectOV);
-
-            //---Instantiation of the mouse events---//
-            tileGroup.setOnMouseClicked(event -> {
-                if (event.isStillSincePress()) {
-                    if (event.getButton() == MouseButton.SECONDARY){
-                        if (event.isAltDown()) rotationHandler.accept(Rotation.RIGHT);
-                        else rotationHandler.accept(Rotation.LEFT);
+                            //---making the occupant clickable---//
+                            occupantNode.setOnMouseClicked(event -> {
+                                if (event.isStillSincePress()) {
+                                    if (event.getButton() == MouseButton.PRIMARY)
+                                        occupantSelectHandler.accept(occupant);
+                                }
+                            });
+                        }
                     }
-                    if (event.getButton() == MouseButton.PRIMARY
-                            && fringeOV.getValue().contains(currentPos)) {
-                        placeTileHandler.accept(currentPos);
-                    }
-                }
-            });
-
-            //---Adding all the occupants and cancelled animals markers when a new cell is added---//
-            placedTileOV.addListener((o, oldTile, newTile) -> {
-                if (newTile != null && oldTile == null) {
-                    //---Adding the Cancelled Animals Markers---//
-                    Set<Animal> animals = newTile
-                            .meadowZones()
-                            .stream()
-                            .flatMap(zone -> zone.animals().stream())
-                            .collect(Collectors.toSet());
-                    for (Animal animal : animals) {
-                        ImageView markerIV = new ImageView("marker.png");
-                        markerIV.setFitWidth(ImageLoader.MARKER_FIT_SIZE);
-                        markerIV.setFitHeight(ImageLoader.MARKER_FIT_SIZE);
-                        markerIV.getStyleClass().add("marker");
-                        markerIV.setId(STR."marker_\{animal.id()}");
-                        tileGroup.getChildren().add(markerIV);
-
-                        //---making the marker visible when the animal is cancelled---//
-                        ObservableValue<Boolean> markerVisibilityOV = gameStateOV.map(gameState -> gameState.board().cancelledAnimals().contains(animal));
-                        markerIV.visibleProperty().bind(markerVisibilityOV);
-                    }
-
-                    //---Adding the occupants---//
-                    for (Occupant occupant : newTile.potentialOccupants()) {
-                        Node occupantNode = Icon.newFor(newTile.placer(), occupant.kind());
-                        occupantNode.setId(STR."\{occupant.kind().toString().toLowerCase()}_\{occupant.zoneId()}");
-                        tileGroup.getChildren().add(occupantNode);
-
-                        //---making the occupant visible if it should be---//
-                        ObservableValue<Boolean> occupantVisibilityOV = visibleOccupantsOV.map(visibleOccupants -> visibleOccupants.contains(occupant));
-                        occupantNode.visibleProperty().bind(occupantVisibilityOV);
-
-                        //---making the occupant always vertical---//
-                        occupantNode.rotateProperty().bind(cellDataOV.map(cellData -> cellData.rotation().negated().degreesCW()));
-
-                        //---making the occupant clickable---//
-                        occupantNode.setOnMouseClicked(event -> {
-                            if (event.isStillSincePress()) {
-                                if (event.getButton() == MouseButton.PRIMARY) occupantSelectHandler.accept(occupant);
-                            }
-                        });
-                    }
-                }
-            });
+                });
+            }
         }
+        return boardSP;
     }
-    return boardSP;
-}
 
     /**
      * A private record that has a unique purpose of regrouping the cell's data depending on multiple observable values
-     * @param backgroundImage   the background image of the cell
-     * @param rotation          the rotation of the cell
-     * @param veilColor         the color of the veil that should be on the cell
+     *
+     * @param backgroundImage the background image of the cell
+     * @param rotation        the rotation of the cell
+     * @param veilColor       the color of the veil that should be on the cell
      */
     private record CellData(Image backgroundImage, Rotation rotation, Color veilColor) {
         public static Map<Integer, Image> IMAGE_CACHE = new HashMap<>();

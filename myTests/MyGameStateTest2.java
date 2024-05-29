@@ -72,7 +72,7 @@ public class MyGameStateTest2 {
     //HuntingTrap
     public static TileDecks initialTileDecks6 = new TileDecks(
             List.of(TILES.get(56)),
-            List.of(TILES.get(49), TILES.get(27), TILES.get(62), TILES.get(61),TILES.get(1),TILES.get(0),TILES.get(8)),
+            List.of(TILES.get(49), TILES.get(27), TILES.get(62), TILES.get(61), TILES.get(1), TILES.get(0), TILES.get(8)),
             List.of(TILES.get(94)));
 
     public static GameState initialGameState6 = GameState.initial(
@@ -83,7 +83,7 @@ public class MyGameStateTest2 {
     //LogBoat
     public static TileDecks initialTileDecks7 = new TileDecks(
             List.of(TILES.get(56)),
-            List.of(TILES.get(49), TILES.get(27),TILES.get(1),TILES.get(0),TILES.get(8)),
+            List.of(TILES.get(49), TILES.get(27), TILES.get(1), TILES.get(0), TILES.get(8)),
             List.of(TILES.get(93)));
 
     public static GameState initialGameState7 = GameState.initial(
@@ -94,7 +94,7 @@ public class MyGameStateTest2 {
     //Shaman
     public static TileDecks initialTileDecks8 = new TileDecks(
             List.of(TILES.get(56)),
-            List.of(TILES.get(49), TILES.get(27),TILES.get(1),TILES.get(0),TILES.get(8)),
+            List.of(TILES.get(49), TILES.get(27), TILES.get(1), TILES.get(0), TILES.get(8)),
             List.of(TILES.get(88)));
 
     public static GameState initialGameState8 = GameState.initial(
@@ -106,7 +106,7 @@ public class MyGameStateTest2 {
     //Fire and PitTrap
     public static TileDecks initialTileDecks9 = new TileDecks(
             List.of(TILES.get(56)),
-            List.of(TILES.get(49), TILES.get(27),TILES.get(1),TILES.get(0),TILES.get(69), TILES.get(25), TILES.get(34)),
+            List.of(TILES.get(49), TILES.get(27), TILES.get(1), TILES.get(0), TILES.get(69), TILES.get(25), TILES.get(34)),
             List.of(TILES.get(92), TILES.get(85)));
 
     public static GameState initialGameState9 = GameState.initial(
@@ -117,7 +117,7 @@ public class MyGameStateTest2 {
     //PitTrap
     public static TileDecks initialTileDecks10 = new TileDecks(
             List.of(TILES.get(56)),
-            List.of(TILES.get(49), TILES.get(27),TILES.get(1),TILES.get(0), TILES.get(31)),
+            List.of(TILES.get(49), TILES.get(27), TILES.get(1), TILES.get(0), TILES.get(31)),
             List.of(TILES.get(92)));
 
     public static GameState initialGameState10 = GameState.initial(
@@ -138,11 +138,10 @@ public class MyGameStateTest2 {
             TEXT_MADE);
 
 
-
     /////////////////////////////////////// TESTS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
     @Test
-    void currentPlayerWorks(){
+    void currentPlayerWorks() {
         var gameState = initialGameState1;
         assertNull(gameState.currentPlayer());
 
@@ -162,7 +161,7 @@ public class MyGameStateTest2 {
     }
 
     @Test
-    void freeOccupantsCountWorks(){
+    void freeOccupantsCountWorks() {
         var gameState = initialGameState1;
         var gameState1 = gameState.withStartingTilePlaced();
 
@@ -180,7 +179,7 @@ public class MyGameStateTest2 {
                 gameState3.tileToPlace(),
                 gameState3.currentPlayer(),
                 Rotation.NONE,
-                new Pos(1,0)));
+                new Pos(1, 0)));
 
         var gameState5 = gameState4.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -200,7 +199,7 @@ public class MyGameStateTest2 {
     }
 
     @Test
-    void lastTilePotentialOccupantsWorksOnEasyCase(){
+    void lastTilePotentialOccupantsWorksOnEasyCase() {
         var gameState = initialGameState1;
 
         var gameState1 = gameState.withStartingTilePlaced();
@@ -225,7 +224,7 @@ public class MyGameStateTest2 {
     }
 
     @Test
-    void lastTilePotentialOccupantsWorksOnDifficultCase(){
+    void lastTilePotentialOccupantsWorksOnDifficultCase() {
 
         var gameState = initialGameState3;
         var gameState1 = gameState.withStartingTilePlaced();
@@ -247,7 +246,6 @@ public class MyGameStateTest2 {
                 gameState3.board().lastPlacedTile().pos().neighbor(Direction.S)));
 
 
-
         //Expected
 
         var lastTilePotentialOccupantsExpected = Set.of(
@@ -263,7 +261,7 @@ public class MyGameStateTest2 {
     }
 
     @Test
-    void withPlacedTileWorksWithHuntingTrap(){
+    void withPlacedTileWorksWithHuntingTrap() {
 
         var gameState = initialGameState6;
         var gameState1 = gameState.withStartingTilePlaced();
@@ -284,7 +282,7 @@ public class MyGameStateTest2 {
                 gameState3.tileToPlace(),
                 gameState3.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,0)));
+                new Pos(-2, 0)));
 
         var gameState5 = gameState4.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -295,7 +293,7 @@ public class MyGameStateTest2 {
                 gameState5.tileToPlace(),
                 gameState5.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,-1)));
+                new Pos(-2, -1)));
 
         //area already occupied
         assertEquals(GameState.Action.PLACE_TILE, gameState6.nextAction());
@@ -306,7 +304,7 @@ public class MyGameStateTest2 {
                 gameState6.tileToPlace(),
                 gameState6.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-1,-1)));
+                new Pos(-1, -1)));
 
         //area already occupied
         assertEquals(GameState.Action.PLACE_TILE, gameState7.nextAction());
@@ -318,7 +316,7 @@ public class MyGameStateTest2 {
                 gameState7.tileToPlace(),
                 gameState7.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(1,0)));
+                new Pos(1, 0)));
 
         var gameState9 = gameState8.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -329,7 +327,7 @@ public class MyGameStateTest2 {
                 gameState9.tileToPlace(),
                 gameState9.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(0,1)));
+                new Pos(0, 1)));
 
         var gameState11 = gameState10.withNewOccupant(null);
 
@@ -338,7 +336,7 @@ public class MyGameStateTest2 {
                 gameState11.tileToPlace(),
                 gameState11.currentPlayer(),
                 Rotation.NONE,
-                new Pos(0,-1)));
+                new Pos(0, -1)));
 
         //Expected
 
@@ -353,11 +351,11 @@ public class MyGameStateTest2 {
                 Set.of(PlayerColor.RED),
                 Set.of(56, 49, 61, 94));
 
-        assertEquals(messageExpected, gameState12.messageBoard().messages().get(gameState12.messageBoard().messages().size()-1));
+        assertEquals(messageExpected, gameState12.messageBoard().messages().get(gameState12.messageBoard().messages().size() - 1));
     }
 
     @Test
-    void withPlacedTileWorksWithLogBoat(){
+    void withPlacedTileWorksWithLogBoat() {
 
         var gameState = initialGameState7;
         var gameState1 = gameState.withStartingTilePlaced();
@@ -378,7 +376,7 @@ public class MyGameStateTest2 {
                 gameState3.tileToPlace(),
                 gameState3.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,0)));
+                new Pos(-2, 0)));
 
         var gameState5 = gameState4.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -389,7 +387,7 @@ public class MyGameStateTest2 {
                 gameState5.tileToPlace(),
                 gameState5.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(1,0)));
+                new Pos(1, 0)));
 
         var gameState7 = gameState6.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -400,7 +398,7 @@ public class MyGameStateTest2 {
                 gameState7.tileToPlace(),
                 gameState7.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(0,1)));
+                new Pos(0, 1)));
 
         var gameState9 = gameState8.withNewOccupant(null);
 
@@ -410,7 +408,7 @@ public class MyGameStateTest2 {
                 gameState9.tileToPlace(),
                 gameState9.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,1)));
+                new Pos(-2, 1)));
 
 
         //Expected
@@ -421,13 +419,13 @@ public class MyGameStateTest2 {
                 Set.of(PlayerColor.YELLOW),
                 Set.of(56, 49, 27, 93));
 
-        assertEquals(messageExpected, gameState10.messageBoard().messages().get(gameState10.messageBoard().messages().size()-1));
+        assertEquals(messageExpected, gameState10.messageBoard().messages().get(gameState10.messageBoard().messages().size() - 1));
 
 
     }
 
     @Test
-    void withPlacedTileWorksWithShamanWithPawnToRemove(){
+    void withPlacedTileWorksWithShamanWithPawnToRemove() {
 
         var gameState = initialGameState8;
         var gameState1 = gameState.withStartingTilePlaced();
@@ -448,7 +446,7 @@ public class MyGameStateTest2 {
                 gameState3.tileToPlace(),
                 gameState3.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,0)));
+                new Pos(-2, 0)));
 
         var gameState5 = gameState4.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -459,7 +457,7 @@ public class MyGameStateTest2 {
                 gameState5.tileToPlace(),
                 gameState5.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(1,0)));
+                new Pos(1, 0)));
 
         var gameState7 = gameState6.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -470,7 +468,7 @@ public class MyGameStateTest2 {
                 gameState7.tileToPlace(),
                 gameState7.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(0,1)));
+                new Pos(0, 1)));
 
         //TODO voir les autres, jai ajoute le occupant sinon cest faux
         var gameState9 = gameState8.withNewOccupant(new Occupant(
@@ -483,7 +481,7 @@ public class MyGameStateTest2 {
                 gameState9.tileToPlace(),
                 gameState9.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,1)));
+                new Pos(-2, 1)));
 
 
         //Expected
@@ -492,7 +490,7 @@ public class MyGameStateTest2 {
     }
 
     @Test
-    void withPlacedTileWorksWithShamanWithNoPawnToRemove(){
+    void withPlacedTileWorksWithShamanWithNoPawnToRemove() {
 
         var gameState = initialGameState8;
         var gameState1 = gameState.withStartingTilePlaced();
@@ -513,7 +511,7 @@ public class MyGameStateTest2 {
                 gameState3.tileToPlace(),
                 gameState3.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,0)));
+                new Pos(-2, 0)));
 
         var gameState5 = gameState4.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -524,7 +522,7 @@ public class MyGameStateTest2 {
                 gameState5.tileToPlace(),
                 gameState5.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(1,0)));
+                new Pos(1, 0)));
 
         var gameState7 = gameState6.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -535,7 +533,7 @@ public class MyGameStateTest2 {
                 gameState7.tileToPlace(),
                 gameState7.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(0,1)));
+                new Pos(0, 1)));
 
 
         var gameState9 = gameState8.withNewOccupant(null);
@@ -546,7 +544,7 @@ public class MyGameStateTest2 {
                 gameState9.tileToPlace(),
                 gameState9.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,1)));
+                new Pos(-2, 1)));
 
 
         //Expected
@@ -556,7 +554,7 @@ public class MyGameStateTest2 {
     }
 
     @Test
-    void withPlacedTileWorksWithForestClosed(){
+    void withPlacedTileWorksWithForestClosed() {
 
         var gameState = initialGameState4;
         var gameState1 = gameState.withStartingTilePlaced();
@@ -575,7 +573,7 @@ public class MyGameStateTest2 {
                 gameState3.tileToPlace(),
                 gameState3.currentPlayer(),
                 Rotation.HALF_TURN,
-                new Pos(1,1)));
+                new Pos(1, 1)));
 
         var gameState5 = gameState4.withNewOccupant(null);
 
@@ -594,7 +592,7 @@ public class MyGameStateTest2 {
     }
 
     @Test
-    void withPlacedTileWorksWithRiverClosed(){
+    void withPlacedTileWorksWithRiverClosed() {
 
         var gameState = initialGameState3;
         var gameState1 = gameState.withStartingTilePlaced();
@@ -634,7 +632,7 @@ public class MyGameStateTest2 {
     }
 
     @Test
-    void withPlacedTileWorksWithOccupationImpossible(){
+    void withPlacedTileWorksWithOccupationImpossible() {
 
         var gameState = initialGameState5;
         var gameState1 = gameState.withStartingTilePlaced();
@@ -653,14 +651,14 @@ public class MyGameStateTest2 {
                 gameState3.tileToPlace(),
                 gameState3.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-1,-1)));
+                new Pos(-1, -1)));
 
         assertEquals(GameState.Action.PLACE_TILE, gameState4.nextAction());
 
     }
 
     @Test
-    void withPlacedTileWorksWithMenhirToPlace(){
+    void withPlacedTileWorksWithMenhirToPlace() {
 
         var gameState = initialGameState4;
         var gameState1 = gameState.withStartingTilePlaced();
@@ -677,7 +675,7 @@ public class MyGameStateTest2 {
                 gameState3.tileToPlace(),
                 gameState3.currentPlayer(),
                 Rotation.HALF_TURN,
-                new Pos(0,1)));
+                new Pos(0, 1)));
 
         var gameState5 = gameState4.withNewOccupant(null);
 
@@ -688,7 +686,7 @@ public class MyGameStateTest2 {
     void withPlacedTileWorksWithTwoConsecutiveMenhirsClosed(){}*/
 
     @Test
-    void withOccupantRemovedWorksWhenOccupantNull(){
+    void withOccupantRemovedWorksWhenOccupantNull() {
 
         var gameState = initialGameState8;
         var gameState1 = gameState.withStartingTilePlaced();
@@ -709,7 +707,7 @@ public class MyGameStateTest2 {
                 gameState3.tileToPlace(),
                 gameState3.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,0)));
+                new Pos(-2, 0)));
 
         var gameState5 = gameState4.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -720,7 +718,7 @@ public class MyGameStateTest2 {
                 gameState5.tileToPlace(),
                 gameState5.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(1,0)));
+                new Pos(1, 0)));
 
         var gameState7 = gameState6.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -731,7 +729,7 @@ public class MyGameStateTest2 {
                 gameState7.tileToPlace(),
                 gameState7.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(0,1)));
+                new Pos(0, 1)));
 
         var gameState9 = gameState8.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -743,7 +741,7 @@ public class MyGameStateTest2 {
                 gameState9.tileToPlace(),
                 gameState9.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,1)));
+                new Pos(-2, 1)));
 
         var gameState11 = gameState10.withOccupantRemoved(null);
         //Expected
@@ -761,7 +759,7 @@ public class MyGameStateTest2 {
     void withNewOccupantWorksWhenOccupantNotNull(){}*/
 
     @Test
-    void withNewOccupantWorksWhenAreaAlreadyOccupied(){
+    void withNewOccupantWorksWhenAreaAlreadyOccupied() {
 
         var gameState = initialGameState6;
         var gameState1 = gameState.withStartingTilePlaced();
@@ -782,7 +780,7 @@ public class MyGameStateTest2 {
                 gameState3.tileToPlace(),
                 gameState3.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,0)));
+                new Pos(-2, 0)));
 
         var gameState5 = gameState4.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -793,7 +791,7 @@ public class MyGameStateTest2 {
                 gameState5.tileToPlace(),
                 gameState5.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,-1)));
+                new Pos(-2, -1)));
 
         assertThrows(IllegalArgumentException.class, () -> gameState6.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -802,9 +800,8 @@ public class MyGameStateTest2 {
     }
 
 
-
     @Test
-    void withStartingTilePlacedWorks(){
+    void withStartingTilePlacedWorks() {
         var gameState = initialGameState1;
         var gameState1 = gameState.withStartingTilePlaced();
 
@@ -820,7 +817,7 @@ public class MyGameStateTest2 {
     }
 
     @Test
-    void withTurnFinishedWorksOnTopTileDrawnUntil(){
+    void withTurnFinishedWorksOnTopTileDrawnUntil() {
         var gameState = initialGameState2;
         var gameState1 = gameState.withStartingTilePlaced();
 
@@ -856,7 +853,7 @@ public class MyGameStateTest2 {
 
 
     @Test
-    void endGameWorksWithFireAndPitTrap(){
+    void endGameWorksWithFireAndPitTrap() {
 
         var gameState = initialGameState9;
         var gameState1 = gameState.withStartingTilePlaced();
@@ -877,7 +874,7 @@ public class MyGameStateTest2 {
                 gameState3.tileToPlace(),
                 gameState3.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,0)));
+                new Pos(-2, 0)));
 
         var gameState5 = gameState4.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -888,7 +885,7 @@ public class MyGameStateTest2 {
                 gameState5.tileToPlace(),
                 gameState5.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(1,0)));
+                new Pos(1, 0)));
 
         var gameState7 = gameState6.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -899,7 +896,7 @@ public class MyGameStateTest2 {
                 gameState7.tileToPlace(),
                 gameState7.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(0,1)));
+                new Pos(0, 1)));
 
         var gameState9 = gameState8.withNewOccupant(null);
 
@@ -909,7 +906,7 @@ public class MyGameStateTest2 {
                 gameState9.tileToPlace(),
                 gameState9.currentPlayer(),
                 Rotation.NONE,
-                new Pos(0,-1)));
+                new Pos(0, -1)));
 
         var gameState11 = gameState10.withNewOccupant(null);
 
@@ -918,7 +915,7 @@ public class MyGameStateTest2 {
                 gameState11.tileToPlace(),
                 gameState11.currentPlayer(),
                 Rotation.LEFT,
-                new Pos(-2,1)));
+                new Pos(-2, 1)));
 
         var gameState13 = gameState12.withNewOccupant(null);
 
@@ -928,7 +925,7 @@ public class MyGameStateTest2 {
                 gameState13.tileToPlace(),
                 gameState13.currentPlayer(),
                 Rotation.LEFT,
-                new Pos(-3,1)));
+                new Pos(-3, 1)));
 
         var gameState15 = gameState14.withNewOccupant(null);
 
@@ -938,7 +935,7 @@ public class MyGameStateTest2 {
                 gameState15.tileToPlace(),
                 gameState15.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(-2,2)));
+                new Pos(-2, 2)));
 
         var gameState17 = gameState16.withNewOccupant(null);
 
@@ -947,7 +944,7 @@ public class MyGameStateTest2 {
                 gameState17.tileToPlace(),
                 gameState17.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-1,-1)));
+                new Pos(-1, -1)));
 
         //cannot be occupied
 
@@ -1013,7 +1010,7 @@ public class MyGameStateTest2 {
 
 
     @Test
-    void endGameWorksWithPitTrap(){
+    void endGameWorksWithPitTrap() {
 
         var gameState = initialGameState10;
         var gameState1 = gameState.withStartingTilePlaced();
@@ -1034,7 +1031,7 @@ public class MyGameStateTest2 {
                 gameState3.tileToPlace(),
                 gameState3.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,0)));
+                new Pos(-2, 0)));
 
         var gameState5 = gameState4.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -1045,7 +1042,7 @@ public class MyGameStateTest2 {
                 gameState5.tileToPlace(),
                 gameState5.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(1,0)));
+                new Pos(1, 0)));
 
         var gameState7 = gameState6.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
@@ -1056,7 +1053,7 @@ public class MyGameStateTest2 {
                 gameState7.tileToPlace(),
                 gameState7.currentPlayer(),
                 Rotation.RIGHT,
-                new Pos(0,1)));
+                new Pos(0, 1)));
 
         var gameState9 = gameState8.withNewOccupant(null);
 
@@ -1066,7 +1063,7 @@ public class MyGameStateTest2 {
                 gameState9.tileToPlace(),
                 gameState9.currentPlayer(),
                 Rotation.NONE,
-                new Pos(0,-1)));
+                new Pos(0, -1)));
 
         var gameState11 = gameState10.withNewOccupant(null);
 
@@ -1075,7 +1072,7 @@ public class MyGameStateTest2 {
                 gameState11.tileToPlace(),
                 gameState11.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-1,-1)));
+                new Pos(-1, -1)));
 
         var gameState13 = gameState12.withNewOccupant(null);
 
@@ -1132,7 +1129,7 @@ public class MyGameStateTest2 {
 
 
     @Test
-    void closedRiverSystemWorks(){
+    void closedRiverSystemWorks() {
 
         var gameState = initialGameState11;
         var gameState1 = gameState.withStartingTilePlaced();
@@ -1144,7 +1141,7 @@ public class MyGameStateTest2 {
                 Rotation.NONE,
                 new Pos(-1, 0)));
 
-            //river
+        //river
         var gameState3 = gameState2.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
                 gameState2.board().lastPlacedTile().tile().e().zones().get(1).id()));
@@ -1154,9 +1151,9 @@ public class MyGameStateTest2 {
                 gameState3.tileToPlace(),
                 gameState3.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,0)));
+                new Pos(-2, 0)));
 
-            //meadow
+        //meadow
         var gameState5 = gameState4.withNewOccupant(new Occupant(
                 Occupant.Kind.PAWN,
                 gameState4.board().lastPlacedTile().tile().e().zones().get(2).id()));
@@ -1167,9 +1164,9 @@ public class MyGameStateTest2 {
                 gameState5.tileToPlace(),
                 gameState5.currentPlayer(),
                 Rotation.NONE,
-                new Pos(-2,1)));
+                new Pos(-2, 1)));
 
-            //river
+        //river
         var gameState7 = gameState6.withNewOccupant(new Occupant(
                 Occupant.Kind.HUT,
                 gameState6.board().lastPlacedTile().tile().n().zones().get(1).id()));

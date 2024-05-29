@@ -14,8 +14,8 @@ public class MyPlacedTileSideTest {
     Zone.Meadow meadowZone1 = new Zone.Meadow(560, new ArrayList<>(), null);
     Zone.Forest forestZone = new Zone.Forest(561, Zone.Forest.Kind.WITH_MENHIR);
     Zone.Meadow meadowZone2 = new Zone.Meadow(562, new ArrayList<>(), null);
-    Zone.Lake lakeZone = new Zone.Lake(568,1, Zone.SpecialPower.LOGBOAT);
-    Zone.River riverZone = new Zone.River(563,0, lakeZone);
+    Zone.Lake lakeZone = new Zone.Lake(568, 1, Zone.SpecialPower.LOGBOAT);
+    Zone.River riverZone = new Zone.River(563, 0, lakeZone);
 
     TileSide.Forest forestSide = new TileSide.Forest(forestZone);
     TileSide.Meadow meadowSide = new TileSide.Meadow(meadowZone1);
@@ -26,6 +26,7 @@ public class MyPlacedTileSideTest {
     PlacedTile placedTileWithRotationRight = new PlacedTile(tile, PlayerColor.RED, Rotation.RIGHT, new Pos(0, 0));
     PlacedTile placedTileWithRotationHalfTurn = new PlacedTile(tile, PlayerColor.RED, Rotation.HALF_TURN, new Pos(0, 0));
     PlacedTile placedTileWithRotationLeft = new PlacedTile(tile, PlayerColor.RED, Rotation.LEFT, new Pos(0, 0));
+
     @Test
     void constructionFailsWithNullParameter() {
         assertThrows(NullPointerException.class, () -> new PlacedTile(null, PlayerColor.RED, Rotation.NONE, new Pos(0, 0)));

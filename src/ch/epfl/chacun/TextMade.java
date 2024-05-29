@@ -54,7 +54,7 @@ public class TextMade implements TextMaker {
     @Override
     public String playerScoredHuntingTrap(PlayerColor scorer, int points, Map<Animal.Kind, Integer> animals) {
         int total = 0;
-        for(Animal.Kind animalKind : animals.keySet()){
+        for (Animal.Kind animalKind : animals.keySet()) {
             total += animals.get(animalKind);
         }
 
@@ -81,7 +81,7 @@ public class TextMade implements TextMaker {
     @Override
     public String playersScoredMeadow(Set<PlayerColor> scorers, int points, Map<Animal.Kind, Integer> animals) {
         int total = 0;
-        for(Animal.Kind animalKind : animals.keySet()){
+        for (Animal.Kind animalKind : animals.keySet()) {
             total += animals.get(animalKind);
         }
 
@@ -108,7 +108,7 @@ public class TextMade implements TextMaker {
     @Override
     public String playersScoredPitTrap(Set<PlayerColor> scorers, int points, Map<Animal.Kind, Integer> animals) {
         int total = 0;
-        for(Animal.Kind animalKind : animals.keySet()){
+        for (Animal.Kind animalKind : animals.keySet()) {
             total += animals.get(animalKind);
         }
 

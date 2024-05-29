@@ -12,7 +12,7 @@ public class MyGameStateTest3 {
     static Board boardWithStartTile = Board.EMPTY.withNewTile(new PlacedTile(initialGameState().tileDecks().topTile(Tile.Kind.START),
             null,
             Rotation.NONE, new
-            Pos(0,0)));
+            Pos(0, 0)));
 
     static TextMaker textMaker = new TextMakerApo();
 
@@ -22,11 +22,11 @@ public class MyGameStateTest3 {
         //TODO bien implémenter la liste de joueur comme LinkedList voir ed#960
         List<PlayerColor> players = new LinkedList<>();
         Collections.addAll(players,
-                            PlayerColor.RED,
-                            PlayerColor.BLUE,
-                            PlayerColor.GREEN,
-                            PlayerColor.YELLOW,
-                            PlayerColor.PURPLE);
+                PlayerColor.RED,
+                PlayerColor.BLUE,
+                PlayerColor.GREEN,
+                PlayerColor.YELLOW,
+                PlayerColor.PURPLE);
 
         //Création tileDecks
         List<Tile> startTiles = new ArrayList<>();
@@ -34,11 +34,11 @@ public class MyGameStateTest3 {
 
         List<Tile> normalTiles = new ArrayList<>();
         Collections.addAll(normalTiles,
-                                        Tiles.TILES.get(0),
-                                        Tiles.TILES.get(26),
-                                        Tiles.TILES.get(64),
-                                        Tiles.TILES.get(32),
-                                        Tiles.TILES.get(60));
+                Tiles.TILES.get(0),
+                Tiles.TILES.get(26),
+                Tiles.TILES.get(64),
+                Tiles.TILES.get(32),
+                Tiles.TILES.get(60));
         normalTiles = List.copyOf(normalTiles);
         List<Tile> menhirTiles = new ArrayList<>(Tiles.TILES.subList(91, 95));
         menhirTiles.add(Tiles.TILES.get(85));
@@ -65,7 +65,7 @@ public class MyGameStateTest3 {
         PlacedTile placedTile1_East = new PlacedTile(firstTile,
                 PlayerColor.RED,
                 Rotation.NONE,
-                new Pos(1,0));
+                new Pos(1, 0));
 
         return withStartTilePlaced().withPlacedTile(placedTile1_East);
     }
@@ -84,7 +84,7 @@ public class MyGameStateTest3 {
         PlacedTile placedTileNorthOf0 = new PlacedTile(secondTile,
                 PlayerColor.BLUE,
                 Rotation.RIGHT,
-                new Pos(1,1));
+                new Pos(1, 1));
 
         return withFirstTileOccupied().withPlacedTile(placedTileNorthOf0);
     }
@@ -114,20 +114,20 @@ public class MyGameStateTest3 {
 
         //No players
         assertThrows(IllegalArgumentException.class, () -> {
-           new GameState(new ArrayList<>(),
-                   gameState.tileDecks(),
-                   gameState.tileToPlace(),
-                   gameState.board(),
-                   gameState.nextAction(),
-                   gameState.messageBoard());
-        //tile not null && nextAction not placeTile
+            new GameState(new ArrayList<>(),
+                    gameState.tileDecks(),
+                    gameState.tileToPlace(),
+                    gameState.board(),
+                    gameState.nextAction(),
+                    gameState.messageBoard());
+            //tile not null && nextAction not placeTile
             new GameState(gameState.players(),
                     gameState.tileDecks(),
                     tileToPlace,
                     gameState.board(),
                     GameState.Action.OCCUPY_TILE,
                     gameState.messageBoard());
-        //tile to place not null
+            //tile to place not null
             new GameState(gameState.players(),
                     gameState.tileDecks(),
                     tileToPlace,
@@ -143,21 +143,21 @@ public class MyGameStateTest3 {
                     gameState.board(),
                     gameState.nextAction(),
                     gameState.messageBoard());
-        //board null
+            //board null
             new GameState(gameState.players(),
                     gameState.tileDecks(),
                     gameState.tileToPlace(),
                     null,
                     gameState.nextAction(),
                     gameState.messageBoard());
-        // nextAction null
+            // nextAction null
             new GameState(gameState.players(),
                     gameState.tileDecks(),
                     gameState.tileToPlace(),
                     gameState.board(),
                     null,
                     gameState.messageBoard());
-        //MessageBoard null
+            //MessageBoard null
             new GameState(gameState.players(),
                     gameState.tileDecks(),
                     gameState.tileToPlace(),
@@ -198,7 +198,6 @@ public class MyGameStateTest3 {
         startTiles.add(Tiles.TILES.get(56));
 
         List<Tile> normalTiles = initialGameState().tileDecks().normalTiles();
-
 
 
         List<Tile> menhirTiles = new ArrayList<>(Tiles.TILES.subList(91, 95));
@@ -245,9 +244,9 @@ public class MyGameStateTest3 {
 
         GameState startingGameState = initialGameState();
         TileDecks tileDeckWithoutStartTile = new TileDecks(new ArrayList<>(startingGameState.tileDecks().startTiles()),
-                                                            new ArrayList<>(startingGameState.tileDecks().normalTiles()),
-                                                            new ArrayList<>(startingGameState.tileDecks().menhirTiles()))
-                                                            .withTopTileDrawn(Tile.Kind.START);
+                new ArrayList<>(startingGameState.tileDecks().normalTiles()),
+                new ArrayList<>(startingGameState.tileDecks().menhirTiles()))
+                .withTopTileDrawn(Tile.Kind.START);
 
         Tile tileToPlace = tileDeckWithoutStartTile.topTile(Tile.Kind.NORMAL);
         TileDecks expectedTileDeck = tileDeckWithoutStartTile.withTopTileDrawn(Tile.Kind.NORMAL);
@@ -289,9 +288,9 @@ public class MyGameStateTest3 {
     @Test
     void withPlacedTileThrows() {
         PlacedTile randomPlacedTile = new PlacedTile(Tiles.TILES.getFirst(),
-                                                        PlayerColor.RED,
-                                                        Rotation.NONE,
-                                                        new Pos(0,-1));
+                PlayerColor.RED,
+                Rotation.NONE,
+                new Pos(0, -1));
         assertThrows(IllegalArgumentException.class, () -> {
             initialGameState().withPlacedTile(randomPlacedTile);
         });
@@ -305,9 +304,9 @@ public class MyGameStateTest3 {
         //Cas 1 : Tuile sans pouvoir spécial qui peut être occupée
         Tile firstTile = Tiles.TILES.getFirst();
         PlacedTile placedTile1_East = new PlacedTile(firstTile,
-                                        PlayerColor.RED,
-                                        Rotation.NONE,
-                                        new Pos(1,0));
+                PlayerColor.RED,
+                Rotation.NONE,
+                new Pos(1, 0));
 
         //Building the expected resulting GS
         TileDecks tileDeckWithoutFirstPTile = new TileDecks(new ArrayList<>(startTilePlacedGS.tileDecks().startTiles()),
@@ -336,7 +335,7 @@ public class MyGameStateTest3 {
     void withNewOccupantThrows() {
         //GS avec la tuile 56
         assertThrows(IllegalArgumentException.class, () -> {
-        withStartTilePlaced().withNewOccupant(new Occupant(Occupant.Kind.PAWN, 0_0));
+            withStartTilePlaced().withNewOccupant(new Occupant(Occupant.Kind.PAWN, 0_0));
         });
     }
 
@@ -357,17 +356,17 @@ public class MyGameStateTest3 {
 
         //expected GS
         GameState expected = new GameState(players,
-                                            expectedTileDecks,
-                                            Tiles.TILES.get(26),
-                                            gameStateFirstTilePlaced.board().withOccupant(occupant),
-                                            GameState.Action.PLACE_TILE,
-                                            gameStateFirstTilePlaced.messageBoard());
+                expectedTileDecks,
+                Tiles.TILES.get(26),
+                gameStateFirstTilePlaced.board().withOccupant(occupant),
+                GameState.Action.PLACE_TILE,
+                gameStateFirstTilePlaced.messageBoard());
 
         assertEquals(expected, gameStateFirstTilePlaced.withNewOccupant(occupant));
         assertEquals(expected, withFirstTileOccupied());
     }
 
-    
+
     @Test
     void SecondPlacedTileWorks() {
         //expected resulting gameState
@@ -376,11 +375,11 @@ public class MyGameStateTest3 {
         PlacedTile placedTileNorthOf0 = new PlacedTile(secondTile,
                 PlayerColor.BLUE,
                 Rotation.RIGHT,
-                new Pos(1,1));
+                new Pos(1, 1));
 
         TileDecks expectedTileDecks = new TileDecks(new ArrayList<>(withFirstTileOccupied().tileDecks().startTiles()),
                 new ArrayList<>(withFirstTileOccupied().tileDecks().normalTiles()),
-                        new ArrayList<>(withFirstTileOccupied().tileDecks().menhirTiles()));
+                new ArrayList<>(withFirstTileOccupied().tileDecks().menhirTiles()));
 
         Board expectedBoard = withFirstTileOccupied().board().withNewTile(placedTileNorthOf0);
 

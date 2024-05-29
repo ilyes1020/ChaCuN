@@ -16,7 +16,7 @@
     -fx-font-weight: bold;
     -fx-text-alignment: center;
     -fx-fill: white;
-    -fx-effect: dropshadow(two-pass-box,#333,10,0,5,5);
+    -fx-effect: dropshadow(two-pass-box, #333, 10, 0, 5, 5);
 }
 
 #next-tile {

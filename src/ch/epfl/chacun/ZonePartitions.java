@@ -6,7 +6,8 @@ package ch.epfl.chacun;
  * @author Ilyes Rouibi (372420)
  * @author Weifeng Ding (379902)
  */
-public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Zone.Meadow> meadows, ZonePartition<Zone.River> rivers, ZonePartition<Zone.Water> riverSystems) {
+public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Zone.Meadow> meadows,
+                             ZonePartition<Zone.River> rivers, ZonePartition<Zone.Water> riverSystems) {
     /**
      * The empty ZonePartitions.
      */
@@ -14,7 +15,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
 
     /**
      * A builder class for constructing instances of the {@code ZonePartitions} class.
-     *
+     * <p>
      * This builder allows for the modification of a {@code ZonePartitions} by manipulating its internal four different type of {@code ZonePartition}.
      */
     public static final class Builder {
@@ -29,7 +30,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
          *
          * @param initial the existing {@code ZonePartitions}
          */
-        public Builder(ZonePartitions initial){
+        public Builder(ZonePartitions initial) {
             this.forestsBuilder = new ZonePartition.Builder<>(initial.forests());
             this.meadowsBuilder = new ZonePartition.Builder<>(initial.meadows());
             this.riversBuilder = new ZonePartition.Builder<>(initial.rivers());
@@ -41,7 +42,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
          *
          * @param tile the tile we want to add to the partitions
          */
-        public void addTile(Tile tile){
+        public void addTile(Tile tile) {
             addZonesToPartitions(tile);
             connectRiversToLakes(tile);
         }
@@ -53,22 +54,20 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
          * @param s2 second tile side
          * @throws IllegalArgumentException If the sides are not compatibles
          */
-        public void connectSides(TileSide s1, TileSide s2){
+        public void connectSides(TileSide s1, TileSide s2) {
             switch (s1) {
                 case TileSide.Forest(Zone.Forest f1)
-                        when s2 instanceof TileSide.Forest(Zone.Forest f2) ->
-                        forestsBuilder.union(f1, f2);
+                        when s2 instanceof TileSide.Forest(Zone.Forest f2) -> forestsBuilder.union(f1, f2);
 
                 case TileSide.Meadow(Zone.Meadow m1)
-                        when s2 instanceof TileSide.Meadow(Zone.Meadow m2) ->
-                        meadowsBuilder.union(m1, m2);
+                        when s2 instanceof TileSide.Meadow(Zone.Meadow m2) -> meadowsBuilder.union(m1, m2);
 
                 case TileSide.River(Zone.Meadow m11, Zone.River r1, Zone.Meadow m12)
                         when s2 instanceof TileSide.River(Zone.Meadow m21, Zone.River r2, Zone.Meadow m22) -> {
-                        riversBuilder.union(r1, r2);
-                        meadowsBuilder.union(m11, m22);
-                        meadowsBuilder.union(m12, m21);
-                        riverSystemsBuilder.union(r1, r2);
+                    riversBuilder.union(r1, r2);
+                    meadowsBuilder.union(m11, m22);
+                    meadowsBuilder.union(m12, m21);
+                    riverSystemsBuilder.union(r1, r2);
                 }
                 default -> throw new IllegalArgumentException("Different kinds of tile sides");
             }
@@ -77,12 +76,12 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
         /**
          * Adds an initial occupant of a specific kind of by the specific player to the area containing the given zone.
          *
-         * @param player the player who will occupy the zone
+         * @param player       the player who will occupy the zone
          * @param occupantKind the kind of the occupant
          * @param occupiedZone the zone that will be occupied
          * @throws IllegalArgumentException if the occupant kind cannot be on the given zone type
          */
-        public void addInitialOccupant(PlayerColor player, Occupant.Kind occupantKind, Zone occupiedZone){
+        public void addInitialOccupant(PlayerColor player, Occupant.Kind occupantKind, Zone occupiedZone) {
             switch (occupantKind) {
                 case PAWN -> addPawn(player, occupiedZone);
                 case HUT -> addHut(player, occupiedZone);
@@ -92,11 +91,11 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
         /**
          * Removes a pawn of the specified color from the area containing the given zone.
          *
-         * @param player the player who possess the pawn that will be removed
+         * @param player       the player who possess the pawn that will be removed
          * @param occupiedZone the zone to remove the pawn from
          * @throws IllegalArgumentException if the zone is a lake
          */
-        public void removePawn(PlayerColor player, Zone occupiedZone){
+        public void removePawn(PlayerColor player, Zone occupiedZone) {
             switch (occupiedZone) {
                 case Zone.Forest forest -> forestsBuilder.removeOccupant(forest, player);
                 case Zone.Meadow meadow -> meadowsBuilder.removeOccupant(meadow, player);
@@ -110,7 +109,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
          *
          * @param forest the forest from which all gatherers (PAWN) should be removed
          */
-        public void clearGatherers(Area<Zone.Forest> forest){
+        public void clearGatherers(Area<Zone.Forest> forest) {
             forestsBuilder.removeAllOccupantsOf(forest);
         }
 
@@ -119,7 +118,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
          *
          * @param river the river from which all fishers (PAWN) should be removed
          */
-        public void clearFishers(Area<Zone.River> river){
+        public void clearFishers(Area<Zone.River> river) {
             riversBuilder.removeAllOccupantsOf(river);
         }
 
@@ -128,7 +127,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
          *
          * @return the new zone partitions
          */
-        public ZonePartitions build(){
+        public ZonePartitions build() {
             return new ZonePartitions(forestsBuilder.build(), meadowsBuilder.build(), riversBuilder.build(), riverSystemsBuilder.build());
         }
 
@@ -143,7 +142,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
             int[] zoneIdSortedOpenConnections = new int[10];
             for (TileSide tileSide : tile.sides()) {
                 for (Zone zone : tileSide.zones()) {
-                    if (zone instanceof Zone.River river && river.hasLake()){
+                    if (zone instanceof Zone.River river && river.hasLake()) {
                         zoneIdSortedOpenConnections[river.lake().localId()]++;
                         zoneIdSortedOpenConnections[river.localId()]++;
                     }
@@ -151,19 +150,22 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
                 }
             }
             //add zones to the partitions
-            for (Zone zone : tile.zones()){
+            for (Zone zone : tile.zones()) {
                 switch (zone) {
-                    case Zone.Forest forest -> forestsBuilder.addSingleton(forest, zoneIdSortedOpenConnections[zone.localId()]);
-                    case Zone.Meadow meadow -> meadowsBuilder.addSingleton(meadow, zoneIdSortedOpenConnections[zone.localId()]);
+                    case Zone.Forest forest ->
+                            forestsBuilder.addSingleton(forest, zoneIdSortedOpenConnections[zone.localId()]);
+                    case Zone.Meadow meadow ->
+                            meadowsBuilder.addSingleton(meadow, zoneIdSortedOpenConnections[zone.localId()]);
                     case Zone.River river -> {
-                        if (river.hasLake()){
-                            riversBuilder.addSingleton(river, zoneIdSortedOpenConnections[zone.localId()] -1);
+                        if (river.hasLake()) {
+                            riversBuilder.addSingleton(river, zoneIdSortedOpenConnections[zone.localId()] - 1);
                         } else {
                             riversBuilder.addSingleton(river, zoneIdSortedOpenConnections[zone.localId()]);
                         }
                         riverSystemsBuilder.addSingleton(river, zoneIdSortedOpenConnections[zone.localId()]);
                     }
-                    case Zone.Lake lake -> riverSystemsBuilder.addSingleton(lake, zoneIdSortedOpenConnections[zone.localId()]);
+                    case Zone.Lake lake ->
+                            riverSystemsBuilder.addSingleton(lake, zoneIdSortedOpenConnections[zone.localId()]);
                 }
             }
         }
@@ -174,7 +176,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
          * @param tile The tile containing the rivers and lakes to be connected.
          */
         private void connectRiversToLakes(Tile tile) {
-            for (Zone zone : tile.sideZones()){
+            for (Zone zone : tile.sideZones()) {
                 if (zone instanceof Zone.River river && river.hasLake())
                     riverSystemsBuilder.union(river, river.lake());
             }
@@ -183,7 +185,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
         /**
          * Adds a pawn for a player to a given zone.
          *
-         * @param player The player for whom to add the pawn.
+         * @param player       The player for whom to add the pawn.
          * @param occupiedZone The zone to which to add the pawn.
          * @throws IllegalArgumentException if the zone is a lake
          */
@@ -199,7 +201,7 @@ public record ZonePartitions(ZonePartition<Zone.Forest> forests, ZonePartition<Z
         /**
          * Adds a hut for a player to a given zone.
          *
-         * @param player The player for whom to add the hut.
+         * @param player       The player for whom to add the hut.
          * @param occupiedZone The zone to which to add the hut.
          * @throws IllegalArgumentException if the zone is a meadow, forest or a river connected to a lake
          */

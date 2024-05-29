@@ -17,13 +17,14 @@ public final class ActionEncoder {
     /**
      * Represents a state-action pair.
      */
-    public record StateAction(GameState gameState, String actionB32) {}
+    public record StateAction(GameState gameState, String actionB32) {
+    }
 
     /**
      * Encodes a game state change caused by placing a tile.
      *
-     * @param gameState   The current game state.
-     * @param placedTile  The tile being placed.
+     * @param gameState  The current game state.
+     * @param placedTile The tile being placed.
      * @return a StateAction object representing the updated game state and the encoded action.
      */
     public static StateAction withPlacedTile(GameState gameState, PlacedTile placedTile) {
@@ -44,11 +45,11 @@ public final class ActionEncoder {
     /**
      * Encodes a game state change caused by placing a new occupant.
      *
-     * @param gameState  The current game state.
-     * @param occupant   The new occupant being placed.
+     * @param gameState The current game state.
+     * @param occupant  The new occupant being placed.
      * @return a StateAction object representing the updated game state and the encoded action.
      */
-    public static StateAction withNewOccupant(GameState gameState, Occupant occupant){
+    public static StateAction withNewOccupant(GameState gameState, Occupant occupant) {
         if (occupant == null) {
             return new StateAction(gameState.withNewOccupant(null), Base32.encodeBits5(0b11111));
         }
@@ -64,11 +65,11 @@ public final class ActionEncoder {
     /**
      * Encodes a game state change caused by removing an occupant.
      *
-     * @param gameState  The current game state.
-     * @param occupant   The occupant being removed.
+     * @param gameState The current game state.
+     * @param occupant  The occupant being removed.
      * @return a StateAction object representing the updated game state and the encoded action.
      */
-    public static StateAction withOccupantRemoved(GameState gameState, Occupant occupant){
+    public static StateAction withOccupantRemoved(GameState gameState, Occupant occupant) {
         if (occupant == null) {
             return new StateAction(gameState.withOccupantRemoved(null), Base32.encodeBits5(0b11111));
         }
@@ -87,25 +88,25 @@ public final class ActionEncoder {
     /**
      * Decodes the action code and applies the corresponding action to the game state.
      *
-     * @param gameState   The current game state.
-     * @param actionCode  The Base32 encoded action code.
+     * @param gameState  The current game state.
+     * @param actionCode The Base32 encoded action code.
      * @return a StateAction object representing the updated game state and the action code,
      * or null if the action code or the action is invalid.
      */
-    public static StateAction decodeAndApply(GameState gameState, String actionCode){
+    public static StateAction decodeAndApply(GameState gameState, String actionCode) {
         try {
             return decodeAndApplyAndThrowsIfActionImpossible(gameState, actionCode);
-        } catch (IllegalArgumentException exception){
+        } catch (IllegalArgumentException exception) {
             System.out.println("Given action code invalid or decoded action impossible to execute.");
             return null;
         }
     }
 
-    private static StateAction decodeAndApplyAndThrowsIfActionImpossible(GameState gameState, String actionCode) throws IllegalArgumentException{
+    private static StateAction decodeAndApplyAndThrowsIfActionImpossible(GameState gameState, String actionCode) throws IllegalArgumentException {
         Preconditions.checkArgument(Base32.isValid(actionCode));
         Preconditions.checkArgument(
                 (actionCode.length() == 2 && gameState.nextAction() == GameState.Action.PLACE_TILE)
-                ^ (actionCode.length() == 1 && (gameState.nextAction() == GameState.Action.OCCUPY_TILE || gameState.nextAction() == GameState.Action.RETAKE_PAWN)));
+                        ^ (actionCode.length() == 1 && (gameState.nextAction() == GameState.Action.OCCUPY_TILE || gameState.nextAction() == GameState.Action.RETAKE_PAWN)));
 
         //when the next action is PLACE_TILE
         if (gameState.nextAction() == GameState.Action.PLACE_TILE) {
@@ -116,7 +117,7 @@ public final class ActionEncoder {
                     .toList();
 
             //case when the placement index is out of bound of the fringe position list
-            if ((Base32.decode(actionCode) >>> 2) >= sortedFringe.size()){
+            if ((Base32.decode(actionCode) >>> 2) >= sortedFringe.size()) {
                 throw new IllegalArgumentException();
             }
 
@@ -127,17 +128,17 @@ public final class ActionEncoder {
             PlacedTile placedTileToPlace = new PlacedTile(gameState.tileToPlace(), gameState.currentPlayer(), rotation, placedTilePos);
 
             //case when the placement is not allowed on the board (ie : pos not in the fringe or sides not compatibles)
-            if (!gameState.board().canAddTile(placedTileToPlace)){
+            if (!gameState.board().canAddTile(placedTileToPlace)) {
                 throw new IllegalArgumentException();
             }
 
             return new StateAction(gameState.withPlacedTile(placedTileToPlace), actionCode);
         }
         //when the next action is OCCUPY_TILE
-        else if (gameState.nextAction() == GameState.Action.OCCUPY_TILE){
+        else if (gameState.nextAction() == GameState.Action.OCCUPY_TILE) {
 
             //case when the action code means to not occupy any zone
-            if (Base32.decode(actionCode) == 0b11111){
+            if (Base32.decode(actionCode) == 0b11111) {
                 return new StateAction(gameState.withNewOccupant(null), actionCode);
 
             } else {
@@ -165,7 +166,7 @@ public final class ActionEncoder {
         else {
 
             //case when the action code means to not retake any pawn
-            if (Base32.decode(actionCode) == 0b11111){
+            if (Base32.decode(actionCode) == 0b11111) {
                 return new StateAction(gameState.withOccupantRemoved(null), actionCode);
 
             } else {
@@ -176,7 +177,7 @@ public final class ActionEncoder {
                         .toList();
 
                 //case when the occupant's index is greater than the number of pawn on the board
-                if (Base32.decode(actionCode) >= sortedPawns.size()){
+                if (Base32.decode(actionCode) >= sortedPawns.size()) {
                     throw new IllegalArgumentException();
                 }
 

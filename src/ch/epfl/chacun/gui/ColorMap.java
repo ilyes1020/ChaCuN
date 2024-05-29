@@ -19,7 +19,7 @@ public final class ColorMap {
      * @return the color of the player in JavaFX
      */
 
-    public static Color fillColor(PlayerColor playerColor){
+    public static Color fillColor(PlayerColor playerColor) {
         return switch (playerColor) {
             case RED -> Color.RED;
             case BLUE -> Color.BLUE;
@@ -36,9 +36,9 @@ public final class ColorMap {
      * @return the stroke color of the player in JavaFX
      */
 
-    public static Color strokeColor(PlayerColor playerColor){
+    public static Color strokeColor(PlayerColor playerColor) {
         return playerColor == PlayerColor.YELLOW || playerColor == PlayerColor.GREEN ?
-                fillColor(playerColor).deriveColor(0,1,0.6,1):
+                fillColor(playerColor).deriveColor(0, 1, 0.6, 1) :
                 Color.WHITE;
     }
 }

@@ -21,16 +21,19 @@ import java.util.function.Consumer;
  * @author Weifeng Ding (379902)
  */
 public final class DecksUI {
+    private static final Image NORMAL_TILE_IMAGE = new Image("/256/NORMAL.JPG");
+    private static final Image MENHIR_TILE_IMAGE = new Image("/256/MENHIR.JPG");
+
     private DecksUI() {}
 
     /**
      * Creates a JavaFx Node representing the Decks User Interface.
      *
-     * @param tileToPlaceOV                 An Observable value of the tile to place.
-     * @param nbOfRemainingNormalTilesOV    An Observable value of the number of remaining normal tiles.
-     * @param nbOfRemainingMenhirTilesOV    An Observable value of the number of remaining menhir tiles.
-     * @param textToDisplayOV               An Observable value of the text to display.
-     * @param clickableText                 A consumer of Occupant.
+     * @param tileToPlaceOV              An Observable value of the tile to place.
+     * @param nbOfRemainingNormalTilesOV An Observable value of the number of remaining normal tiles.
+     * @param nbOfRemainingMenhirTilesOV An Observable value of the number of remaining menhir tiles.
+     * @param textToDisplayOV            An Observable value of the text to display.
+     * @param clickableText              A consumer of Occupant.
      * @return a JavaFx Node representing the Decks User Interface.
      */
 
@@ -38,7 +41,7 @@ public final class DecksUI {
                               ObservableValue<Integer> nbOfRemainingNormalTilesOV,
                               ObservableValue<Integer> nbOfRemainingMenhirTilesOV,
                               ObservableValue<String> textToDisplayOV,
-                              Consumer<Occupant> clickableText){
+                              Consumer<Occupant> clickableText) {
         //---DecksUI's VBox initialization---//
         VBox decksVB = new VBox();
         decksVB.getStylesheets().add("decks.css");
@@ -84,32 +87,10 @@ public final class DecksUI {
 
 
         //---normal tile stackPane---//
-        StackPane normalTileSP = new StackPane();
-
-        ImageView normalTileDeck = new ImageView("/256/NORMAL.JPG");
-        normalTileDeck.setId("NORMAL");
-
-        normalTileDeck.setFitWidth(ImageLoader.NORMAL_TILE_FIT_SIZE);
-        normalTileDeck.setFitHeight(ImageLoader.NORMAL_TILE_FIT_SIZE);
-
-        Text normalTileDeckCounter = new Text();
-        normalTileDeckCounter.textProperty().bind(nbOfRemainingNormalTilesOV.map(Object::toString));
-
-        normalTileSP.getChildren().addAll(normalTileDeck, normalTileDeckCounter);
+        StackPane normalTileSP = createTileStackPane(NORMAL_TILE_IMAGE, nbOfRemainingNormalTilesOV);
 
         //---menhir tile stackPane---//
-        StackPane menhirTileSP = new StackPane();
-
-        ImageView menhirTileDeck = new ImageView("/256/MENHIR.JPG");
-        menhirTileDeck.setId("MENHIR");
-
-        menhirTileDeck.setFitWidth(ImageLoader.NORMAL_TILE_FIT_SIZE);
-        menhirTileDeck.setFitHeight(ImageLoader.NORMAL_TILE_FIT_SIZE);
-
-        Text menhirTileCounter = new Text();
-        menhirTileCounter.textProperty().bind(nbOfRemainingMenhirTilesOV.map(Object::toString));
-
-        menhirTileSP.getChildren().addAll(menhirTileDeck, menhirTileCounter);
+        StackPane menhirTileSP = createTileStackPane(MENHIR_TILE_IMAGE, nbOfRemainingMenhirTilesOV);
 
         //---adding normalTileDeck and menhirTileDeck as children of Hbox---//
         remainingTilesHB.getChildren().addAll(normalTileSP, menhirTileSP);
@@ -118,5 +99,20 @@ public final class DecksUI {
         decksVB.getChildren().addAll(remainingTilesHB, tileToPlaceSP);
 
         return decksVB;
+    }
+
+    private static StackPane createTileStackPane(Image tileImage, ObservableValue<Integer> tileCountOV) {
+        StackPane tileSP = new StackPane();
+
+        ImageView tileDeck = new ImageView(tileImage);
+        tileDeck.setFitWidth(ImageLoader.NORMAL_TILE_FIT_SIZE);
+        tileDeck.setFitHeight(ImageLoader.NORMAL_TILE_FIT_SIZE);
+
+        Text tileCounter = new Text();
+        tileCounter.textProperty().bind(tileCountOV.map(Object::toString));
+
+        tileSP.getChildren().addAll(tileDeck, tileCounter);
+
+        return tileSP;
     }
 }

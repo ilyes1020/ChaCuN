@@ -30,7 +30,7 @@ public sealed interface TileSide {
      *
      * @param forest the forest (Zone) that is in contact with the tile side
      */
-    public record Forest(Zone.Forest forest) implements TileSide{
+    public record Forest(Zone.Forest forest) implements TileSide {
         /**
          * Returns the zones that are in contact with the tile side (this).
          *
@@ -58,7 +58,7 @@ public sealed interface TileSide {
      *
      * @param meadow the meadow (Zone) that is in contact with the tile side
      */
-    public record Meadow(Zone.Meadow meadow) implements TileSide{
+    public record Meadow(Zone.Meadow meadow) implements TileSide {
 
         /**
          * Returns the zones that are in contact with the tile side (this).
@@ -86,10 +86,10 @@ public sealed interface TileSide {
      * Record representing a river surrounded by two meadows, in contact with a tile side.
      *
      * @param meadow1 the first clockwise meadow (Zone) that is in contact with the tile side and the river
-     * @param river the river (Zone) that is in contact with the tile side
+     * @param river   the river (Zone) that is in contact with the tile side
      * @param meadow2 the second clockwise meadow (Zone) that is in contact with the tile side and the river
      */
-    public record River(Zone.Meadow meadow1, Zone.River river, Zone.Meadow meadow2) implements TileSide{
+    public record River(Zone.Meadow meadow1, Zone.River river, Zone.Meadow meadow2) implements TileSide {
         /**
          * Returns the zones that are in contact with the tile side (this).
          *

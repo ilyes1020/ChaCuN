@@ -12,8 +12,8 @@ import java.util.*;
 public class RunGameTest {
 
     public static void main(String[] args) throws InterruptedException {
-       // try{
-            fullGame();
+        // try{
+        fullGame();
         /*}catch (Exception e) {
             System.out.println(allCommands);
             saveIntegers(allCommands, "commands.txt");
@@ -60,7 +60,6 @@ public class RunGameTest {
         normalTiles.add(Tiles.TILES.get(35));
 
 
-
         menhirTiles.add(Tiles.TILES.get(92));
         menhirTiles.add(Tiles.TILES.get(88));
         menhirTiles.add(Tiles.TILES.get(85));
@@ -72,8 +71,7 @@ public class RunGameTest {
         InputOrSavedInput scanner = new InputOrSavedInput(false, "commands.txt");
 
 
-
-        TileDecks tileDecks = new TileDecks(startTile,normalTiles,menhirTiles);
+        TileDecks tileDecks = new TileDecks(startTile, normalTiles, menhirTiles);
         TileDecks tileDecksSimple = new TileDecks(startTile, List.of(Tiles.TILES.get(18), Tiles.TILES.get(74)), List.of());
         GameState gameState = getInitialGameState(tileDecks);
 
@@ -81,14 +79,14 @@ public class RunGameTest {
         PlayerColor currentPlayer = gameState.currentPlayer();
 
         System.out.print("Welcome to the game : 0 for starting a new game, 1 for loading a game : ");
-            int act1 = scanner.nextInt();
-            allCommands.add(act1);
-            if(act1 == 1) {
+        int act1 = scanner.nextInt();
+        allCommands.add(act1);
+        if (act1 == 1) {
 
-                gameState = loadGameState("gameState");
-            }
+            gameState = loadGameState("gameState");
+        }
 
-        while(gameState.nextAction() != GameState.Action.END_GAME){
+        while (gameState.nextAction() != GameState.Action.END_GAME) {
             currentPlayer = gameState.currentPlayer();
             roundCount++;
             saveIntegers(allCommands, "commands.txt");
@@ -96,13 +94,13 @@ public class RunGameTest {
             System.out.println("New turn : " + roundCount);
             System.out.println("Current Player : " + gameState.currentPlayer().name());
 
-            System.out.println("Here are the stats for messageBoard : this player has : " + gameState.messageBoard().points().getOrDefault(gameState.currentPlayer(),0));//TODO check if we need to do get or default
+            System.out.println("Here are the stats for messageBoard : this player has : " + gameState.messageBoard().points().getOrDefault(gameState.currentPlayer(), 0));//TODO check if we need to do get or default
 
             System.out.printf("Enter 0 for printing the board, 1 for saving the game and continuing :   ");
 
             int act = scanner.nextInt();
             allCommands.add(act);
-            if(act == 1){
+            if (act == 1) {
                 saveGameState(gameState, "gameState");
 
             }
@@ -113,14 +111,14 @@ public class RunGameTest {
 
             System.out.println("========================");
 
-            while (gameState.currentPlayer() == currentPlayer && gameState.nextAction() != GameState.Action.END_GAME){
+            while (gameState.currentPlayer() == currentPlayer && gameState.nextAction() != GameState.Action.END_GAME) {
 
-                switch (gameState.nextAction()){
+                switch (gameState.nextAction()) {
 
                     case RETAKE_PAWN:
                         System.out.println("You placed the shaman tile! Lets see if you can remove a pawn");
                         int placedOccupants = gameState.board().occupantCount(currentPlayer, Occupant.Kind.PAWN);
-                        if(placedOccupants == 0) {
+                        if (placedOccupants == 0) {
                             System.out.println("You cannot remove a pawn since you haven't placed one yet!");
                             gameState = gameState.withOccupantRemoved(null);
                         }
@@ -128,12 +126,12 @@ public class RunGameTest {
                         // Print a newline character after the loading animation is finished
                         System.out.println("\nYES YOU CAN!");
 
-                        Occupant occupantToRemove = new Occupant(Occupant.Kind.PAWN,  321);
+                        Occupant occupantToRemove = new Occupant(Occupant.Kind.PAWN, 321);
                         System.out.println("Lets see what occupants you have placed: " + occupantToRemove);
                         System.out.println("Do you wish to remove it? [1/0] : ");
                         int input = scanner.nextInt();
                         allCommands.add(input);
-                        if(input == 1){
+                        if (input == 1) {
                             gameState = gameState.withOccupantRemoved(occupantToRemove);
                         } else {
                             gameState = gameState.withOccupantRemoved(null);
@@ -141,8 +139,8 @@ public class RunGameTest {
 
                         break;
 
-                    case PLACE_TILE :
-                        if(gameState.tileToPlace().kind() == Tile.Kind.MENHIR){
+                    case PLACE_TILE:
+                        if (gameState.tileToPlace().kind() == Tile.Kind.MENHIR) {
                             System.out.println("MENHIR TILE TO PLACE!");
                         }
                         System.out.println("You have got to place tile id : " + String.valueOf(gameState.tileToPlace().id()));
@@ -153,7 +151,7 @@ public class RunGameTest {
                         int y = scanner.nextInt();
                         allCommands.add(y);
 
-                        Pos pos = new Pos(x,y);
+                        Pos pos = new Pos(x, y);
 
                         System.out.print("You want to rotate ? (0 for NONE, 1 for RIGHT, 2 for HALF_TURN, 3 for LEFT turn) : ");
                         int rotationId = scanner.nextInt();
@@ -168,7 +166,7 @@ public class RunGameTest {
                         break;
 
                     case OCCUPY_TILE:
-                        System.out.println("You have to occupy the tile : " + String.valueOf( gameState.board().lastPlacedTile().id()));
+                        System.out.println("You have to occupy the tile : " + String.valueOf(gameState.board().lastPlacedTile().id()));
 
                         System.out.println("Here are the potential zones you can occupy : ");
 
@@ -177,7 +175,7 @@ public class RunGameTest {
                         occ.sort(Comparator.comparingInt(Occupant::zoneId));
                         occ.sort(Comparator.comparing(Occupant::kind));
 
-                        for(Occupant o : occ){
+                        for (Occupant o : occ) {
                             System.out.println(o.kind() + " " + o.zoneId());
                         }
                         System.out.println("-----------");
@@ -188,10 +186,10 @@ public class RunGameTest {
 
                         allCommands.add(chosenOccupant);
 
-                        if(chosenOccupant == -1){
+                        if (chosenOccupant == -1) {
                             gameState = gameState.withNewOccupant(null);
                             break;
-                        }else{
+                        } else {
                             gameState = gameState.withNewOccupant(occ.get(chosenOccupant));
                         }
 
@@ -203,14 +201,13 @@ public class RunGameTest {
             }
 
 
-
         }
 
         System.out.println("Game is ended : ");
         System.out.println("FINAL BOARD: ");
         System.out.println(printBoard(gameState.board()));
         System.out.println("=========================");
-        for(MessageBoard.Message m : gameState.messageBoard().messages()){
+        for (MessageBoard.Message m : gameState.messageBoard().messages()) {
             System.out.println("---------------");
             System.out.println("Scored tiles: " + m.tileIds() + " Scorers: " + m.scorers() + " Points: " + m.points() + " Type: " + m.text());
 
@@ -222,64 +219,60 @@ public class RunGameTest {
     }
 
 
-    public static void getFinalSuperGameMessageBoard( GameState gameState, GameState gameStateToCheck){
+    public static void getFinalSuperGameMessageBoard(GameState gameState, GameState gameStateToCheck) {
 
         //for now, we instantiate only the messageboard and the cancelled animals
         MessageBoard m = gameState.messageBoard();
         Board board = gameState.board();
 
-        Area<Zone.Forest> a = new Area<Zone.Forest>(Set.of((Zone.Forest) getZone(743),(Zone.Forest) getZone(320),(Zone.Forest) getZone(561), (Zone.Forest)getZone(412)),new ArrayList<>(), 0);
+        Area<Zone.Forest> a = new Area<Zone.Forest>(Set.of((Zone.Forest) getZone(743), (Zone.Forest) getZone(320), (Zone.Forest) getZone(561), (Zone.Forest) getZone(412)), new ArrayList<>(), 0);
         m = m.withScoredForest(a);
         m = m.withClosedForestWithMenhir(PlayerColor.RED, a);
 
-        a = new Area<>(Set.of((Zone.Forest) getZone(411), (Zone.Forest)getZone(401), (Zone.Forest)getZone(4)), new ArrayList<>() ,0);
+        a = new Area<>(Set.of((Zone.Forest) getZone(411), (Zone.Forest) getZone(401), (Zone.Forest) getZone(4)), new ArrayList<>(), 0);
         m = m.withScoredForest(a);
         m = m.withClosedForestWithMenhir(PlayerColor.GREEN, a);
 
 
-        a = new Area<>(Set.of((Zone.Forest) getZone(370) , (Zone.Forest) getZone(301),  (Zone.Forest)getZone(43)), List.of(PlayerColor.BLUE), 0 );
+        a = new Area<>(Set.of((Zone.Forest) getZone(370), (Zone.Forest) getZone(301), (Zone.Forest) getZone(43)), List.of(PlayerColor.BLUE), 0);
 
         m = m.withScoredForest(a);
 
-        m = m.withClosedForestWithMenhir(PlayerColor.RED,a);
+        m = m.withClosedForestWithMenhir(PlayerColor.RED, a);
 
-        Area<Zone.River> b = new Area<>(Set.of((Zone.River)getZone(591), (Zone.River) getZone(45)), List.of(PlayerColor.BLUE), 0 );
+        Area<Zone.River> b = new Area<>(Set.of((Zone.River) getZone(591), (Zone.River) getZone(45)), List.of(PlayerColor.BLUE), 0);
         m = m.withScoredRiver(b);
 
 
-        a = new Area<>(Set.of((Zone.Forest)getZone(723) , (Zone.Forest)getZone(310), (Zone.Forest)getZone(593)),List.of(PlayerColor.GREEN), 0);
+        a = new Area<>(Set.of((Zone.Forest) getZone(723), (Zone.Forest) getZone(310), (Zone.Forest) getZone(593)), List.of(PlayerColor.GREEN), 0);
 
         m = m.withScoredForest(a);
 
         m = m.withClosedForestWithMenhir(PlayerColor.GREEN, a);
 
-        Area<Zone.Meadow> adjacentMeadow = new Area<>(Set.of( (Zone.Meadow)getZone(941) , (Zone.Meadow)getZone(300) , (Zone.Meadow)getZone(392) , (Zone.Meadow)getZone(850) , (Zone.Meadow)getZone(880)  ), List.of(PlayerColor.RED, PlayerColor.GREEN), 4);
+        Area<Zone.Meadow> adjacentMeadow = new Area<>(Set.of((Zone.Meadow) getZone(941), (Zone.Meadow) getZone(300), (Zone.Meadow) getZone(392), (Zone.Meadow) getZone(850), (Zone.Meadow) getZone(880)), List.of(PlayerColor.RED, PlayerColor.GREEN), 4);
         m = m.withScoredHuntingTrap(PlayerColor.GREEN, adjacentMeadow);
 
-        a = new Area<>(Set.of((Zone.Forest)getZone(733) , (Zone.Forest)getZone(391), (Zone.Forest)getZone(940)),List.of(PlayerColor.RED), 0);
+        a = new Area<>(Set.of((Zone.Forest) getZone(733), (Zone.Forest) getZone(391), (Zone.Forest) getZone(940)), List.of(PlayerColor.RED), 0);
         m = m.withScoredForest(a);
 
 
-
-
-
-
-        a = new Area<>(Set.of((Zone.Forest)getZone(883), (Zone.Forest)getZone(920), (Zone.Forest)getZone(601), (Zone.Forest)getZone(456)), List.of(PlayerColor.RED), 0);
+        a = new Area<>(Set.of((Zone.Forest) getZone(883), (Zone.Forest) getZone(920), (Zone.Forest) getZone(601), (Zone.Forest) getZone(456)), List.of(PlayerColor.RED), 0);
         m = m.withScoredForest(a);
 
         m = m.withClosedForestWithMenhir(PlayerColor.BLUE, a);
 
 
-        Area<Zone.Water> c = new Area<>(Set.of((Zone.Water)getZone(731), (Zone.Water)getZone(933), (Zone.Water)getZone(41), (Zone.Water)getZone(938), (Zone.Water)getZone(48), (Zone.Water)getZone(591), (Zone.Water)getZone(45), (Zone.Water)getZone(598)), List.of(PlayerColor.RED), 2);
+        Area<Zone.Water> c = new Area<>(Set.of((Zone.Water) getZone(731), (Zone.Water) getZone(933), (Zone.Water) getZone(41), (Zone.Water) getZone(938), (Zone.Water) getZone(48), (Zone.Water) getZone(591), (Zone.Water) getZone(45), (Zone.Water) getZone(598)), List.of(PlayerColor.RED), 2);
         m = m.withScoredLogboat(PlayerColor.BLUE, c);
-        b = new Area<>(Set.of((Zone.River)getZone(731), (Zone.River)getZone(933), (Zone.River)getZone(41)), List.of(PlayerColor.BLUE), 0);
+        b = new Area<>(Set.of((Zone.River) getZone(731), (Zone.River) getZone(933), (Zone.River) getZone(41)), List.of(PlayerColor.BLUE), 0);
         m = m.withScoredRiver(b);
 
-        a = new Area<>(Set.of((Zone.Forest)getZone(351), (Zone.Forest)getZone(290), (Zone.Forest)getZone(3)), List.of(PlayerColor.GREEN), 0);
+        a = new Area<>(Set.of((Zone.Forest) getZone(351), (Zone.Forest) getZone(290), (Zone.Forest) getZone(3)), List.of(PlayerColor.GREEN), 0);
         m = m.withScoredForest(a);
         m = m.withClosedForestWithMenhir(PlayerColor.RED, a);
 
-        b = new Area<>(Set.of((Zone.River)getZone(915), (Zone.River)getZone(931)), List.of(PlayerColor.BLUE), 0);
+        b = new Area<>(Set.of((Zone.River) getZone(915), (Zone.River) getZone(931)), List.of(PlayerColor.BLUE), 0);
         m = m.withScoredRiver(b);
 
         MessageBoard msgEndGame = new MessageBoard(m.textMaker(), new ArrayList<>());
@@ -288,29 +281,28 @@ public class RunGameTest {
         //initialize the messages here on msgEndGame
 
         //ici  ---------------------------------
-        Area<Zone.Meadow> d = new Area<>(Set.of((Zone.Meadow)getZone(402), (Zone.Meadow)getZone(350)), List.of(PlayerColor.BLUE), 2);
+        Area<Zone.Meadow> d = new Area<>(Set.of((Zone.Meadow) getZone(402), (Zone.Meadow) getZone(350)), List.of(PlayerColor.BLUE), 2);
         msgEndGame = msgEndGame.withScoredMeadow(d, Set.of());
 
-        d = new Area<>(Set.of((Zone.Meadow)getZone(410),(Zone.Meadow)getZone(921), (Zone.Meadow)getZone(880), (Zone.Meadow)getZone(560), (Zone.Meadow)getZone(620), (Zone.Meadow)getZone(850),(Zone.Meadow)getZone(941), (Zone.Meadow)getZone(740), (Zone.Meadow)getZone(180), (Zone.Meadow)getZone(371), (Zone.Meadow)getZone(300), (Zone.Meadow)getZone(392), (Zone.Meadow)getZone(311), (Zone.Meadow)getZone(592), (Zone.Meadow)getZone(44)),List.of(PlayerColor.RED, PlayerColor.GREEN), 7 );
+        d = new Area<>(Set.of((Zone.Meadow) getZone(410), (Zone.Meadow) getZone(921), (Zone.Meadow) getZone(880), (Zone.Meadow) getZone(560), (Zone.Meadow) getZone(620), (Zone.Meadow) getZone(850), (Zone.Meadow) getZone(941), (Zone.Meadow) getZone(740), (Zone.Meadow) getZone(180), (Zone.Meadow) getZone(371), (Zone.Meadow) getZone(300), (Zone.Meadow) getZone(392), (Zone.Meadow) getZone(311), (Zone.Meadow) getZone(592), (Zone.Meadow) getZone(44)), List.of(PlayerColor.RED, PlayerColor.GREEN), 7);
         //Only canceled animal is from hunting trap, tigers flee from wildfire
         msgEndGame = msgEndGame.withScoredMeadow(d, Set.of(new Animal(3000, Animal.Kind.DEER)));
 
-        d = new Area<>(Set.of((Zone.Meadow)getZone(921), (Zone.Meadow)getZone(410), (Zone.Meadow)getZone(560), (Zone.Meadow)getZone(620), (Zone.Meadow)getZone(850), (Zone.Meadow)getZone(880)), List.of(PlayerColor.RED, PlayerColor.GREEN), 7);
+        d = new Area<>(Set.of((Zone.Meadow) getZone(921), (Zone.Meadow) getZone(410), (Zone.Meadow) getZone(560), (Zone.Meadow) getZone(620), (Zone.Meadow) getZone(850), (Zone.Meadow) getZone(880)), List.of(PlayerColor.RED, PlayerColor.GREEN), 7);
         msgEndGame = msgEndGame.withScoredPitTrap(d, Set.of());
 
-        d = new Area<>(Set.of((Zone.Meadow)getZone(914), (Zone.Meadow)getZone(932), (Zone.Meadow)getZone(732), (Zone.Meadow)getZone(42), (Zone.Meadow)getZone(390)), List.of(PlayerColor.RED), 1);
+        d = new Area<>(Set.of((Zone.Meadow) getZone(914), (Zone.Meadow) getZone(932), (Zone.Meadow) getZone(732), (Zone.Meadow) getZone(42), (Zone.Meadow) getZone(390)), List.of(PlayerColor.RED), 1);
         msgEndGame = msgEndGame.withScoredMeadow(d, Set.of());
 
 
-
-        Area<Zone.Water> e = new Area<>(Set.of((Zone.Water)getZone(911), (Zone.Water)getZone(913), (Zone.Water)getZone(915), (Zone.Water)getZone(918), (Zone.Water)getZone(931), (Zone.Water)getZone(933), (Zone.Water)getZone(935), (Zone.Water)getZone(938), (Zone.Water)getZone(731), (Zone.Water)getZone(41), (Zone.Water)getZone(45), (Zone.Water)getZone(48), (Zone.Water)getZone(591), (Zone.Water)getZone(598)), List.of(PlayerColor.RED), 3);
+        Area<Zone.Water> e = new Area<>(Set.of((Zone.Water) getZone(911), (Zone.Water) getZone(913), (Zone.Water) getZone(915), (Zone.Water) getZone(918), (Zone.Water) getZone(931), (Zone.Water) getZone(933), (Zone.Water) getZone(935), (Zone.Water) getZone(938), (Zone.Water) getZone(731), (Zone.Water) getZone(41), (Zone.Water) getZone(45), (Zone.Water) getZone(48), (Zone.Water) getZone(591), (Zone.Water) getZone(598)), List.of(PlayerColor.RED), 3);
         msgEndGame = msgEndGame.withScoredRiverSystem(e); //4 pts (4 fish)
         msgEndGame = msgEndGame.withScoredRaft(e); //4 pts (4 lakes)
 
-        e = new Area<>(Set.of((Zone.Water)getZone(181), (Zone.Water)getZone(563), (Zone.Water)getZone(568), (Zone.Water)getZone(741)), List.of(PlayerColor.RED), 1);
+        e = new Area<>(Set.of((Zone.Water) getZone(181), (Zone.Water) getZone(563), (Zone.Water) getZone(568), (Zone.Water) getZone(741)), List.of(PlayerColor.RED), 1);
         msgEndGame = msgEndGame.withScoredRiverSystem(e); //2 pts (2 fish)
 
-        e = new Area<>(Set.of((Zone.Water)getZone(451), (Zone.Water)getZone(1), (Zone.Water)getZone(8)), List.of(PlayerColor.GREEN), 1);
+        e = new Area<>(Set.of((Zone.Water) getZone(451), (Zone.Water) getZone(1), (Zone.Water) getZone(8)), List.of(PlayerColor.GREEN), 1);
         msgEndGame = msgEndGame.withScoredRiverSystem(e); //3 pts (3 fish)
 
         Set<PlayerColor> winners = Set.of(PlayerColor.RED);
@@ -325,36 +317,35 @@ public class RunGameTest {
         List<MessageBoard.Message> messagesOfBoardBeforeEnd = gameStateToCheck.messageBoard().messages();
         messagesOfBoardBeforeEnd = messagesOfBoardBeforeEnd.subList(0, indexOfEndGameMessages);
 
-        if(m.messages().equals(messagesOfBoardBeforeEnd)){
+        if (m.messages().equals(messagesOfBoardBeforeEnd)) {
             System.out.println("TEST PASSED (BEFORE END GAME)");
-        }else{
+        } else {
             throw new IllegalArgumentException("NONONO");
         }
 
         List<MessageBoard.Message> newMessages = new ArrayList<>(m.messages());
         newMessages.addAll(messagesAtEndGame);
-        boolean work = true ;
+        boolean work = true;
         //now we check the last messages:
         messagesOfBoardBeforeEnd = gameStateToCheck.messageBoard().messages().subList(indexOfEndGameMessages, gameStateToCheck.messageBoard().messages().size());
 
-        for(MessageBoard.Message message : messagesOfBoardBeforeEnd){
-           if(! messagesAtEndGame.contains(message)){
-               work = false;
-               System.out.println(message);
-               System.out.println("NOT CONTAIN");
+        for (MessageBoard.Message message : messagesOfBoardBeforeEnd) {
+            if (!messagesAtEndGame.contains(message)) {
+                work = false;
+                System.out.println(message);
+                System.out.println("NOT CONTAIN");
             }
         }
 
-        if(work){
+        if (work) {
             System.out.println("TEST PASSED (ENDGAME)");
-        }else{
+        } else {
             throw new IllegalArgumentException("no");
         }
 
         //now we check the messages :
 
     }
-
 
 
     public static void generatePermutations(List<MessageBoard.Message> messages, int index) {
@@ -377,17 +368,16 @@ public class RunGameTest {
     }
 
 
-    static Zone getZone(int id){
-        for(Tile t : Tiles.TILES){
-            for(Zone z : t.zones() ){
-                if(z.id() == id){
+    static Zone getZone(int id) {
+        for (Tile t : Tiles.TILES) {
+            for (Zone z : t.zones()) {
+                if (z.id() == id) {
                     return z;
                 }
             }
         }
         return null;
     }
-
 
 
     public static void saveIntegers(List<Integer> integers, String filename) {
@@ -414,16 +404,16 @@ public class RunGameTest {
         return integers;
     }
 
-        public static void saveGameState(GameState gameState, String filePath)  {
+    public static void saveGameState(GameState gameState, String filePath) {
 
-        }
+    }
 
-        public static GameState loadGameState(String filePath)  {
-         return null;
-        }
+    public static GameState loadGameState(String filePath) {
+        return null;
+    }
 
 
-    static String printBoard(Board board){
+    static String printBoard(Board board) {
         System.out.println(board.occupants());
         String ANSI_RESET = "\u001B[0m";
         String ANSI_RED = "\u001B[31m";
@@ -433,40 +423,40 @@ public class RunGameTest {
 
         StringBuilder superString = new StringBuilder();
 
-        for(int y = -12; y <= 12; y++){
-            for(int x = -12 ; x <= 12 ; x++){
-                PlacedTile p = board.tileAt(new Pos(x,y));
-                if(p != null){
+        for (int y = -12; y <= 12; y++) {
+            for (int x = -12; x <= 12; x++) {
+                PlacedTile p = board.tileAt(new Pos(x, y));
+                if (p != null) {
                     int idInt = p.tile().id();
-                    String id = ((String.valueOf( p.tile().id())));
-                    if(p.placer() == PlayerColor.RED){
+                    String id = ((String.valueOf(p.tile().id())));
+                    if (p.placer() == PlayerColor.RED) {
                         id = ANSI_RED + id + ANSI_RESET;
                     }
-                    if(p.placer() == PlayerColor.GREEN){
+                    if (p.placer() == PlayerColor.GREEN) {
                         id = ANSI_GREEN + id + ANSI_RESET;
                     }
-                    if(p.placer() == PlayerColor.BLUE){
+                    if (p.placer() == PlayerColor.BLUE) {
                         id = ANSI_BLUE + id + ANSI_RESET;
                     }
 
 
-                    if(idInt < 10){
-                        if( p.occupant() != null){
-                            id = id + " " + (p.zoneWithId( p.occupant().zoneId()).localId());
-                        }else{
+                    if (idInt < 10) {
+                        if (p.occupant() != null) {
+                            id = id + " " + (p.zoneWithId(p.occupant().zoneId()).localId());
+                        } else {
                             id = id + " |";
                         }
-                        superString.append("  " +id + " ");
-                    }else{
-                        if( p.occupant() != null){
-                            id = id + " " + (p.zoneWithId( p.occupant().zoneId()).localId());
-                        }else{
+                        superString.append("  " + id + " ");
+                    } else {
+                        if (p.occupant() != null) {
+                            id = id + " " + (p.zoneWithId(p.occupant().zoneId()).localId());
+                        } else {
                             id = id + " N";
                         }
-                        superString.append(" " +id + " ");
+                        superString.append(" " + id + " ");
 
                     }
-                }else{
+                } else {
                     superString.append("      ");
                 }
             }
@@ -477,7 +467,7 @@ public class RunGameTest {
 
     }
 
-    static GameState getInitialGameState(TileDecks t){
+    static GameState getInitialGameState(TileDecks t) {
 
         TextMaker text = new MyTextMaker();
         List<PlayerColor> players = new ArrayList<>();
@@ -490,33 +480,34 @@ public class RunGameTest {
     }
 }
 
-class InputOrSavedInput{
+class InputOrSavedInput {
     boolean liveInput;
     Scanner sc;
     String file;
     List<Integer> inputs = new ArrayList<>();
     Iterator<Integer> it;
-    InputOrSavedInput(boolean liveInput, String file){
+
+    InputOrSavedInput(boolean liveInput, String file) {
         this.file = file;
         sc = new Scanner(System.in);
 
-        if(!liveInput){
+        if (!liveInput) {
             inputs = RunGameTest.loadIntegers(file);
             it = inputs.iterator();
         }
     }
 
-    int nextInt(){
-        if(liveInput){
+    int nextInt() {
+        if (liveInput) {
             int out = sc.nextInt();
             inputs.add(out);
             RunGameTest.saveIntegers(inputs, file);
             return out;
-        }else{
-            if(it.hasNext()) {
+        } else {
+            if (it.hasNext()) {
 
                 return it.next();
-            }else{
+            } else {
                 liveInput = true;
                 return nextInt();
             }

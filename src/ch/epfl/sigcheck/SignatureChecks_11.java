@@ -6,7 +6,8 @@ package ch.epfl.sigcheck;
 // pour cette étape du projet sont corrects.
 
 final class SignatureChecks_11 {
-    private SignatureChecks_11() {}
+    private SignatureChecks_11() {
+    }
 
     void checkMain() throws Exception {
         v01 = new ch.epfl.chacun.gui.Main();

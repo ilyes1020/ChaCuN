@@ -1,6 +1,9 @@
 package ch.epfl.chacun;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -72,9 +75,9 @@ public final class Board {
      */
     public Set<Occupant> occupants() {
         return Arrays.stream(tilesIndex)
-            .mapToObj(i -> placedTiles[i].occupant())
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+                .mapToObj(i -> placedTiles[i].occupant())
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -142,8 +145,8 @@ public final class Board {
     /**
      * Returns the adjacent meadow to the given zone. The returned area contains all the occupants of the initial area.
      *
-     * @param pos         The position to check for adjacency.
-     * @param meadowZone  The meadow zone to search for.
+     * @param pos        The position to check for adjacency.
+     * @param meadowZone The meadow zone to search for.
      * @return The adjacent meadow to the given zone, including all occupants of the initial meadow.
      */
     public Area<Zone.Meadow> adjacentMeadow(Pos pos, Zone.Meadow meadowZone) {
@@ -151,7 +154,7 @@ public final class Board {
         Set<Zone.Meadow> adjacentMeadowZones = initialMeadowArea
                 .zones()
                 .stream()
-                .filter(z ->{
+                .filter(z -> {
                     Pos zTilePosition = tileWithId(z.tileId()).pos();
                     return (Math.abs(zTilePosition.x() - pos.x()) <= 1) && (Math.abs(zTilePosition.y() - pos.y()) <= 1);
                 })
@@ -163,8 +166,8 @@ public final class Board {
     /**
      * Returns the number of occupants of the specified kind belonging to the given player on the board.
      *
-     * @param player        The player whose occupants to count.
-     * @param occupantKind  The kind of occupant to count.
+     * @param player       The player whose occupants to count.
+     * @param occupantKind The kind of occupant to count.
      * @return The number of occupants of the specified kind belonging to the given player on the board.
      */
 
@@ -206,7 +209,7 @@ public final class Board {
      * @return The set of forest areas closed by the last placed tile.
      */
     public Set<Area<Zone.Forest>> forestsClosedByLastTile() {
-        if (lastPlacedTile() == null){
+        if (lastPlacedTile() == null) {
             return Set.of();
         }
         return lastPlacedTile().forestZones().stream()
@@ -221,7 +224,7 @@ public final class Board {
      * @return The set of river areas closed by the last placed tile.
      */
     public Set<Area<Zone.River>> riversClosedByLastTile() {
-        if (lastPlacedTile() == null){
+        if (lastPlacedTile() == null) {
             return Set.of();
         }
         return lastPlacedTile().riverZones().stream()
@@ -237,7 +240,7 @@ public final class Board {
      * @return True if the tile can be added, false otherwise.
      */
     public boolean canAddTile(PlacedTile tile) {
-        if (!insertionPositions().contains(tile.pos())){
+        if (!insertionPositions().contains(tile.pos())) {
             return false;
         }
         return Direction.ALL.stream()
