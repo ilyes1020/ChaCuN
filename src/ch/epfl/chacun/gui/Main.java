@@ -6,7 +6,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -52,7 +51,7 @@ public final class Main extends Application {
 
         //-----INITIALIZING THE GAMESTATE-----//
         long seed;
-        List<Tile> tiles = new ArrayList<>(Tiles.TILES);
+        List<Tile> tiles = new ArrayList<>(Tiles.TILES_HUNTING_TRAP);
         //Checking for the validity of the arguments and shuffle with the seed if there is one provided
         if (playerNames.size() < 2 || playerNames.size() > 5) {
             throw new IllegalArgumentException("Invalid player number.");
@@ -200,49 +199,6 @@ public final class Main extends Application {
                 clickableText));
 
         Scene scene = new Scene(rootBP);
-
-        // FEATURE: Idle mode
-        // press ctrl to just advance the game state by placing a tile/occ anywhere it fits
-        rootBP.setOnKeyPressed(e -> {
-            if (e.getCode() != KeyCode.CONTROL) {
-                return;
-            }
-            GameState state = gameStateOV.get();
-            switch (state.nextAction()) {
-                case PLACE_TILE -> {
-                    for (Pos pos : state.board().insertionPositions()
-                            .stream()
-                            .sorted(Comparator.comparing((Pos p) -> p.x() * p.x() + p.y() * p.y()))
-                            .toList()) {
-                        for (Rotation _ : Rotation.ALL) {
-                            if (state.tileToPlace() != null && state.board().canAddTile(new PlacedTile(state.tileToPlace(),
-                                    state.currentPlayer(), rotationOV.get(),
-                                    pos))) {
-                                placeTileHandler.accept(pos);
-                                return;
-                            }
-                            rotationHandler.accept(Rotation.RIGHT);
-                        }
-                    }
-                }
-                case OCCUPY_TILE -> updateState(actionListOV, ActionEncoder.withNewOccupant(state
-                                , state.lastTilePotentialOccupants()
-                                        .stream()
-                                        .findAny()
-                                        .orElse(null))
-                        , gameStateOV);
-
-                case RETAKE_PAWN -> updateState(actionListOV, ActionEncoder.withOccupantRemoved(state
-                                , state.board()
-                                        .occupants()
-                                        .stream()
-                                        .filter(o -> o.kind().equals(Occupant.Kind.PAWN))
-                                        .filter(o -> state.board().tileWithId(Zone.tileId(o.zoneId())).placer().equals(state.currentPlayer()))
-                                        .findAny()
-                                        .orElse(null))
-                        , gameStateOV);
-            }
-        });
 
         //placing the starting tile
         gameStateOV.setValue(gameStateOV.getValue().withStartingTilePlaced());

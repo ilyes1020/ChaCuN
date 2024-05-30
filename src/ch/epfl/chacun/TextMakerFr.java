@@ -94,7 +94,7 @@ public final class TextMakerFr implements TextMaker {
      * @param scorer  the player who placed the hunting trap
      * @param points  the scored points
      * @param animals the animals present in the same meadow as the hunting trap and 8 tiles around it
-     * @return a string message indicating the number of points that a player scored by placing a hunting trap
+     * @return        a string message indicating the number of points that a player scored by placing a hunting trap
      */
     @Override
     public String playerScoredHuntingTrap(PlayerColor scorer, int points, Map<Animal.Kind, Integer> animals) {
@@ -108,7 +108,7 @@ public final class TextMakerFr implements TextMaker {
      * @param scorer    the player who placed the logboat
      * @param points    the scored points
      * @param lakeCount the number of lake accessible to the logboat
-     * @return
+     * @return          a string message indicating the number of points that a player scored by placing a logboat
      */
     @Override
     public String playerScoredLogboat(PlayerColor scorer, int points, int lakeCount) {

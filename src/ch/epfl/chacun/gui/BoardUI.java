@@ -123,11 +123,11 @@ public final class BoardUI {
 
                             // If there is no PlacedTile on the cell, and it is in the fringe,
                             // we check if the mouse is hovering it.
-                            else if (fringeOV.getValue().contains(currentPos)) {
+                            else if (fringeOV.getValue().contains(currentPos) && currentPlayer != null) {
 
                                 // If the mouse is hovering the cell,
                                 // we set the background image to the tileToPlace's image
-                                if (mouseHovering.getValue()) {
+                                if (mouseHovering.getValue() && tileToPlace != null) {
                                     backgroundImage = CellData.IMAGE_CACHE.computeIfAbsent(tileToPlace.id(), ImageLoader::normalImageForTile);
                                     PlacedTile placedTileToPlace = new PlacedTile(tileToPlace, currentPlayer, rotation, currentPos);
 
