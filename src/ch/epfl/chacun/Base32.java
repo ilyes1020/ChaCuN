@@ -7,8 +7,7 @@ package ch.epfl.chacun;
  * @author Weifeng Ding(379902)
  */
 public final class Base32 {
-    private Base32() {
-    }
+    private Base32() {}
 
     /**
      * The Base32 alphabet used for encoding and decoding.

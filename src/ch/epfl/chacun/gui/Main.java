@@ -51,7 +51,7 @@ public final class Main extends Application {
 
         //-----INITIALIZING THE GAMESTATE-----//
         long seed;
-        List<Tile> tiles = new ArrayList<>(Tiles.TILES_HUNTING_TRAP);
+        List<Tile> tiles = new ArrayList<>(Tiles.TILES);
         //Checking for the validity of the arguments and shuffle with the seed if there is one provided
         if (playerNames.size() < 2 || playerNames.size() > 5) {
             throw new IllegalArgumentException("Invalid player number.");
@@ -73,7 +73,7 @@ public final class Main extends Application {
                 .collect(Collectors.toMap(
                         PlayerColor.ALL::get,
                         playerNames::get,
-                        (a, b) -> a,        // merge function, in case of duplicate keys (should never happen as keys are different indices)
+                        (a, _) -> a,        // merge function, in case of duplicate keys (should never happen as keys are different indices)
                         LinkedHashMap::new  // linkedHashMap to maintain insertion order
                 ));
 

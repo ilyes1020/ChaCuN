@@ -17,8 +17,7 @@ public final class ActionEncoder {
     /**
      * Represents a state-action pair.
      */
-    public record StateAction(GameState gameState, String actionB32) {
-    }
+    public record StateAction(GameState gameState, String actionB32) {}
 
     /**
      * Encodes a game state change caused by placing a tile.
@@ -96,7 +95,7 @@ public final class ActionEncoder {
     public static StateAction decodeAndApply(GameState gameState, String actionCode) {
         try {
             return decodeAndApplyAndThrowsIfActionImpossible(gameState, actionCode);
-        } catch (IllegalArgumentException exception) {
+        } catch (RuntimeException exception) {
             System.out.println("Given action code invalid or decoded action impossible to execute.");
             return null;
         }
@@ -118,7 +117,7 @@ public final class ActionEncoder {
 
             //case when the placement index is out of bound of the fringe position list
             if ((Base32.decode(actionCode) >>> 2) >= sortedFringe.size()) {
-                throw new IllegalArgumentException();
+                throw new IndexOutOfBoundsException();
             }
 
             //to unpack the position and rotation from the action code
