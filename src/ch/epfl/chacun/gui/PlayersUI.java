@@ -81,7 +81,7 @@ public final class PlayersUI {
             playerNode.getStyleClass().add("player");
 
             //---currentPlayer indicator update setup---//
-            currentPlayerOV.addListener((_, oldPlayer, newPlayer) -> {
+            currentPlayerOV.addListener((ignored, oldPlayer, newPlayer) -> {
                 if (oldPlayer == p) {
                     playerNode.getStyleClass().remove("current");
                 }

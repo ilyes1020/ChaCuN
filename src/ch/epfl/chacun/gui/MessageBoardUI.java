@@ -39,7 +39,7 @@ public final class MessageBoardUI {
         messagesSP.getStylesheets().add("message-board.css");
 
         //---messages updating setup---//
-        messagesOV.addListener((_, oldMessages, newMessages) -> {
+        messagesOV.addListener((ignored, oldMessages, newMessages) -> {
 
             //---adding a new Text containing the newly added message---//
             for (MessageBoard.Message newMessage : newMessages
@@ -54,8 +54,8 @@ public final class MessageBoardUI {
                 newMessageText.setWrappingWidth(ImageLoader.LARGE_TILE_FIT_SIZE);
 
                 //---updating the tileIds list when the mouse enter the text node---//
-                newMessageText.setOnMouseEntered(_ -> highlightedTilesIdOP.setValue(newMessage.tileIds()));
-                newMessageText.setOnMouseExited(_ -> highlightedTilesIdOP.setValue(Set.of()));
+                newMessageText.setOnMouseEntered(e -> highlightedTilesIdOP.setValue(newMessage.tileIds()));
+                newMessageText.setOnMouseExited(e -> highlightedTilesIdOP.setValue(Set.of()));
 
                 //---adding the Text node to the VBox---//
                 messagesVB.getChildren().add(newMessageText);

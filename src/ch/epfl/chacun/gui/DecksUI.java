@@ -21,8 +21,8 @@ import java.util.function.Consumer;
  * @author Weifeng Ding (379902)
  */
 public final class DecksUI {
-    private static final Image NORMAL_TILE_IMAGE = new Image("/256/NORMAL.JPG");
-    private static final Image MENHIR_TILE_IMAGE = new Image("/256/MENHIR.JPG");
+    private static final Image NORMAL_TILE_IMAGE = new Image("/256/NORMAL.jpg");
+    private static final Image MENHIR_TILE_IMAGE = new Image("/256/MENHIR.jpg");
 
     private DecksUI() {}
 

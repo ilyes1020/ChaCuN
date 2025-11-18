@@ -73,7 +73,7 @@ public final class Main extends Application {
                 .collect(Collectors.toMap(
                         PlayerColor.ALL::get,
                         playerNames::get,
-                        (a, _) -> a,        // merge function, in case of duplicate keys (should never happen as keys are different indices)
+                        (a, b) -> a,        // merge function, in case of duplicate keys (should never happen as keys are different indices)
                         LinkedHashMap::new  // linkedHashMap to maintain insertion order
                 ));
 
