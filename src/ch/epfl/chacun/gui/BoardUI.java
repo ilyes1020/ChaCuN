@@ -195,7 +195,7 @@ public final class BoardUI {
                 });
 
                 //---Adding all the occupants and cancelled animals markers when a new cell is added---//
-                placedTileOV.addListener((_, oldTile, newTile) -> {
+                placedTileOV.addListener((observable, oldTile, newTile) -> {
                     if (newTile != null && oldTile == null) {
                         //---Adding the Cancelled Animals Markers---//
                         Set<Animal> animals = newTile
