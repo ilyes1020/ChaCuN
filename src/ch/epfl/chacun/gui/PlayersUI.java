@@ -48,9 +48,10 @@ public final class PlayersUI {
         for (PlayerColor p : players) {
 
             //---auto updating text for points initialization---//
-            ObservableValue<String> pointsTextOV =
+                ObservableValue<String> pointsTextOV =
                     pointsMapOV.map(pointsMap ->
-                            STR." \{textMaker.playerName(p)} : \{pointsMap.getOrDefault(p, 0)} \{pointsMap.getOrDefault(p, 0) > 1 ? "points" : "point"}\n");
+                        " " + textMaker.playerName(p) + " : " + pointsMap.getOrDefault(p, 0)
+                            + " " + (pointsMap.getOrDefault(p, 0) > 1 ? "points" : "point") + "\n");
 
             Text playerPointsText = new Text();
             playerPointsText.textProperty().bind(pointsTextOV);

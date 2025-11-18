@@ -53,7 +53,7 @@ public final class Base32 {
         int secondHalf = tenLSBs & 0b11111;
 
 
-        return STR."\{ALPHABET.charAt(firstHalf)}\{ALPHABET.charAt(secondHalf)}";
+        return "" + ALPHABET.charAt(firstHalf) + ALPHABET.charAt(secondHalf);
     }
 
     /**

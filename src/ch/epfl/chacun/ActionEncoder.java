@@ -149,7 +149,7 @@ public final class ActionEncoder {
                 }
 
                 Occupant.Kind occupantKind = Occupant.Kind.values()[Base32.decode(actionCode) >>> 4];
-                int occupantZoneId = Integer.parseInt(STR."\{gameState.board().lastPlacedTile().id()}\{Base32.decode(actionCode) & 0b1111}");
+                int occupantZoneId = Integer.parseInt("" + gameState.board().lastPlacedTile().id() + (Base32.decode(actionCode) & 0b1111));
 
                 Occupant occupant = new Occupant(occupantKind, occupantZoneId);
 

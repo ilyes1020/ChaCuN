@@ -208,7 +208,7 @@ public final class BoardUI {
                             markerIV.setFitWidth(ImageLoader.MARKER_FIT_SIZE);
                             markerIV.setFitHeight(ImageLoader.MARKER_FIT_SIZE);
                             markerIV.getStyleClass().add("marker");
-                            markerIV.setId(STR."marker_\{animal.id()}");
+                            markerIV.setId("marker_" + animal.id());
                             tileGroup.getChildren().add(markerIV);
 
                             //---making the marker visible when the animal is cancelled---//
@@ -219,7 +219,7 @@ public final class BoardUI {
                         //---Adding the occupants---//
                         for (Occupant occupant : newTile.potentialOccupants()) {
                             Node occupantNode = Icon.newFor(newTile.placer(), occupant.kind());
-                            occupantNode.setId(STR."\{occupant.kind().toString().toLowerCase()}_\{occupant.zoneId()}");
+                            occupantNode.setId(occupant.kind().toString().toLowerCase() + "_" + occupant.zoneId());
                             tileGroup.getChildren().add(occupantNode);
 
                             //---making the occupant visible if it should be---//

@@ -42,8 +42,8 @@ public final class TextMakerFr implements TextMaker {
      */
     @Override
     public String playerClosedForestWithMenhir(PlayerColor player) {
-        return STR."\{playerName(player)} a fermé une forêt contenant un menhir"
-                + STR." et peut donc placer une tuile menhir.";
+        return playerName(player) + " a fermé une forêt contenant un menhir"
+            + " et peut donc placer une tuile menhir.";
     }
 
     /**
@@ -55,17 +55,17 @@ public final class TextMakerFr implements TextMaker {
      */
     @Override
     public String playersScoredForest(Set<PlayerColor> scorers, int points, int mushroomGroupCount, int tileCount) {
-        String message = STR."\{scorersSyntax(scorers)}"
-                + STR." \{aIfSingularOntIfPlural(scorers.size())} remporté"
-                + STR." \{points} \{withSIfPlural("point", points, false)}"
-                + STR." en tant qu'\{withSIfPlural("occupant·e", scorers.size(), true)}"
-                + STR." \{withSIfPlural("majoritaire", scorers.size(), false)}"
-                + STR." d'une forêt composée de \{tileCount} tuiles";
+        String message = scorersSyntax(scorers)
+            + " " + aIfSingularOntIfPlural(scorers.size()) + " remporté"
+            + " " + points + " " + withSIfPlural("point", points, false)
+            + " en tant qu'" + withSIfPlural("occupant·e", scorers.size(), true)
+            + " " + withSIfPlural("majoritaire", scorers.size(), false)
+            + " d'une forêt composée de " + tileCount + " tuiles";
 
         return mushroomGroupCount == 0 ?
-                STR."\{message}." :
-                STR."\{message} et de \{mushroomGroupCount}"
-                        + STR." \{withSIfPlural("groupe", mushroomGroupCount, false)} de champignons.";
+            message + "." :
+            message + " et de " + mushroomGroupCount
+                + " " + withSIfPlural("groupe", mushroomGroupCount, false) + " de champignons.";
     }
 
     /**
@@ -77,17 +77,17 @@ public final class TextMakerFr implements TextMaker {
      */
     @Override
     public String playersScoredRiver(Set<PlayerColor> scorers, int points, int fishCount, int tileCount) {
-        String message = STR."\{scorersSyntax(scorers)}"
-                + STR." \{aIfSingularOntIfPlural(scorers.size())} remporté"
-                + STR." \{points} \{withSIfPlural("point", points, false)}"
-                + STR." en tant qu'\{withSIfPlural("occupant·e", scorers.size(), true)}"
-                + STR." \{withSIfPlural("majoritaire", scorers.size(), false)}"
-                + STR." d'une rivière composée de \{tileCount} tuiles";
+        String message = scorersSyntax(scorers)
+            + " " + aIfSingularOntIfPlural(scorers.size()) + " remporté"
+            + " " + points + " " + withSIfPlural("point", points, false)
+            + " en tant qu'" + withSIfPlural("occupant·e", scorers.size(), true)
+            + " " + withSIfPlural("majoritaire", scorers.size(), false)
+            + " d'une rivière composée de " + tileCount + " tuiles";
 
         return fishCount == 0 ?
-                STR."\{message}." :
-                STR."\{message} et contenant"
-                        + STR." \{fishCount} \{withSIfPlural("poisson", fishCount, false)}.";
+            message + "." :
+            message + " et contenant"
+                + " " + fishCount + " " + withSIfPlural("poisson", fishCount, false) + ".";
     }
 
     /**
@@ -98,10 +98,10 @@ public final class TextMakerFr implements TextMaker {
      */
     @Override
     public String playerScoredHuntingTrap(PlayerColor scorer, int points, Map<Animal.Kind, Integer> animals) {
-        return STR."\{playerName(scorer)} a remporté"
-                + STR." \{points} \{withSIfPlural("point", points, false)}"
-                + STR." en plaçant la fosse à pieux dans un pré dans lequel elle est entourée de"
-                + STR." \{animalSyntax(animals)}.";
+        return playerName(scorer) + " a remporté"
+            + " " + points + " " + withSIfPlural("point", points, false)
+            + " en plaçant la fosse à pieux dans un pré dans lequel elle est entourée de"
+            + " " + animalSyntax(animals) + ".";
     }
 
     /**
@@ -112,10 +112,10 @@ public final class TextMakerFr implements TextMaker {
      */
     @Override
     public String playerScoredLogboat(PlayerColor scorer, int points, int lakeCount) {
-        return STR."\{playerName(scorer)} a remporté"
-                + STR." \{points} \{withSIfPlural("point", points, false)}"
-                + STR." en plaçant la pirogue dans un réseau hydrographique contenant"
-                + STR." \{lakeCount} \{withSIfPlural("lac", lakeCount, false)}";
+        return playerName(scorer) + " a remporté"
+            + " " + points + " " + withSIfPlural("point", points, false)
+            + " en plaçant la pirogue dans un réseau hydrographique contenant"
+            + " " + lakeCount + " " + withSIfPlural("lac", lakeCount, false);
     }
 
     /**
@@ -126,12 +126,12 @@ public final class TextMakerFr implements TextMaker {
      */
     @Override
     public String playersScoredMeadow(Set<PlayerColor> scorers, int points, Map<Animal.Kind, Integer> animals) {
-        return STR."\{scorersSyntax(scorers)}"
-                + STR." \{aIfSingularOntIfPlural(scorers.size())} remporté"
-                + STR." \{points} \{withSIfPlural("point", points, false)}"
-                + STR." en tant qu'\{withSIfPlural("occupant·e", scorers.size(), true)}"
-                + STR." majoritaire d'un pré contenant"
-                + STR." \{animalSyntax(animals)}.";
+        return scorersSyntax(scorers)
+            + " " + aIfSingularOntIfPlural(scorers.size()) + " remporté"
+            + " " + points + " " + withSIfPlural("point", points, false)
+            + " en tant qu'" + withSIfPlural("occupant·e", scorers.size(), true)
+            + " majoritaire d'un pré contenant"
+            + " " + animalSyntax(animals) + ".";
     }
 
     /**
@@ -142,12 +142,12 @@ public final class TextMakerFr implements TextMaker {
      */
     @Override
     public String playersScoredRiverSystem(Set<PlayerColor> scorers, int points, int fishCount) {
-        return STR."\{scorersSyntax(scorers)}"
-                + STR." \{aIfSingularOntIfPlural(scorers.size())} remporté"
-                + STR." \{points} \{withSIfPlural("point", points, false)}"
-                + STR." en tant qu'\{withSIfPlural("occupant·e", scorers.size(), true)}"
-                + STR." majoritaire d'un réseau hydrographique contenant"
-                + STR." \{fishCount} \{withSIfPlural("poisson", fishCount, false)}.";
+        return scorersSyntax(scorers)
+            + " " + aIfSingularOntIfPlural(scorers.size()) + " remporté"
+            + " " + points + " " + withSIfPlural("point", points, false)
+            + " en tant qu'" + withSIfPlural("occupant·e", scorers.size(), true)
+            + " majoritaire d'un réseau hydrographique contenant"
+            + " " + fishCount + " " + withSIfPlural("poisson", fishCount, false) + ".";
     }
 
     /**
@@ -158,12 +158,12 @@ public final class TextMakerFr implements TextMaker {
      */
     @Override
     public String playersScoredPitTrap(Set<PlayerColor> scorers, int points, Map<Animal.Kind, Integer> animals) {
-        return STR."\{scorersSyntax(scorers)}"
-                + STR." \{aIfSingularOntIfPlural(scorers.size())} remporté"
-                + STR." \{points} \{withSIfPlural("point", points, false)}"
-                + STR." en tant qu'\{withSIfPlural("occupant·e", scorers.size(), true)}"
-                + STR." majoritaire d'un pré contenant la grande fosse à pieux et entourée de"
-                + STR." \{animalSyntax(animals)}.";
+        return scorersSyntax(scorers)
+            + " " + aIfSingularOntIfPlural(scorers.size()) + " remporté"
+            + " " + points + " " + withSIfPlural("point", points, false)
+            + " en tant qu'" + withSIfPlural("occupant·e", scorers.size(), true)
+            + " majoritaire d'un pré contenant la grande fosse à pieux et entourée de"
+            + " " + animalSyntax(animals) + ".";
     }
 
     /**
@@ -174,12 +174,12 @@ public final class TextMakerFr implements TextMaker {
      */
     @Override
     public String playersScoredRaft(Set<PlayerColor> scorers, int points, int lakeCount) {
-        return STR."\{scorersSyntax(scorers)}"
-                + STR." \{aIfSingularOntIfPlural(scorers.size())} remporté"
-                + STR." \{points} \{withSIfPlural("point", points, false)}"
-                + STR." en tant qu'\{withSIfPlural("occupant·e", scorers.size(), true)}"
-                + STR." majoritaire d'un réseau hydrographique contenant le radeau et"
-                + STR." \{lakeCount} \{withSIfPlural("lac", lakeCount, false)}.";
+        return scorersSyntax(scorers)
+            + " " + aIfSingularOntIfPlural(scorers.size()) + " remporté"
+            + " " + points + " " + withSIfPlural("point", points, false)
+            + " en tant qu'" + withSIfPlural("occupant·e", scorers.size(), true)
+            + " majoritaire d'un réseau hydrographique contenant le radeau et"
+            + " " + lakeCount + " " + withSIfPlural("lac", lakeCount, false) + ".";
     }
 
     /**
@@ -189,9 +189,9 @@ public final class TextMakerFr implements TextMaker {
      */
     @Override
     public String playersWon(Set<PlayerColor> winners, int points) {
-        return STR."\{scorersSyntax(winners)}"
-                + STR." \{aIfSingularOntIfPlural(winners.size())} remporté la partie avec"
-                + STR." \{points} \{withSIfPlural("point", points, false)}!";
+        return scorersSyntax(winners)
+            + " " + aIfSingularOntIfPlural(winners.size()) + " remporté la partie avec"
+            + " " + points + " " + withSIfPlural("point", points, false) + "!";
     }
 
     /**
@@ -246,7 +246,7 @@ public final class TextMakerFr implements TextMaker {
                     builder.append(", ");
                 }
             }
-            builder.append(STR."\{animals.get(animalKind)} \{withSIfPlural(animalFrName(animalKind), animals.get(animalKind), false)}");
+            builder.append(animals.get(animalKind) + " " + withSIfPlural(animalFrName(animalKind), animals.get(animalKind), false));
         }
         return builder.toString();
     }
@@ -266,6 +266,6 @@ public final class TextMakerFr implements TextMaker {
 
     private String withSIfPlural(String noun, int count, boolean withMedianPoint) {
         if (count == 1) return noun;
-        return withMedianPoint ? STR."\{noun}·s" : STR."\{noun}s";
+        return withMedianPoint ? noun + "·s" : noun + "s";
     }
 }

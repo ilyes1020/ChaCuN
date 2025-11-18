@@ -45,7 +45,7 @@ public final class ActionUI {
         ObservableValue<String> lastFourActionsToStringOV = actionListOV.map(list -> {
             StringJoiner sj = new StringJoiner(", ");
             for (int i = Math.max(0, list.size() - 4); i < list.size(); i++) {
-                sj.add(STR."\{i + 1}:\{list.get(i)}");
+                sj.add((i + 1) + ":" + list.get(i));
             }
             return sj.toString();
         });
